@@ -1,0 +1,7 @@
+.idea
+data/*
+training/*
+vendor/*
+
+settings.json
+composer.phar

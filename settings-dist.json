@@ -1,0 +1,11 @@
+{
+  "app_key" : "",
+  "app_secret" : "",
+  "token" : "",
+  "token_secret" : "",
+  "last_id": 0,
+  "max_id": null,
+  "delay": 3,
+  "limit": 50,
+  "processing_limit": 2000
+}

@@ -1,0 +1,127 @@
+<?php
+
+/*
+ * https://twitter.com/i/search/timeline?f=realtime
+ * &q=from%3Adumpmon%20since%3A2014-12-01%20until%3A2014-12-09
+ * &include_available_features=0
+ * &include_entities=0
+ * &scroll_cursor=TWEET-542101187911499776-541932658931273728
+ */
+
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
+echo "\nMemory usage: ". memory_convert(memory_get_usage())."\n";
+
+require_once __DIR__.'/assets/simple_html_dom.php';
+
+$base_url   = 'https://twitter.com/i/search/timeline?f=realtime&q=';
+$base_query = 'from:dumpmon since:%s until:%s';
+$prev_day   = '1970-05-01';
+$garbage    = 0;
+$processed  = 0;
+
+$twitter  = curl_init();
+$pastebin = curl_init();
+
+curl_setopt($twitter, CURLOPT_FOLLOWLOCATION, true);
+curl_setopt($twitter, CURLOPT_RETURNTRANSFER, true);
+
+curl_setopt($pastebin, CURLOPT_FOLLOWLOCATION, true);
+curl_setopt($pastebin, CURLOPT_RETURNTRANSFER, true);
+
+$since = '2014-12-03';
+$until = '2014-12-08';
+
+$origurl = $base_url.rawurlencode(sprintf($base_query, $since, $until));
+
+$processing = true;
+$url        = $origurl;
+
+while($processing)
+{
+    curl_setopt($twitter, CURLOPT_URL, $url);
+
+    $json = json_decode(curl_exec($twitter));
+    $html = str_get_html($json->items_html);
+
+    $tweets = $html->find('.original-tweet');
+
+    $garbage = 0;
+
+    foreach ($tweets as $tweet)
+    {
+        if(!$link = $tweet->find('.twitter-timeline-link', 0))
+        {
+            continue;
+        }
+
+        $processed++;
+
+        $pasteLink = $link->attr['data-expanded-url'];
+        $timestamp = $tweet->find('.js-short-timestamp', 0)->attr['data-time'];
+        $tweetid   = $tweet->attr['data-tweet-id'];
+
+        $day = date('Y-m-d', $timestamp);
+
+        if($day != $prev_day)
+        {
+            $prev_day = $day;
+            echo "Processing day: ".$day."\n";
+        }
+
+        $folder = $day;
+
+        if(!is_dir(__DIR__.'/data/'.$folder))
+        {
+            mkdir(__DIR__.'/data/'.$folder);
+        }
+
+        curl_setopt($pastebin, CURLOPT_URL, $pasteLink);
+
+        sleep(3);
+
+        $data = curl_exec($pastebin);
+
+        if(!$data)
+        {
+            continue;
+        }
+
+        if(stripos($data, 'Pastebin.com has blocked your IP') !== false)
+        {
+            echo "IP blocked!!!\n";
+            break;
+        }
+
+        if(stripos($data, 'has been removed') !== false)
+        {
+            $garbage++;
+            continue;
+        }
+
+        file_put_contents(__DIR__.'/data/'.$folder.'/'.$tweetid.'.txt', $data);
+    }
+
+    $html->clear();
+    unset($html);
+
+    // Let's setup the url for the next iteration
+    $url = $origurl.'&scroll_cursor='.$json->scroll_cursor;
+
+    $processing = $json->has_more_items;
+
+    echo "    ...processed ".$processed." tweets\n";
+    echo "      Found ".$garbage." garbage tweets in this batch\n";
+}
+
+
+echo "\nPeak memory usage: ".memory_convert(memory_get_peak_usage())."\n";
+echo "Memory usage: ". memory_convert(memory_get_usage())."\n";
+
+function memory_convert($size)
+{
+    $unit = array('b','kb','mb','gb','tb','pb');
+
+    return @round($size/pow(1024,($i=floor(log($size,1024)))),2).' '.$unit[$i];
+}
