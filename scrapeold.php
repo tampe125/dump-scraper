@@ -11,6 +11,14 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
+$options = getopt('s:u:', array('since:', 'until:'));
+
+if((!isset($options['s']) && !isset($options['until'])) || (!isset($options['u']) && !isset($options['until'])))
+{
+    echo "Please provide the `since` and `until` arguments\n";
+    exit;
+}
+
 echo "\nMemory usage: ". memory_convert(memory_get_usage())."\n";
 
 require_once __DIR__.'/assets/simple_html_dom.php';
@@ -30,10 +38,10 @@ curl_setopt($twitter, CURLOPT_RETURNTRANSFER, true);
 curl_setopt($pastebin, CURLOPT_FOLLOWLOCATION, true);
 curl_setopt($pastebin, CURLOPT_RETURNTRANSFER, true);
 
-$since = '2014-12-03';
-$until = '2014-12-08';
+$since = isset($options['s']) ? $options['s'] : $options['since'];
+$until = isset($options['u']) ? $options['u'] : $options['until'];
 
-$origurl = $base_url.rawurlencode(sprintf($base_query, $since, $until));
+$origurl = $base_url.rawurlencode(sprintf($base_query, trim($since), trim($until)));
 
 $processing = true;
 $url        = $origurl;
