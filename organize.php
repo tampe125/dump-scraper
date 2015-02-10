@@ -61,7 +61,7 @@ foreach($iterator as $file)
         $organizer->setInfo($info);
         $organizer->analyze();
 
-        $score = max($organizer->getScore(), 3);
+        $score = min($organizer->getScore(), 3);
 
         $line[$key] = round($score, 4);
     }

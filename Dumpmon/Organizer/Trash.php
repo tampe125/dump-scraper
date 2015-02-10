@@ -67,11 +67,20 @@ class Trash extends Organizer
             $multiplier = 0.25;
         }
 
-        $time  = preg_match_all('/(?:2[0-3]|[01][0-9]):[0-5][0-9]:[0-5][0-9]/', $this->data) * $multiplier;
-        $score = $time / $this->lines;
-
+        // Mysql dates
         $dates  = preg_match_all('/(19|20)\d\d[\-\/.](0[1-9]|1[012])[\-\/.](0[1-9]|[12][0-9]|3[01])/', $this->data) * $multiplier;
+        $score  = $dates / $this->lines;
+
+        // English dates
+        $dates  = preg_match_all('/(0[1-9]|1[012])[\-\/.](0[1-9]|[12][0-9]|3[01])[\-\/.](19|20)\d\d/', $this->data) * $multiplier;
         $score += $dates / $this->lines;
+
+        // Search for the time only if the previous regex didn't match anything. Otherwise I'll count timestamps YYYY-mm-dd HH:ii:ss twice
+        if(!$score)
+        {
+            $time   = preg_match_all('/(?:2[0-3]|[01][0-9]):[0-5][0-9]:[0-5][0-9]/', $this->data) * $multiplier;
+            $score += $time / $this->lines;
+        }
 
         return $score;
     }
@@ -83,7 +92,7 @@ class Trash extends Organizer
      */
     protected function detectHtml()
     {
-        $html = preg_match_all('/<\/?(?:html|div|p|div|script|link|span|u|ul|li|ol|a)+|\s*\/?>/i', $this->data) * 1.5;
+        $html = preg_match_all('/<\/?(?:html|div|p|div|script|link|span|u|ul|li|ol|a)+\s*\/?>/i', $this->data) * 1.5;
         $urls = preg_match_all('/\b(?:(?:https?):\/\/|www\.)[-A-Z0-9+&@#\/%=~_|$?!:,.]*[A-Z0-9+&@#\/%=~_|$]/i', $this->data);
 
         return ($html + $urls) / $this->lines;
