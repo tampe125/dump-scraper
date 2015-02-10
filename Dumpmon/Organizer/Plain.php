@@ -42,7 +42,7 @@ class Plain extends Organizer
      */
     protected function detectUsernamePwd()
     {
-        $pwd = preg_match_all('/^[a-z0-9]*?:.*?$/im', $this->data);
+        $pwd = preg_match_all('/^.{3,20}:.*?$/im', $this->data);
 
         return $pwd / $this->lines;
     }

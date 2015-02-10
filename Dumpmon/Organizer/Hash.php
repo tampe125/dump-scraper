@@ -8,7 +8,16 @@ class Hash extends Organizer
     {
         $hashes = $this->detectMd5();
 
-        $this->score = $hashes / $this->lines;
+        // If I just have few lines, most likely it's trash. I have to do this since sometimes some debug output are
+        // crammed into a single line, screwing up all the stats
+        if($this->lines < 3)
+        {
+            $this->score = 0;
+        }
+        else
+        {
+            $this->score = $hashes / $this->lines;
+        }
     }
 
     protected function detectMd5()
