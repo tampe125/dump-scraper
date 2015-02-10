@@ -18,7 +18,7 @@ class Plain extends Organizer
      */
     protected function detectEmailPwd()
     {
-        $emailPwd = preg_match_all('/.*?@.*?\.[a-z]{2,5}[:|\|].*?[:\n]/i', $this->data);
+        $emailPwd = preg_match_all('/.*?@.*?\.[a-z]{2,5}[:|\||,].*?[:\n]$/im', $this->data);
 
         return $emailPwd / $this->lines;
     }
@@ -30,7 +30,7 @@ class Plain extends Organizer
      */
     protected function detectPwdStandalone()
     {
-        $pwd = preg_match_all('/pass(?:word)?\s*?[:|=].\w+/i', $this->data);
+        $pwd = preg_match_all('/pass(?:word)?\s*?[:|=].\w+/im', $this->data);
 
         return $pwd / $this->lines;
     }

@@ -20,7 +20,7 @@ class Trash extends Organizer
      */
     protected function detectEmailsOnly()
     {
-        $emails = preg_match_all('/^.*?@.*?\.[a-z]{2,5}$/i', $this->data);
+        $emails = preg_match_all("/^[a-z0-9!#$%&'*+\/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+\/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/im", $this->data);
 
         return $emails / $this->lines;
     }

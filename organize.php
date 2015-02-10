@@ -48,6 +48,9 @@ foreach($iterator as $file)
 
     $data  = file_get_contents($file->getPathname());
 
+    // Remove /r since they could mess up regex
+    $data = str_replace("\r", '', $data);
+
     $info = array(
         'data'  => $data,
         'lines' => substr_count($data, "\n")
