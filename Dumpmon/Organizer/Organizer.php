@@ -10,6 +10,9 @@ abstract class Organizer
     /** @var  string    Data that will be analyzed */
     protected $data;
 
+    /** @var  integer   The number of lines of the file */
+    protected $lines;
+
     /**
      * Returns the score for the current file. High values results in a higher probability to belong to the current
      * class of analyzer

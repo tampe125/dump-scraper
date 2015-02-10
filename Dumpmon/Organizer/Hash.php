@@ -8,7 +8,7 @@ class Hash extends Organizer
     {
         $hashes = $this->detectMd5();
 
-        $this->score = $hashes / mb_strlen($this->data);
+        $this->score = $hashes / $this->lines;
     }
 
     protected function detectMd5()

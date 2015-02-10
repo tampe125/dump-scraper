@@ -20,7 +20,7 @@ class Plain extends Organizer
     {
         $emailPwd = preg_match_all('/.*?@.*?\.[a-z]{2,5}[:|\|].*?[:\n]/i', $this->data);
 
-        return $emailPwd / mb_strlen($this->data);
+        return $emailPwd / $this->lines;
     }
 
     /**
@@ -32,7 +32,7 @@ class Plain extends Organizer
     {
         $pwd = preg_match_all('/pass(?:word)?\s*?[:|=].\w+/i', $this->data);
 
-        return $pwd / mb_strlen($this->data);
+        return $pwd / $this->lines;
     }
 
     /**
@@ -44,6 +44,6 @@ class Plain extends Organizer
     {
         $pwd = preg_match_all('/^[a-z0-9]*?:.*?$/im', $this->data);
 
-        return $pwd / mb_strlen($this->data);
+        return $pwd / $this->lines;
     }
 }

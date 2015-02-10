@@ -49,7 +49,8 @@ foreach($iterator as $file)
     $data  = file_get_contents($file->getPathname());
 
     $info = array(
-        'data'  => $data
+        'data'  => $data,
+        'lines' => substr_count($data, "\n")
     );
 
     $line = array();
@@ -60,7 +61,7 @@ foreach($iterator as $file)
         $organizer->setInfo($info);
         $organizer->analyze();
 
-        $score = $organizer->getScore() * 100;
+        $score = max($organizer->getScore(), 3);
 
         $line[$key] = round($score, 4);
     }

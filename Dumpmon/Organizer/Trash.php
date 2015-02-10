@@ -22,7 +22,7 @@ class Trash extends Organizer
     {
         $emails = preg_match_all('/^.*?@.*?\.[a-z]{2,5}$/i', $this->data);
 
-        return $emails / mb_strlen($this->data);
+        return $emails / $this->lines;
     }
 
     /**
@@ -35,7 +35,7 @@ class Trash extends Organizer
         $hex   = preg_match_all('/0\x[a-f0-9]{8}/i', $this->data);
         $debug = substr_count($this->data, '#EXTINF');
 
-        return ($hex + $debug) / mb_strlen($this->data);
+        return ($hex + $debug) / $this->lines;
     }
 
     /**
@@ -45,7 +45,7 @@ class Trash extends Organizer
     {
         $ip = preg_match_all('/\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b/', $this->data);
 
-        return $ip / mb_strlen($this->data);
+        return $ip / $this->lines;
     }
 
     /**
@@ -68,10 +68,10 @@ class Trash extends Organizer
         }
 
         $time  = preg_match_all('/(?:2[0-3]|[01][0-9]):[0-5][0-9]:[0-5][0-9]/', $this->data) * $multiplier;
-        $score = $time / mb_strlen($this->data);
+        $score = $time / $this->lines;
 
         $dates  = preg_match_all('/(19|20)\d\d[\-\/.](0[1-9]|1[012])[\-\/.](0[1-9]|[12][0-9]|3[01])/', $this->data) * $multiplier;
-        $score += $dates / mb_strlen($this->data);
+        $score += $dates / $this->lines;
 
         return $score;
     }
@@ -86,6 +86,6 @@ class Trash extends Organizer
         $html = preg_match_all('/<\/?(?:html|div|p|div|script|link|span|u|ul|li|ol|a)+|\s*\/?>/i', $this->data) * 1.5;
         $urls = preg_match_all('/\b(?:(?:https?):\/\/|www\.)[-A-Z0-9+&@#\/%=~_|$?!:,.]*[A-Z0-9+&@#\/%=~_|$]/i', $this->data);
 
-        return ($html + $urls) / mb_strlen($this->data);
+        return ($html + $urls) / $this->lines;
     }
 }
