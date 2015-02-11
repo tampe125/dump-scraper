@@ -6,13 +6,21 @@ class Trash extends Organizer
 {
     public function analyze()
     {
-        $score  = $this->detectEmailsOnly();
-        $score += $this->detectDebug() * 1.2;
-        $score += $this->detectIP() * 1.5;
-        $score += $this->detectTimeStamps();
-        $score += $this->detectHtml();
+        // Single lines pastebin are always trash
+        if($this->lines < 3)
+        {
+            $this->score = 3;
+        }
+        else
+        {
+            $score  = $this->detectEmailsOnly();
+            $score += $this->detectDebug() * 1.2;
+            $score += $this->detectIP() * 1.5;
+            $score += $this->detectTimeStamps();
+            $score += $this->detectHtml();
 
-        $this->score = $score;
+            $this->score = $score;
+        }
     }
 
     /**
@@ -60,11 +68,11 @@ class Trash extends Organizer
         // Do I have a table dump? If so I have to lower the score of the timestamps, since most likely
         // it's the creation time
         $insert = substr_count($this->data, 'INSERT INTO');
-        $mysql  = preg_match_all('/\+.*?\+/', $this->data);
+        $mysql  = preg_match_all('/\+.*?\+/m', $this->data);
 
         if($insert > 3 || $mysql > 5)
         {
-            $multiplier = 0.25;
+            $multiplier = 0.01;
         }
 
         // Mysql dates
@@ -93,7 +101,7 @@ class Trash extends Organizer
     protected function detectHtml()
     {
         $html = preg_match_all('/<\/?(?:html|div|p|div|script|link|span|u|ul|li|ol|a)+\s*\/?>/i', $this->data) * 1.5;
-        $urls = preg_match_all('/\b(?:(?:https?):\/\/|www\.)[-A-Z0-9+&@#\/%=~_|$?!:,.]*[A-Z0-9+&@#\/%=~_|$]/i', $this->data);
+        $urls = preg_match_all('/\b(?:(?:https?):\/\/|www\.)[-A-Z0-9+&@#\/%=~_|$?!:,.]*[A-Z0-9+&@#\/%=~_|$]/i', $this->data) * 0.5;
 
         return ($html + $urls) / $this->lines;
     }

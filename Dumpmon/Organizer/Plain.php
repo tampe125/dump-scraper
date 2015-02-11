@@ -18,7 +18,7 @@ class Plain extends Organizer
      */
     protected function detectEmailPwd()
     {
-        $emailPwd = preg_match_all('/.*?@.*?\.[a-z]{2,5}[:|\||,].*?[:\n]$/im', $this->data);
+        $emailPwd = preg_match_all("/^[a-z0-9!#$%&'*+\/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+\/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?[:|\||,].*?[:".'\n'."]/im", $this->data);
 
         return $emailPwd / $this->lines;
     }

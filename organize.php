@@ -14,8 +14,9 @@ require_once __DIR__.'/autoloader.php';
 \Autoloader::getInstance()->addMap('Dumpmon\\', __DIR__ . '/Dumpmon');
 
 $source = __DIR__.'/training';
+$csv    = __DIR__.'/training/features.csv';
 
-$features = fopen(__DIR__.'/training/features.csv', 'w+');
+$features = fopen($csv, 'w+');
 fputcsv($features, array('Trash score', 'Plain score', 'Hash score', 'Label', 'Filename'));
 
 $organizers = array(
@@ -46,6 +47,11 @@ foreach($iterator as $file)
         echo "\nMemory usage: ". memory_convert(memory_get_usage())."\n";
     }
 
+    /*if($file->getFilename() == '565184679196631041.txt')
+    {
+        $x = 1;
+    }*/
+
     $data  = file_get_contents($file->getPathname());
 
     // Remove /r since they could mess up regex
@@ -53,7 +59,7 @@ foreach($iterator as $file)
 
     $info = array(
         'data'  => $data,
-        'lines' => substr_count($data, "\n")
+        'lines' => max(substr_count($data, "\n"), 1)
     );
 
     $line = array();
@@ -79,6 +85,9 @@ foreach($iterator as $file)
             break;
         case 'trash':
             $label = 0;
+            break;
+        default:
+            $label = '';
             break;
     }
 
