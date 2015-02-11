@@ -13,15 +13,21 @@ require_once __DIR__.'/autoloader.php';
 
 \Autoloader::getInstance()->addMap('Dumpmon\\', __DIR__ . '/Dumpmon');
 
-$options = getopt('d:', array('dir:'));
+$options = getopt('fd:', array('dir:', 'force'));
 
 $directory = 'training';
 $csvDir    = 'training';
+$mode      = 'wb';
 
 if(isset($options['d']) || $options['dir'])
 {
     $directory = 'data/'.(isset($options['d']) ? $options['d'] : $options['dir']);
     $csvDir    = 'data';
+}
+
+if(isset($options['f']) || $options['force'])
+{
+    $mode = 'ab';
 }
 
 $source = __DIR__.'/'.$directory;
@@ -33,9 +39,9 @@ if(!is_dir($source))
     die();
 }
 
-echo "\nProcessing directory: ".$source;
+echo "\nProcessing directory: ".$source."\n";
 
-$features = fopen($csv, 'w+');
+$features = fopen($csv, $mode);
 fputcsv($features, array('Trash score', 'Plain score', 'Hash score', 'Label', 'Filename'));
 
 $organizers = array(
@@ -44,7 +50,7 @@ $organizers = array(
     'hash'  => new Hash(),
 );
 
-echo "\nMemory usage: ". memory_convert(memory_get_usage())."\n";
+echo "Memory usage: ". memory_convert(memory_get_usage())."\n";
 
 $i        = 0;
 $iterator = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($source, \RecursiveDirectoryIterator::SKIP_DOTS));
@@ -63,7 +69,7 @@ foreach($iterator as $file)
     {
         $i = 0;
 
-        echo "\nMemory usage: ". memory_convert(memory_get_usage())."\n";
+        echo "Memory usage: ". memory_convert(memory_get_usage())."\n";
     }
 
     /*if($file->getFilename() == '565184679196631041.txt')
