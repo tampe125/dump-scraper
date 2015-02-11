@@ -13,8 +13,27 @@ require_once __DIR__.'/autoloader.php';
 
 \Autoloader::getInstance()->addMap('Dumpmon\\', __DIR__ . '/Dumpmon');
 
-$source = __DIR__.'/training';
-$csv    = __DIR__.'/training/features.csv';
+$options = getopt('d:', array('dir:'));
+
+$directory = 'training';
+$csvDir    = 'training';
+
+if(isset($options['d']) || $options['dir'])
+{
+    $directory = 'data/'.(isset($options['d']) ? $options['d'] : $options['dir']);
+    $csvDir    = 'data';
+}
+
+$source = __DIR__.'/'.$directory;
+$csv    = __DIR__.'/'.$csvDir.'/features.csv';
+
+if(!is_dir($source))
+{
+    echo "\nDirectory ".$source." does not exist!";
+    die();
+}
+
+echo "\nProcessing directory: ".$source;
 
 $features = fopen($csv, 'w+');
 fputcsv($features, array('Trash score', 'Plain score', 'Hash score', 'Label', 'Filename'));
