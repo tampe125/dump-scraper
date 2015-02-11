@@ -40,10 +40,12 @@ class Trash extends Organizer
      */
     protected function detectDebug()
     {
-        $hex   = preg_match_all('/0\x[a-f0-9]{8}/i', $this->data);
-        $debug = substr_count($this->data, '#EXTINF');
+        $hex      = preg_match_all('/0\x[a-f0-9]{8}/i', $this->data);
+        $debug    = substr_count($this->data, '#EXTINF');
+        $classDeg = substr_count(strtolower($this->data), 'class=');
+        $thread   = substr_count(strtolower($this->data), 'thread');
 
-        return ($hex + $debug) / $this->lines;
+        return ($hex + $debug + $classDeg + $thread) / $this->lines;
     }
 
     /**
