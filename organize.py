@@ -54,4 +54,4 @@ with open(__DIR__ + "/data/raw/features.csv", 'rb') as csvfile:
 
         shutil.copyfile(__DIR__ + "/data/raw/" + line[-1], target_dir)
 
-        print(str(line[-1]) + " Label: " + folder.capitalize())
+print("Operation completed")

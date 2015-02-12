@@ -43,6 +43,8 @@ class Trash extends Detector
         $hex       = preg_match_all('/0\x[a-f0-9]{8}/i', $this->data);
         $debug     = substr_count($this->data, '#EXTINF');
         $debug    += substr_count(strtolower($this->data), 'debug');
+        $debug    += substr_count(strtolower($this->data), '[trace]');
+        $debug    += substr_count(strtolower($this->data), 'session');
         $classDeg  = substr_count(strtolower($this->data), 'class=');
         $thread    = substr_count(strtolower($this->data), 'thread');
 
@@ -78,11 +80,11 @@ class Trash extends Detector
             $multiplier = 0.01;
         }
 
-        // Mysql dates
+        // Mysql dates - 2015-11-02
         $dates  = preg_match_all('/(19|20)\d\d[\-\/.](0[1-9]|1[012])[\-\/.](0[1-9]|[12][0-9]|3[01])/', $this->data) * $multiplier;
         $score  = $dates / $this->lines;
 
-        // English dates
+        // English dates - 11-25-2015
         $dates  = preg_match_all('/(0[1-9]|1[012])[\-\/.](0[1-9]|[12][0-9]|3[01])[\-\/.](19|20)\d\d/', $this->data) * $multiplier;
         $score += $dates / $this->lines;
 

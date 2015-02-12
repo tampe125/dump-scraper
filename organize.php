@@ -124,6 +124,11 @@ foreach($folders as $folder)
             continue;
         }
 
+        /*if($file->getFilename() == '565469432563388417.txt')
+        {
+            $x = 1;
+        }*/
+
         $data  = file_get_contents($file->getPathname());
 
         // Remove /r since they could mess up regex
