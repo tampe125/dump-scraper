@@ -20,10 +20,9 @@ class Hash extends Organizer
             $hashes += $this->phpassGen();
             $hashes += $this->detectSha1();
             $hashes += $this->detectMySQL();
+            $hashes += $this->detectDrupal();
 
             $this->score = $hashes / $this->lines;
-
-            // Drupal $S$DugG4yZmhfIGhNJJZMzKzh4MzOCkpsPBR9HtDIvqQeIyqLM6wyuM
         }
     }
 
@@ -60,5 +59,11 @@ class Hash extends Organizer
     {
         // Regex /\*[a-f0-9]{40}/i
         return preg_match_all('/\*[a-f0-9]{40}/im', $this->data);
+    }
+
+    private function detectDrupal()
+    {
+        // Drupal $S$DugG4yZmhfIGhNJJZMzKzh4MzOCkpsPBR9HtDIvqQeIyqLM6wyuM
+        return preg_match_all('/\$S\$.{52}/m', $this->data);
     }
 }
