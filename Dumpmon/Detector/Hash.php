@@ -1,8 +1,8 @@
 <?php
 
-namespace Dumpmon\Organizer;
+namespace Dumpmon\Detector;
 
-class Hash extends Organizer
+class Hash extends Detector
 {
     public function analyze()
     {

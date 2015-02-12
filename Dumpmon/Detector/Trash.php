@@ -1,8 +1,8 @@
 <?php
 
-namespace Dumpmon\Organizer;
+namespace Dumpmon\Detector;
 
-class Trash extends Organizer
+class Trash extends Detector
 {
     public function analyze()
     {

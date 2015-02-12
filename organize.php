@@ -5,9 +5,9 @@ namespace Dumpmon;
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-use Dumpmon\Organizer\Hash;
-use Dumpmon\Organizer\Plain;
-use Dumpmon\Organizer\Trash;
+use Dumpmon\Detector\Hash;
+use Dumpmon\Detector\Plain;
+use Dumpmon\Detector\Trash;
 use Dumpmon\Utils\Utils;
 
 require_once __DIR__.'/autoloader.php';
@@ -136,7 +136,7 @@ foreach($folders as $folder)
 
         $line = array();
 
-        /** @var \Dumpmon\Organizer\Organizer $organizer */
+        /** @var \Dumpmon\Detector\Detector $organizer */
         foreach($organizers as $key => $organizer)
         {
             $organizer->reset();

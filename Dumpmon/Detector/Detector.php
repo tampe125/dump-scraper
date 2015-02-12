@@ -1,8 +1,8 @@
 <?php
 
-namespace Dumpmon\Organizer;
+namespace Dumpmon\Detector;
 
-abstract class Organizer
+abstract class Detector
 {
     /** @var  float   Final score for the current file */
     protected $score;
