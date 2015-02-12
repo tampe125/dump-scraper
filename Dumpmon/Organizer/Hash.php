@@ -16,10 +16,14 @@ class Hash extends Organizer
         {
             $hashes  = $this->detectMd5();
             $hashes += $this->detectMd5Crypt();
+            $hashes += $this->phpassMd5();
+            $hashes += $this->phpassGen();
             $hashes += $this->detectSha1();
             $hashes += $this->detectMySQL();
 
             $this->score = $hashes / $this->lines;
+
+            // Drupal $S$DugG4yZmhfIGhNJJZMzKzh4MzOCkpsPBR9HtDIvqQeIyqLM6wyuM
         }
     }
 
@@ -32,6 +36,18 @@ class Hash extends Organizer
     {
         // Example (unsalted) $1$sCGfZOwq$K9M3ULuacSQln/e3/KnPN.
         return preg_match_all('/\$1\$.{8}\$.{22}/im', $this->data);
+    }
+
+    private function phpassMd5()
+    {
+        // Example $H$9V1cX/WqUhsSWM0ipyB7HwFQqTQKxP1
+        return preg_match_all('/\$H\$9.{30}/m', $this->data);
+    }
+
+    private function phpassGen()
+    {
+        // Example $P$B52zg0z/Y5e96IpD4KJ7a9ByqcrKb01
+        return preg_match_all('/\$P\$.{31}/m', $this->data);
     }
 
     protected function detectSha1()
