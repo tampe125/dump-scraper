@@ -6,6 +6,18 @@ import scipy as sp
 import shutil
 from sklearn import neighbors
 
+# Print banner
+print("")
+print("Dump Scraper - Classify dump files")
+print("Copyright (C) 2015 FabbricaBinaria - Davide Tampellini")
+print("===============================================================================")
+print("Dump Scraper is Free Software, distributed under the terms of the GNU General")
+print("Public License version 3 or, at your option, any later version.")
+print("This program comes with ABSOLUTELY NO WARRANTY as per sections 15 & 16 of the")
+print("license. See http://www.gnu.org/licenses/gpl-3.0.html for details.")
+print("===============================================================================")
+print("")
+
 __DIR__ = os.path.dirname(os.path.realpath(__file__))
 dir_organized = __DIR__ + "/data/organized/"
 
