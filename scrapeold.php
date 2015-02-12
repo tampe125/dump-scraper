@@ -94,9 +94,9 @@ while($processing)
 
         $folder = $day;
 
-        if(!is_dir(__DIR__.'/data/'.$folder))
+        if(!is_dir(__DIR__.'/data/raw/'.$folder))
         {
-            mkdir(__DIR__.'/data/'.$folder);
+            mkdir(__DIR__.'/data/raw/'.$folder);
         }
 
         curl_setopt($pastebin, CURLOPT_URL, $pasteLink);
@@ -122,7 +122,7 @@ while($processing)
             continue;
         }
 
-        file_put_contents(__DIR__.'/data/'.$folder.'/'.$tweetid.'.txt', $data);
+        file_put_contents(__DIR__.'/data/raw/'.$folder.'/'.$tweetid.'.txt', $data);
     }
 
     $html->clear();

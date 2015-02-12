@@ -106,9 +106,9 @@ while($processed <= $settings->processing_limit)
 
         $folder = $day;
 
-        if(!is_dir(__DIR__.'/data/'.$folder))
+        if(!is_dir(__DIR__.'/data/raw/'.$folder))
         {
-            mkdir(__DIR__.'/data/'.$folder);
+            mkdir(__DIR__.'/data/raw/'.$folder);
         }
 
         sleep($settings->delay);
@@ -138,7 +138,7 @@ while($processed <= $settings->processing_limit)
             }
         }
 
-        file_put_contents(__DIR__.'/data/'.$folder.'/'.$tweet->id.'.txt', $data);
+        file_put_contents(__DIR__.'/data/raw/'.$folder.'/'.$tweet->id.'.txt', $data);
     }
 
     echo "    ...processed ".$processed." tweets\n";

@@ -17,7 +17,7 @@ BANNER;
 
 echo "\n".$banner."\n";
 
-$source = __DIR__.'/data';
+$source = __DIR__.'/data/raw';
 $target = __DIR__.'/training';
 
 $iterator = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($source, \RecursiveDirectoryIterator::SKIP_DOTS));

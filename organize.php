@@ -35,8 +35,8 @@ $mode      = 'wb';
 
 if(isset($options['d']) || $options['dir'])
 {
-    $directory = 'data/'.(isset($options['d']) ? $options['d'] : $options['dir']);
-    $csvDir    = 'data';
+    $directory = 'data/raw/'.(isset($options['d']) ? $options['d'] : $options['dir']);
+    $csvDir    = 'data/raw';
 }
 
 if(isset($options['f']) || $options['force'])

@@ -30,9 +30,7 @@ n_neighbors = 10
 clf = neighbors.KNeighborsClassifier(n_neighbors, weights='uniform')
 clf.fit(training, target)
 
-data = sp.genfromtxt(__DIR__ + "/data/features.csv", delimiter=",", skip_header=1)
-
-with open(__DIR__ + "/data/features.csv", 'rb') as csvfile:
+with open(__DIR__ + "/data/raw/features.csv", 'rb') as csvfile:
     reader = csv.reader(csvfile)
 
     for line in reader:
@@ -54,6 +52,6 @@ with open(__DIR__ + "/data/features.csv", 'rb') as csvfile:
         if not os.path.exists(os.path.dirname(target_dir)):
             os.makedirs(os.path.dirname(target_dir))
 
-        shutil.copyfile(__DIR__ + "/data/" + line[-1], target_dir)
+        shutil.copyfile(__DIR__ + "/data/raw/" + line[-1], target_dir)
 
         print(str(line[-1]) + " Label: " + folder.capitalize())
