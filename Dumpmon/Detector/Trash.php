@@ -42,15 +42,16 @@ class Trash extends Detector
      */
     protected function detectDebug()
     {
-        $hex       = preg_match_all('/0\x[a-f0-9]{8}/i', $this->data);
-        $debug     = substr_count($this->data, '#EXTINF');
-        $debug    += substr_count(strtolower($this->data), 'debug');
-        $debug    += substr_count(strtolower($this->data), '[trace]');
-        $debug    += substr_count(strtolower($this->data), 'session');
-        $classDeg  = substr_count(strtolower($this->data), 'class=');
-        $thread    = substr_count(strtolower($this->data), 'thread');
+        $score   = preg_match_all('/0\x[a-f0-9]{8}/i', $this->data);
+        $score  += substr_count($this->data, '#EXTINF');
+        $score  += substr_count(strtolower($this->data), 'debug');
+        $score  += substr_count(strtolower($this->data), '[trace]');
+        $score  += substr_count(strtolower($this->data), 'session');
+        $score  += substr_count(strtolower($this->data), 'class=');
+        $score  += substr_count(strtolower($this->data), 'thread');
+        $score  += substr_count(strtolower($this->data), 'uuid');
 
-        return ($hex + $debug + $classDeg + $thread) / $this->lines;
+        return $score / $this->lines;
     }
 
     /**
@@ -72,12 +73,14 @@ class Trash extends Detector
     {
         $multiplier = 1;
 
-        // Do I have a table dump? If so I have to lower the score of the timestamps, since most likely
-        // it's the creation time
+        // Do I have a table dump? If so I have to lower the score of the timestamps, since most likely it's the creation time
         $insert = substr_count($this->data, 'INSERT INTO');
         $mysql  = preg_match_all('/\+.*?\+/m', $this->data);
 
-        if($insert > 3 || $mysql > 5)
+        // Do I have lines starting with a number? Maybe it's a table dump without any MySQL markup
+        $digits = preg_match_all('/^\d{1,4}/m', $this->data) / $this->lines;
+
+        if($insert > 3 || $mysql > 5 || $digits > 0.25)
         {
             $multiplier = 0.01;
         }
@@ -119,6 +122,13 @@ class Trash extends Detector
      */
     private function longLines()
     {
+        // This is a special case: porn passwords usually have tons of keywords and long lines (4k+)
+        // Let's manually add an exception for those files and hope for the best
+        if(strpos($this->data, 'XXX Porn Passwords') !== false)
+        {
+            return 0;
+        }
+
         $lines = explode("\n", $this->data);
 
         foreach($lines as $line)
