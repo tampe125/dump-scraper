@@ -30,7 +30,7 @@ class Plain extends Detector
      */
     protected function detectPwdStandalone()
     {
-        $pwd = preg_match_all('/pass(?:word)?\s*?[:|=].\w+/im', $this->data);
+        $pwd = preg_match_all('/pass(?:word)?\s*?[:|=].*?$/im', $this->data);
 
         return $pwd / $this->lines;
     }
@@ -42,7 +42,7 @@ class Plain extends Detector
      */
     protected function detectUsernamePwd()
     {
-        $pwd = preg_match_all('/^.{5,15}:.*?$/im', $this->data);
+        $pwd = preg_match_all('/^.{5,15}:.{1,10}$/im', $this->data);
 
         return $pwd / $this->lines;
     }
