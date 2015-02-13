@@ -95,6 +95,12 @@ $csv    = __DIR__.'/'.$csvDir.'/features.csv';
 $features = fopen($csv, 'wb');
 fputcsv($features, array('Trash score', 'Plain score', 'Hash score', 'Label', 'Filename'));
 
+$organizers = array(
+    'trash' => new Trash(),
+    'plain' => new Plain(),
+    'hash'  => new Hash(),
+);
+
 foreach($folders as $folder)
 {
     $source = __DIR__.'/data/raw/'.$folder;
@@ -107,12 +113,6 @@ foreach($folders as $folder)
 
     echo "Directory    : ".$folder."\n";
     echo "Memory usage : ". Utils::memory_convert(memory_get_usage())."\n\n";
-
-    $organizers = array(
-        'trash' => new Trash(),
-        'plain' => new Plain(),
-        'hash'  => new Hash(),
-    );
 
     $iterator = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($source, \RecursiveDirectoryIterator::SKIP_DOTS));
 
