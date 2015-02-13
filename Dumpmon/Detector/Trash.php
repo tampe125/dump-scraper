@@ -149,7 +149,7 @@ class Trash extends Detector
      */
     private function privateKeys()
     {
-        if(strpos($this->data, 'BEGIN RSA PRIVATE KEY') !== false)
+        if(strpos($this->data, '---BEGIN') !== false)
         {
             return 3;
         }
