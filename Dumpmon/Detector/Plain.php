@@ -4,11 +4,14 @@ namespace Dumpmon\Detector;
 
 class Plain extends Detector
 {
+    protected $emailRegex = "[a-z0-9!#$%&'*+\/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+\/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?";
+
     public function analyze()
     {
         $score  = $this->detectEmailPwd();
         $score += $this->detectPwdStandalone();
-        $score += $this->detectUsernamePwd() * 0.66;
+        $score += $this->detectUsernamePwd() * 0.75;
+        $score += $this->detectPwdEmails();
 
         $this->score = $score;
     }
@@ -18,7 +21,7 @@ class Plain extends Detector
      */
     protected function detectEmailPwd()
     {
-        $emailPwd = preg_match_all("/^[a-z0-9!#$%&'*+\/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+\/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?[;|:|\||,|".'\t'."].*?[:".'\n'."]/im", $this->data);
+        $emailPwd = preg_match_all('/^"?'.$this->emailRegex."\s?[\/|;|:|\||,|".'\t'."].*?[:".'\n'."]/im", $this->data);
 
         return $emailPwd / $this->lines;
     }
@@ -37,13 +40,18 @@ class Plain extends Detector
 
     /**
      * Detects lists of username:password
-     * Its score is lowered since there could be a lot of false positive
-     *
      */
     protected function detectUsernamePwd()
     {
-        $pwd = preg_match_all('/^.{5,15}:.{1,10}$/im', $this->data);
+        $pwd = preg_match_all('/^[a-z0-9]{5,15}:.{1,10}$/im', $this->data);
 
         return $pwd / $this->lines;
+    }
+
+    private function detectPwdEmails()
+    {
+        $score = preg_match_all("/[\s|\/|;|:|\||,|".'\t'."]".$this->emailRegex."\s*?$/im", $this->data);
+
+        return $score / $this->lines;
     }
 }
