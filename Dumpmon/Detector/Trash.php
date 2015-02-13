@@ -14,6 +14,8 @@ class Trash extends Detector
         else
         {
             $score  = $this->detectEmailsOnly();
+            $score += $this->longLines();
+            $score += $this->privateKeys();
             $score += $this->detectDebug() * 1.2;
             $score += $this->detectIP() * 1.5;
             $score += $this->detectTimeStamps();
@@ -89,12 +91,11 @@ class Trash extends Detector
         $score += $dates / $this->lines;
 
         // Search for the time only if the previous regex didn't match anything. Otherwise I'll count timestamps YYYY-mm-dd HH:ii:ss twice
-        if(!$score)
+        if($score < 0.01)
         {
-            $time   = preg_match_all('/(?:2[0-3]|[01][0-9]):[0-5][0-9]:[0-5][0-9]/', $this->data) * $multiplier;
+            $time   = preg_match_all('/(?:2[0-3]|[01][0-9]):[0-5][0-9](?:\:[0-5][0-9])?/', $this->data) * $multiplier;
             $score += $time / $this->lines;
         }
-
         return $score;
     }
 
@@ -109,5 +110,40 @@ class Trash extends Detector
         $urls = preg_match_all('/\b(?:(?:https?):\/\/|www\.)[-A-Z0-9+&@#\/%=~_|$?!:,.]*[A-Z0-9+&@#\/%=~_|$]/i', $this->data) * 0.5;
 
         return ($html + $urls) / $this->lines;
+    }
+
+    /**
+     * Files with huge lines are debug info
+     *
+     * @return int
+     */
+    private function longLines()
+    {
+        $lines = explode("\n", $this->data);
+
+        foreach($lines as $line)
+        {
+            if(strlen($line) > 1000)
+            {
+                return 3;
+            }
+        }
+
+        return 0;
+    }
+
+    /**
+     * RSA private keys
+     *
+     * @return int
+     */
+    private function privateKeys()
+    {
+        if(strpos($this->data, 'BEGIN RSA PRIVATE KEY') !== false)
+        {
+            return 3;
+        }
+
+        return 0;
     }
 }

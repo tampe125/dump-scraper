@@ -14,6 +14,20 @@ class Hash extends Detector
         }
         else
         {
+            // Let's check for line length. I have to duplicate the check here otherwise I'll get abnormous values
+            $lines = explode("\n", $this->data);
+
+            foreach($lines as $line)
+            {
+                // Line too long? Ok, set the score to zero and stop here
+                if(strlen($line) > 1000)
+                {
+                    $this->score = 0;
+
+                    return ;
+                }
+            }
+
             $hashes  = $this->detectMd5();
             $hashes += $this->detectMd5Crypt();
             $hashes += $this->phpassMd5();
