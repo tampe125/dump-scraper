@@ -30,6 +30,8 @@ n_neighbors = 10
 clf = neighbors.KNeighborsClassifier(n_neighbors, weights='uniform')
 clf.fit(training, target)
 
+trash_count = hash_count = plain_count = 0
+
 with open(__DIR__ + "/data/raw/features.csv", 'rb') as csvfile:
     reader = csv.reader(csvfile)
 
@@ -42,10 +44,13 @@ with open(__DIR__ + "/data/raw/features.csv", 'rb') as csvfile:
 
         if label == 0:
             folder = 'trash'
+            trash_count += 1
         elif label == 1:
             folder = 'hash'
+            hash_count += 1
         elif label == 2:
             folder = 'plain'
+            plain_count += 1
 
         target_dir = dir_organized + folder + "/" + line[-1]
 
@@ -54,4 +59,7 @@ with open(__DIR__ + "/data/raw/features.csv", 'rb') as csvfile:
 
         shutil.copyfile(__DIR__ + "/data/raw/" + line[-1], target_dir)
 
+print("Trash files: " + str(trash_count))
+print("Hash files: " + str(hash_count))
+print("Plain files: " + str(plain_count))
 print("Operation completed")

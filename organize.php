@@ -73,13 +73,13 @@ else
 
     if(isset($options['s']) || isset($options['since']))
     {
-        $folders[] = (isset($options['s']) ? $options['s'] : $options['since']);
+        $folders[] = trim((isset($options['s']) ? $options['s'] : $options['since']));
     }
 
     if(isset($options['u']) || isset($options['until']))
     {
-        $date = strtotime(isset($options['s']) ? $options['s'] : $options['since']);
-        $end  = strtotime(isset($options['u']) ? $options['u'] : $options['until']);
+        $date = strtotime(trim(isset($options['s']) ? $options['s'] : $options['since']));
+        $end  = strtotime(trim(isset($options['u']) ? $options['u'] : $options['until']));
 
         $date = strtotime('+1 day', $date);
 
