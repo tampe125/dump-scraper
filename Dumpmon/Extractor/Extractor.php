@@ -10,6 +10,9 @@ abstract class Extractor
     /** @var  string    Extracted data from the file */
     protected $extracted;
 
+    /** @var array      Holds all the matcing group after running an extraction */
+    protected $matches = array();
+
     /**
      * Resets all the internal pointers
      */
@@ -46,4 +49,22 @@ abstract class Extractor
      * @return void
      */
     public abstract function analyze();
+
+    /**
+     * This function should be used as callback function while extracting data.
+     * In this way we can fetch the info and replace it with dummy text, avoiding double extractions
+     *
+     * @param $matches
+     *
+     * @return string
+     */
+    protected function replaceMatches($matches)
+    {
+        if(isset($matches[1]))
+        {
+            $this->matches[] = $matches[1];
+        }
+
+        return '';
+    }
 }
