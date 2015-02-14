@@ -107,7 +107,7 @@ class Hash extends Detector
 
     protected function detectCrypt()
     {
-        $hashes = preg_match_all('/.{0,2}[a-zA-Z0-9\/\.]{11}[,\s]?$/m', $this->data);
+        $hashes = preg_match_all('/[a-zA-Z0-9\/\.]{13}[,\s\n]/m', $this->data);
 
         return $hashes / $this->lines;
     }
