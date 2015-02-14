@@ -4,25 +4,67 @@ namespace Dumpmon\Detector;
 
 class Trash extends Detector
 {
+    private $functions;
+
+    public function __construct()
+    {
+        $this->functions = array(
+            'fewLines'         => 1,
+            'longLines'        => 1,
+            'privateKeys'      => 1,
+            'antivirusDump'    => 1,
+            'detectEmailsOnly' => 1,
+            'detectDebug'      => 1.2,
+            'detectIP'         => 1.5,
+            'detectTimeStamps' => 1,
+            'detectHtml'       => 1
+        );
+    }
+
     public function analyze()
+    {
+        foreach($this->functions as $method => $coefficient)
+        {
+            if(method_exists($this, $method))
+            {
+                $this->score += $this->$method() * $coefficient;
+            }
+
+            // I already reached the maximum value, there's no point in continuing
+            if($this->score >= 3)
+            {
+                break;
+            }
+        }
+    }
+
+    protected function fewLines()
     {
         // Single lines pastebin are always trash
         if($this->lines < 3)
         {
-            $this->score = 3;
+            return 3;
         }
-        else
-        {
-            $score  = $this->detectEmailsOnly();
-            $score += $this->longLines();
-            $score += $this->privateKeys();
-            $score += $this->detectDebug() * 1.2;
-            $score += $this->detectIP() * 1.5;
-            $score += $this->detectTimeStamps();
-            $score += $this->detectHtml();
 
-            $this->score = $score;
+        return 0;
+    }
+
+    protected function antivirusDump()
+    {
+        $signatures = array(
+            'Malwarebytes Anti-Malware',
+            'www.malwarebytes.org'
+        );
+
+        foreach($signatures as $signature)
+        {
+            if(stripos($this->data, $signature) !== false)
+            {
+                return 3;
+            }
         }
+
+        return 0;
     }
 
     /**
@@ -120,7 +162,7 @@ class Trash extends Detector
      *
      * @return int
      */
-    private function longLines()
+    protected function longLines()
     {
         // This is a special case: porn passwords usually have tons of keywords and long lines (4k+)
         // Let's manually add an exception for those files and hope for the best
@@ -147,7 +189,7 @@ class Trash extends Detector
      *
      * @return int
      */
-    private function privateKeys()
+    protected function privateKeys()
     {
         if(strpos($this->data, '---BEGIN') !== false)
         {
