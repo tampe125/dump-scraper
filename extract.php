@@ -24,7 +24,7 @@ license. See http://www.gnu.org/licenses/gpl-3.0.html for details.
 ===============================================================================
 BANNER;
 
-echo "\n".$banner."\n\n";
+echo "\n".$banner;
 
 $options = getopt('s:u:ht', array('since:', 'until:', 'help', 'train'));
 
@@ -95,9 +95,10 @@ foreach($folders as $folder)
         continue;
     }
 
-    echo "Directory    : ".$folder."\n";
-    echo "Memory usage : ". Utils::memory_convert(memory_get_usage())."\n\n";
+    echo "\n\nDirectory    : ".$folder."\n";
+    echo "Memory usage : ". Utils::memory_convert(memory_get_usage())."\n";
 
+    $i        = 0;
     $iterator = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($source, \RecursiveDirectoryIterator::SKIP_DOTS));
 
     /** @var \SplFileInfo $file */
@@ -108,10 +109,19 @@ foreach($folders as $folder)
             continue;
         }
 
-        /*if($file->getFilename() == '564938346234142721.txt')
+        echo '.';
+        $i++;
+
+        if($i >= 50)
+        {
+            echo "    50\n";
+            $i = 0;
+        }
+
+        if($file->getFilename() == '565190396578639872.txt')
         {
             $x = 1;
-        }*/
+        }
 
         $data  = file_get_contents($file->getPathname());
 
