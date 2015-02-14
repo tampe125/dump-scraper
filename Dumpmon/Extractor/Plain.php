@@ -12,8 +12,9 @@ class Plain extends Extractor
 
         $data .= $this->extractUrlWithPwd()."\n";
         $data .= $this->extractEmailNameUsernamePwd()."\n";
+        $data .= $this->extractPwdStandalone()."\n";
         $data .= $this->extractEmailPwd()."\n";
-        $data .= $this->extractPwdEmails();
+        $data .= $this->extractPwdEmails()."\n";
         $data .= $this->extractUsernamePwd()."\n";
 
         $this->extracted = $data;
@@ -69,6 +70,15 @@ class Plain extends Extractor
         $this->matches = array();
 
         $this->data = preg_replace_callback('/^'.$this->emailRegex.'\s?\t.*?\t.*?\t(.*?)$/im', array($this, 'replaceMatches'), $this->data);
+
+        return implode("\n", $this->matches);
+    }
+
+    protected function extractPwdStandalone()
+    {
+        $this->matches = array();
+
+        $this->data = preg_replace_callback('/pass(?:word)?\s*?[:|=](.*?$)/im', array($this, 'replaceMatches'), $this->data);
 
         return implode("\n", $this->matches);
     }
