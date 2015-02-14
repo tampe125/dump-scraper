@@ -108,7 +108,7 @@ foreach($folders as $folder)
             continue;
         }
 
-        /*if($file->getFilename() == '565469432563388417.txt')
+        /*if($file->getFilename() == '564938346234142721.txt')
         {
             $x = 1;
         }*/
@@ -142,7 +142,14 @@ foreach($folders as $folder)
 
         if($extracted)
         {
-            file_put_contents(__DIR__.'/data/processed/'.$label.'/'.basename($file->getPath()).'/'.$file->getFilename(), $extracted);
+            $destination = __DIR__.'/data/processed/'.$label.'/'.basename($file->getPath());
+
+            if(!is_dir($destination))
+            {
+                mkdir($destination, 0777, true);
+            }
+
+            file_put_contents($destination.'/'.$file->getFilename(), $extracted);
         }
     }
 }
