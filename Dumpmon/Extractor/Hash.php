@@ -10,19 +10,19 @@ class Hash extends Extractor
             // generic phpass hash
             '/(\$P\$.{31})/im',
             // md5 crypt
-            '/\$1\$.{8}\$.{22}/im',
+            '/(\$1\$.{8}\$.{22})/im',
             // phpass md5
-            '/\$H\$9.{30}/m',
+            '/(\$H\$9.{30})/m',
             // Drupal
-            '/\$S\$.{52}/m',
+            '/(\$S\$.{52})/m',
             // mysql
-            '/\*[a-f0-9]{40}/im',
+            '/(\*[a-f0-9]{40})/im',
             // raw md5
             '/([a-f0-9]{32})/im',
             // generic crpyt
             '/([a-z0-9\/\.]{13})[,\s\n]?$/im',
             // sha1
-            '/\b[0-9a-f]{40}\b/im',
+            '/(\b[0-9a-f]{40}\b)/im',
         );
     }
 
