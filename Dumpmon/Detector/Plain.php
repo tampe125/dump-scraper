@@ -4,7 +4,7 @@ namespace Dumpmon\Detector;
 
 class Plain extends Detector
 {
-    protected $emailRegex = "[a-z0-9!#$%&'*+\/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+\/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?";
+    protected $emailRegex = "[a-z0-9\-\._]+@[a-z0-9\-\.]+\.[a-z]{2,4}";
 
     public function analyze()
     {
@@ -50,7 +50,7 @@ class Plain extends Detector
 
     private function detectPwdEmails()
     {
-        $score = preg_match_all("/[\s|\/|;|:|\||,|".'\t'."]".$this->emailRegex."\s*?$/im", $this->data);
+        $score = preg_match_all("/.{4,15}[\s|\/|;|:|\||,|".'\t'."]".$this->emailRegex."\s*?$/im", $this->data);
 
         return $score / $this->lines;
     }

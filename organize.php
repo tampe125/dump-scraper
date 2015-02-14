@@ -116,6 +116,8 @@ foreach($folders as $folder)
 
     $iterator = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($source, \RecursiveDirectoryIterator::SKIP_DOTS));
 
+    $i = 0;
+
     /** @var \SplFileInfo $file */
     foreach($iterator as $file)
     {
@@ -124,7 +126,16 @@ foreach($folders as $folder)
             continue;
         }
 
-        /*if($file->getFilename() == '565469432563388417.txt')
+        echo '.';
+        $i++;
+
+        if($i >= 50)
+        {
+            echo "    50\n";
+            $i = 0;
+        }
+
+        /*if($file->getFilename() == '565158845300105216.txt')
         {
             $x = 1;
         }*/
