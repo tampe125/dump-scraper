@@ -86,6 +86,8 @@ class Trash extends Detector
     protected function detectDebug()
     {
         $score   = preg_match_all('/0\x[a-f0-9]{8}/i', $this->data);
+        // Windows paths
+        $score  += preg_match_all('#[A-Z]:\\\.*?\\\.*?\\\#m', $this->data);
         $score  += substr_count($this->data, '#EXTINF');
         $score  += substr_count(strtolower($this->data), 'debug');
         $score  += substr_count(strtolower($this->data), '[trace]');
@@ -118,10 +120,10 @@ class Trash extends Detector
 
         // Do I have a table dump? If so I have to lower the score of the timestamps, since most likely it's the creation time
         $insert = substr_count($this->data, 'INSERT INTO');
-        $mysql  = preg_match_all('/\+.*?\+/m', $this->data);
+        $mysql  = preg_match_all('/\+-{10,}?\+/m', $this->data);
 
         // Do I have lines starting with a number? Maybe it's a table dump without any MySQL markup
-        $digits = preg_match_all('/^\d{1,4}/m', $this->data) / $this->lines;
+        $digits = preg_match_all('/^\d{1,4},/m', $this->data) / $this->lines;
 
         if($insert > 3 || $mysql > 5 || $digits > 0.25)
         {
