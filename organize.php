@@ -150,18 +150,24 @@ foreach($folders as $folder)
             'lines' => max(substr_count($data, "\n"), 1)
         );
 
-        $line = array();
+        $line    = array();
+        $results = array(
+            'trash' => 0,
+            'plain' => 0,
+            'hash'  => 0
+        );
 
         /** @var \Dumpmon\Detector\Detector $organizer */
         foreach($organizers as $key => $organizer)
         {
             $organizer->reset();
             $organizer->setInfo($info);
-            $organizer->analyze();
+            $organizer->analyze($results);
 
             $score = min($organizer->getScore(), 3);
 
             $line[$key] = round($score, 4);
+            $results[$key] = round($score, 4);
         }
 
         switch(basename($file->getPath()))

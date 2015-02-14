@@ -6,7 +6,7 @@ class Plain extends Detector
 {
     protected $emailRegex = "[a-z0-9\-\._]+@[a-z0-9\-\.]+\.[a-z]{2,4}";
 
-    public function analyze()
+    public function analyze($results)
     {
         $score  = $this->detectEmailPwd();
         $score += $this->detectPwdStandalone();

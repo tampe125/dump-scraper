@@ -13,6 +13,7 @@ class Trash extends Detector
             'longLines'        => 1,
             'privateKeys'      => 1,
             'antivirusDump'    => 1,
+            'detectEmails'     => 1,
             'detectEmailsOnly' => 1,
             'detectDebug'      => 1.2,
             'detectIP'         => 1.5,
@@ -21,7 +22,7 @@ class Trash extends Detector
         );
     }
 
-    public function analyze()
+    public function analyze($results)
     {
         foreach($this->functions as $method => $coefficient)
         {
@@ -192,6 +193,21 @@ class Trash extends Detector
     protected function privateKeys()
     {
         if(strpos($this->data, '---BEGIN') !== false)
+        {
+            return 3;
+        }
+
+        return 0;
+    }
+
+    /**
+     * Detects emails in "raw mode"
+     *
+     * @return int
+     */
+    protected function detectEmails()
+    {
+        if(strpos($this->data, 'Content-Type:') !== false)
         {
             return 3;
         }

@@ -22,8 +22,17 @@ class Hash extends Detector
         );
     }
 
-    public function analyze()
+    public function analyze($results)
     {
+        // If the Trash Detector has an high value, don't process the file, otherwise we could end up with a false positive
+        // Sadly debug files LOVE to use hashes...
+        if($results['trash'] >= 1)
+        {
+            $this->score = 0;
+
+            return;
+        }
+
         foreach($this->functions as $method => $coefficient)
         {
             if(method_exists($this, $method))

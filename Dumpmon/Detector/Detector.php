@@ -52,7 +52,9 @@ abstract class Detector
     /**
      * Entry point for analyzing the file
      *
+     * @param   array   $results    Indexed array containing the results of other Detectors
+     *
      * @return void
      */
-    public abstract function analyze();
+    public abstract function analyze($results);
 }
