@@ -17,6 +17,7 @@ class Hash extends Detector
             'phpassGen'      => 1,
             'detectSha1'     => 1,
             'detectMySQL'    => 1,
+            'detectCrypt'    => 1,
             'detectDrupal'   => 1,
         );
     }
@@ -91,6 +92,13 @@ class Hash extends Detector
     {
         // Regex /\*[a-f0-9]{40}/i
         $hashes = preg_match_all('/\*[a-f0-9]{40}/im', $this->data);
+
+        return $hashes / $this->lines;
+    }
+
+    protected function detectCrypt()
+    {
+        $hashes = preg_match_all('/.{0,2}[a-zA-Z0-9\/\.]{11}[,\s]?$/m', $this->data);
 
         return $hashes / $this->lines;
     }
