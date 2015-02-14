@@ -70,7 +70,17 @@ while($processed <= $settings->processing_limit)
         $params['max_id'] = $max_id;
     }
 
-    $tweets     = $connection->get("statuses/user_timeline", $params);
+    try
+    {
+        $tweets     = $connection->get("statuses/user_timeline", $params);
+    }
+    catch(\Exception $e)
+    {
+        echo "    Error while fetching tweets: ".$e->getMessage()."\n";
+        echo "    Trying again in few moments\n";
+
+        continue;
+    }
 
     // No more tweets to process
     if(!$tweets)
