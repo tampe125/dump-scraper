@@ -8,10 +8,12 @@ class Plain extends Extractor
 
     public function analyze()
     {
-        $data  = $this->extractUsernamePwd()."\n";
+        $data  = '';
+
         $data .= $this->extractUrlWithPwd()."\n";
         $data .= $this->extractEmailPwd()."\n";
         $data .= $this->extractPwdEmails();
+        $data .= $this->extractUsernamePwd()."\n";
 
         $this->extracted = $data;
     }
@@ -20,7 +22,7 @@ class Plain extends Extractor
     {
         $this->matches = array();
 
-        $this->data = preg_replace_callback('/^"?'.$this->emailRegex."\s?[\/|;|:|\||,|".'\t'."]\s?(.*?)[:".'\n'."]/im", array($this, 'replaceMatches'), $this->data);
+        $this->data = preg_replace_callback('/^"?'.$this->emailRegex."\s?[\/|;|:|\||,|".'\t'."]\s?(.*?)[:".'\n"'."]/im", array($this, 'replaceMatches'), $this->data);
 
         return implode("\n", $this->matches);
     }
@@ -50,7 +52,7 @@ class Plain extends Extractor
     {
         $this->matches = array();
 
-        $this->data = preg_replace_callback("/[\s|\/|;|:|\||,|".'\t'."]".$this->emailRegex."\s*?$/im", array($this, 'replaceMatches'), $this->data);
+        $this->data = preg_replace_callback("/(?:.*?:)?(.*?)[\s|\/|;|:|\||,|".'\t'."]".$this->emailRegex."\s*?$/im", array($this, 'replaceMatches'), $this->data);
 
         return implode("\n", $this->matches);
     }
