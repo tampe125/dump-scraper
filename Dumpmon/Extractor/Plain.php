@@ -6,80 +6,33 @@ class Plain extends Extractor
 {
     protected $emailRegex = "[a-z0-9\-\._]+@[a-z0-9\-\.]+\.[a-z]{2,4}";
 
+    public function __construct()
+    {
+        $this->regex = array(
+            // URL with passwords
+            '/[ht|f]tp[s]*:\/\/\w+\:(.*)\@\w*\.\w*/',
+            // Extracts data displayed in columns: Davison 	Yvonne 	library
+            '/^'.$this->emailRegex.'\s?\t.*?\t.*?\t(.*?)$/im',
+            // Standalone passwords
+            '/pass(?:word)?\s*?[:|=](.*?$)/im',
+            // email - password
+            '/^"?'.$this->emailRegex."\s?[\/|;|:|\||,|".'\t'."]\s?(.*?)[:".'\n"'."]/im",
+            // password email
+            "/(?:.*?:)?(.*?)[\s|\/|;|:|\||,|".'\t'."]".$this->emailRegex."\s*?$/im",
+            // username - password
+            '/^[a-z0-9\-]{5,15}:(.*?)$/im'
+        );
+    }
+
     public function analyze()
     {
         $data  = '';
 
-        $data .= $this->extractUrlWithPwd()."\n";
-        $data .= $this->extractEmailNameUsernamePwd()."\n";
-        $data .= $this->extractPwdStandalone()."\n";
-        $data .= $this->extractEmailPwd()."\n";
-        $data .= $this->extractPwdEmails()."\n";
-        $data .= $this->extractUsernamePwd()."\n";
+        foreach($this->regex as $regex)
+        {
+            $data .= $this->extractData($regex)."\n";
+        }
 
         $this->extracted = $data;
-    }
-
-    protected function extractEmailPwd()
-    {
-        $this->matches = array();
-
-        $this->data = preg_replace_callback('/^"?'.$this->emailRegex."\s?[\/|;|:|\||,|".'\t'."]\s?(.*?)[:".'\n"'."]/im", array($this, 'replaceMatches'), $this->data);
-
-        return implode("\n", $this->matches);
-    }
-
-    /**
-     * Detects lists of username:password
-     */
-    protected function extractUsernamePwd()
-    {
-        $this->matches = array();
-
-        $this->data = preg_replace_callback('/^[a-z0-9\-]{5,15}:(.*?)$/im', array($this, 'replaceMatches'), $this->data);
-
-        return implode("\n", $this->matches);
-    }
-
-    protected function extractUrlWithPwd()
-    {
-        $this->matches = array();
-
-        $this->data = preg_replace_callback('/[ht|f]tp[s]*:\/\/\w+\:(.*)\@\w*\.\w*/', array($this, 'replaceMatches'), $this->data);
-
-        return implode("\n", $this->matches);
-    }
-
-    protected function extractPwdEmails()
-    {
-        $this->matches = array();
-
-        $this->data = preg_replace_callback("/(?:.*?:)?(.*?)[\s|\/|;|:|\||,|".'\t'."]".$this->emailRegex."\s*?$/im", array($this, 'replaceMatches'), $this->data);
-
-        return implode("\n", $this->matches);
-    }
-
-    /**
-     * Extracts data displayed in columns:
-     *
-     * Davison 	Yvonne 	library
-     * yvonne 	dixon 	scoobie
-     */
-    protected function extractEmailNameUsernamePwd()
-    {
-        $this->matches = array();
-
-        $this->data = preg_replace_callback('/^'.$this->emailRegex.'\s?\t.*?\t.*?\t(.*?)$/im', array($this, 'replaceMatches'), $this->data);
-
-        return implode("\n", $this->matches);
-    }
-
-    protected function extractPwdStandalone()
-    {
-        $this->matches = array();
-
-        $this->data = preg_replace_callback('/pass(?:word)?\s*?[:|=](.*?$)/im', array($this, 'replaceMatches'), $this->data);
-
-        return implode("\n", $this->matches);
     }
 }

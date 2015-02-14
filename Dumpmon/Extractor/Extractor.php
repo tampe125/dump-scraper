@@ -13,6 +13,9 @@ abstract class Extractor
     /** @var array      Holds all the matcing group after running an extraction */
     protected $matches = array();
 
+    /** @var array      Holds all the regex that will be run on the current text */
+    protected $regex = array();
+
     /**
      * Resets all the internal pointers
      */
@@ -50,6 +53,15 @@ abstract class Extractor
      */
     public abstract function analyze();
 
+    protected function extractData($regex)
+    {
+        $this->matches = array();
+
+        $this->data = preg_replace_callback($regex, array($this, 'replaceMatches'), $this->data);
+
+        return implode("\n", $this->matches);
+    }
+
     /**
      * This function should be used as callback function while extracting data.
      * In this way we can fetch the info and replace it with dummy text, avoiding double extractions
@@ -62,7 +74,7 @@ abstract class Extractor
     {
         if(isset($matches[1]))
         {
-            $this->matches[] = $matches[1];
+            $this->matches[] = trim($matches[1]);
         }
 
         return '';

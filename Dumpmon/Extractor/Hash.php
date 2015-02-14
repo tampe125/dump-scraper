@@ -4,41 +4,27 @@ namespace Dumpmon\Extractor;
 
 class Hash extends Extractor
 {
+    public function __construct()
+    {
+        $this->regex = array(
+            // generic phpass hash
+            '/(\$P\$.{31})/im',
+            // raw md5
+            '/([a-f0-9]{32})/im',
+            // generic crpyt
+            '/([a-z0-9\/\.]{13})[,\s\n]?$/im',
+        );
+    }
+
     public function analyze()
     {
         $data  = '';
 
-        $data .= $this->extractPhpassGen()."\n";
-        $data .= $this->extractMd5()."\n";
-        $data .= $this->extractCrypt()."\n";
+        foreach($this->regex as $regex)
+        {
+            $data .= $this->extractData($regex)."\n";
+        }
 
         $this->extracted = $data;
-    }
-
-    protected function extractPhpassGen()
-    {
-        $this->matches = array();
-
-        $this->data = preg_replace_callback('/(\$P\$.{31})/im', array($this, 'replaceMatches'), $this->data);
-
-        return implode("\n", $this->matches);
-    }
-
-    protected function extractMd5()
-    {
-        $this->matches = array();
-
-        $this->data = preg_replace_callback('/([a-f0-9]{32})/im', array($this, 'replaceMatches'), $this->data);
-
-        return implode("\n", $this->matches);
-    }
-
-    protected function extractCrypt()
-    {
-        $this->matches = array();
-
-        $this->data = preg_replace_callback('/([a-z0-9\/\.]{13})[,\s\n]?$/im', array($this, 'replaceMatches'), $this->data);
-
-        return implode("\n", $this->matches);
     }
 }
