@@ -24,7 +24,7 @@ license. See http://www.gnu.org/licenses/gpl-3.0.html for details.
 ===============================================================================
 BANNER;
 
-echo "\n".$banner;
+echo "\n".$banner."\n\n";
 
 $options = getopt('s:u:ht', array('since:', 'until:', 'help', 'train'));
 
@@ -58,13 +58,13 @@ $dates = array();
 
 if(isset($options['s']) || isset($options['since']))
 {
-    $dates[] = (isset($options['s']) ? $options['s'] : $options['since']);
+    $dates[] = trim((isset($options['s']) ? $options['s'] : $options['since']));
 }
 
 if(isset($options['u']) || isset($options['until']))
 {
-    $date = strtotime(isset($options['s']) ? $options['s'] : $options['since']);
-    $end  = strtotime(isset($options['u']) ? $options['u'] : $options['until']);
+    $date = trim(strtotime(isset($options['s']) ? $options['s'] : $options['since']));
+    $end  = trim(strtotime(isset($options['u']) ? $options['u'] : $options['until']));
 
     $date = strtotime('+1 day', $date);
 
@@ -95,7 +95,7 @@ foreach($folders as $folder)
         continue;
     }
 
-    echo "\n\nDirectory    : ".$folder."\n";
+    echo "Directory    : ".$folder."\n";
     echo "Memory usage : ". Utils::memory_convert(memory_get_usage())."\n";
 
     $i        = 0;
@@ -118,7 +118,7 @@ foreach($folders as $folder)
             $i = 0;
         }
 
-        if($file->getFilename() == '565190396578639872.txt')
+        if($file->getFilename() == '566635570949263361.txt')
         {
             $x = 1;
         }
@@ -162,4 +162,6 @@ foreach($folders as $folder)
             file_put_contents($destination.'/'.$file->getFilename(), $extracted);
         }
     }
+
+    echo "\n\n";
 }
