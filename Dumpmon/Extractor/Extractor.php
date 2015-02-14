@@ -37,7 +37,7 @@ abstract class Extractor
 
     public function getExtractedData()
     {
-        return $this->extracted;
+        return trim($this->extracted);
     }
 
     /**
