@@ -13,12 +13,13 @@ class Trash extends Detector
             'longLines'        => 1,
             'privateKeys'      => 1,
             'antivirusDump'    => 1,
-            'detectEmails'     => 1,
+            'detectRawEmail'   => 1,
             'detectEmailsOnly' => 1,
             'detectDebug'      => 1.2,
             'detectIP'         => 1.5,
             'detectTimeStamps' => 1,
-            'detectHtml'       => 1
+            'detectHtml'       => 1,
+            'detectVarious'    => 1
         );
     }
 
@@ -73,7 +74,7 @@ class Trash extends Detector
      */
     protected function detectEmailsOnly()
     {
-        $emails = preg_match_all("/^[a-z0-9\-\._]+@[a-z0-9\-\.]+\.[a-z]{2,4}$/im", $this->data);
+        $emails = preg_match_all('/^[\s"]?[a-z0-9\-\._]+@[a-z0-9\-\.]+\.[a-z]{2,4}[\s|\t]?$/im', $this->data);
 
         return $emails / $this->lines;
     }
@@ -88,6 +89,8 @@ class Trash extends Detector
         $score   = preg_match_all('/0\x[a-f0-9]{8}/i', $this->data);
         // Windows paths
         $score  += preg_match_all('#[A-Z]:\\\.*?\\\.*?\\\#m', $this->data);
+        // Windows register keys
+        $score  += substr_count(strtolower($this->data), 'hklm\\');
         $score  += substr_count($this->data, '#EXTINF');
         $score  += substr_count(strtolower($this->data), 'debug');
         $score  += substr_count(strtolower($this->data), '[trace]');
@@ -104,7 +107,21 @@ class Trash extends Detector
      */
     protected function detectIP()
     {
-        $ip = preg_match_all('/\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b/', $this->data);
+        $multiplier = 1;
+
+        // Do I have a table dump? If so I have to lower the score
+        $insert = substr_count($this->data, 'INSERT INTO');
+        $mysql  = preg_match_all('/\+-{10,}?\+/m', $this->data);
+
+        // Do I have lines starting with a number? Maybe it's a table dump without any MySQL markup
+        $digits = preg_match_all('/^\d{1,4},/m', $this->data) / $this->lines;
+
+        if($insert > 3 || $mysql > 5 || $digits > 0.25)
+        {
+            $multiplier = 0.01;
+        }
+
+        $ip = preg_match_all('/\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b/', $this->data) * $multiplier;
 
         return $ip / $this->lines;
     }
@@ -160,6 +177,13 @@ class Trash extends Detector
         return ($html + $urls) / $this->lines;
     }
 
+    protected function detectVarious()
+    {
+        $score = substr_count(strtolower($this->data), 'e-mail found');
+
+        return $score / $this->lines;
+    }
+
     /**
      * Files with huge lines are debug info
      *
@@ -207,7 +231,7 @@ class Trash extends Detector
      *
      * @return int
      */
-    protected function detectEmails()
+    protected function detectRawEmail()
     {
         if(strpos($this->data, 'Content-Type:') !== false)
         {
