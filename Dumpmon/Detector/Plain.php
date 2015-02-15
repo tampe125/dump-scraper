@@ -21,7 +21,7 @@ class Plain extends Detector
      */
     protected function detectEmailPwd()
     {
-        $emailPwd = preg_match_all('/^"?'.$this->emailRegex."\s?[\/|;|:|\||,|".'\t'."].*?[:".'\n'."]/im", $this->data);
+        $emailPwd = preg_match_all('/^[\s"]?'.$this->emailRegex."\s?[\/|;|:|\||,|".'\t'."].*?[:".'\n'."]/im", $this->data);
 
         return $emailPwd / $this->lines;
     }
