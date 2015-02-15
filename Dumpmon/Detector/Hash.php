@@ -19,6 +19,7 @@ class Hash extends Detector
             'detectMySQL'    => 1,
             'detectCrypt'    => 1,
             'detectDrupal'   => 1,
+            'detectBlowfish' => 1,
         );
     }
 
@@ -107,7 +108,10 @@ class Hash extends Detector
 
     protected function detectCrypt()
     {
-        $hashes = preg_match_all('/[a-zA-Z0-9\/\.]{13}[,\s\n]/m', $this->data);
+        // Sadly the crypt hash is very used and has a very common signature, this means that I can simply search for it
+        // in the whole document, or I'll have TONS of false positive. I have to shrink the range using more strict regex
+
+        $hashes = preg_match_all('/[\s\t:][a-zA-Z0-9\/\.]{13}[,\s\n]?$/m', $this->data, $matches);
 
         return $hashes / $this->lines;
     }
@@ -116,6 +120,13 @@ class Hash extends Detector
     {
         // Drupal $S$DugG4yZmhfIGhNJJZMzKzh4MzOCkpsPBR9HtDIvqQeIyqLM6wyuM
         $hashes =  preg_match_all('/\$S\$.{52}/m', $this->data);
+
+        return $hashes / $this->lines;
+    }
+
+    protected function detectBlowfish()
+    {
+        $hashes = preg_match_all('\$2[axy]{0,1}\$[a-zA-Z0-9./]{8}\$[a-zA-Z0-9./]{1,}', $this->data);
 
         return $hashes / $this->lines;
     }
