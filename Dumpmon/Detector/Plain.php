@@ -4,10 +4,19 @@ namespace Dumpmon\Detector;
 
 class Plain extends Detector
 {
-    protected $emailRegex = "[a-z0-9\-\._]+@[a-z0-9\-\.]+\.[a-z]{2,4}";
+    protected $emailRegex = '[a-z0-9\-\._]+@[a-z0-9\-\.]+\.[a-z]{2,4}';
 
     public function analyze($results)
     {
+        // If the Trash Detector has an high value, don't process the file, otherwise we could end up with a false positive
+        // Sadly some list of emails only could be very hard to separate from email - pwd files
+        if($results['trash'] >= 0.95)
+        {
+            $this->score = 0;
+
+            return;
+        }
+
         $score  = $this->detectEmailPwd();
         $score += $this->detectPwdStandalone();
         $score += $this->detectUsernamePwd() * 0.75;
@@ -21,7 +30,7 @@ class Plain extends Detector
      */
     protected function detectEmailPwd()
     {
-        $emailPwd = preg_match_all('/^[\s"]?'.$this->emailRegex."\s?[\/|;|:|\||,|".'\t'."].*?[:".'\n'."]/im", $this->data);
+        $emailPwd = preg_match_all('/^[\s"]?'.$this->emailRegex.'\s?[\/|;|:|\||,|\t].*?[:\n]/im', $this->data);
 
         return $emailPwd / $this->lines;
     }
