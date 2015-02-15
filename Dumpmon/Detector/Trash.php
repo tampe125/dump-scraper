@@ -73,7 +73,7 @@ class Trash extends Detector
      */
     protected function detectEmailsOnly()
     {
-        $emails = preg_match_all("/^[a-z0-9!#$%&'*+\/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+\/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/im", $this->data);
+        $emails = preg_match_all("/^[a-z0-9\-\._]+@[a-z0-9\-\.]+\.[a-z]{2,4}$/im", $this->data);
 
         return $emails / $this->lines;
     }
