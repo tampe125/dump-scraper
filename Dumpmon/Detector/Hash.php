@@ -13,6 +13,7 @@ class Hash extends Detector
             'longLines'      => 1,
             'detectMd5'      => 1,
             'detectMd5Crypt' => 1,
+            'detectSha512Crypt' => 1,
             'phpassMd5'      => 1,
             'phpassGen'      => 1,
             'detectSha1'     => 1,
@@ -27,7 +28,7 @@ class Hash extends Detector
     {
         // If the Trash Detector has an high value, don't process the file, otherwise we could end up with a false positive
         // Sadly debug files LOVE to use hashes...
-        if($results['trash'] >= 1)
+        if($results['trash'] >= 0.95)
         {
             $this->score = 0;
 
@@ -119,14 +120,21 @@ class Hash extends Detector
     protected function detectDrupal()
     {
         // Drupal $S$DugG4yZmhfIGhNJJZMzKzh4MzOCkpsPBR9HtDIvqQeIyqLM6wyuM
-        $hashes =  preg_match_all('/\$S\$.{52}/m', $this->data);
+        $hashes =  preg_match_all('/\$S\$[a-zA-Z0-9\/\.]{52}/m', $this->data);
 
         return $hashes / $this->lines;
     }
 
     protected function detectBlowfish()
     {
-        $hashes = preg_match_all('\$2[axy]{0,1}\$[a-zA-Z0-9./]{8}\$[a-zA-Z0-9./]{1,}', $this->data);
+        $hashes = preg_match_all('/\$2[axy]{0,1}\$[a-zA-Z0-9.\/]{8}\$[a-zA-Z0-9.\/]{1,}/m', $this->data);
+
+        return $hashes / $this->lines;
+    }
+
+    protected function detectSha512Crypt()
+    {
+        $hashes = preg_match_all('/\$6\$[a-z0-9.\/]{8}\$[a-z0-9.\/]{1,}/im', $this->data);
 
         return $hashes / $this->lines;
     }
