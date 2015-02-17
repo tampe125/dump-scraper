@@ -10,5 +10,5 @@ date = datetime.date.today().strftime('%Y-%m-%d')
 
 call(["php", __DIR__ + "/scrape.php"])
 call(["php", __DIR__ + "/organize.php", "-s " + date])
-call(["python", __DIR__ + "/organize.py"])
+call(["python", __DIR__ + "/classify.py"])
 call(["php", __DIR__ + "/extract.php", "-s " + date])

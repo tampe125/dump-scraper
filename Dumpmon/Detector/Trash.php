@@ -171,10 +171,16 @@ class Trash extends Detector
      */
     protected function detectHtml()
     {
-        $html = preg_match_all('/<\/?(?:html|div|p|div|script|link|span|u|ul|li|ol|a)+\s*\/?>/i', $this->data) * 1.5;
-        $urls = preg_match_all('/\b(?:(?:https?):\/\/|www\.)[-A-Z0-9+&@#\/%=~_|$?!:,.]*[A-Z0-9+&@#\/%=~_|$]/i', $this->data) * 0.5;
+        // HTML tags (only the most used ones are here)
+        $score  = preg_match_all('/<\/?(?:html|div|p|div|script|link|span|u|ul|li|ol|a)+\s*\/?>/i', $this->data) * 1.5;
 
-        return ($html + $urls) / $this->lines;
+        // Links
+        $score += preg_match_all('/\b(?:(?:https?|udp):\/\/|www\.)[-A-Z0-9+&@#\/%=~_|$?!:,.]*[A-Z0-9+&@#\/%=~_|$]/i', $this->data) * 0.5;
+
+        // Links containing an md5 hash
+        $score += preg_match_all('/(?:(?:https?|udp):\/\/|www\.)[-A-Z0-9+&@#\/%=~_|$?!:,.]*[A-Z0-9+&@#\/%=~_|$]=[a-f0-9]{32}/i', $this->data);
+
+        return $score / $this->lines;
     }
 
     protected function detectVarious()

@@ -107,7 +107,7 @@ foreach($folders as $folder)
 
     if(!is_dir($source))
     {
-        echo "\nDirectory ".$source." does not exist!";
+        echo "Directory ".$source." does not exist!";
         die();
     }
 
@@ -135,10 +135,10 @@ foreach($folders as $folder)
             $i = 0;
         }
 
-        /*if($file->getFilename() == '565158845300105216.txt')
+        if($file->getFilename() == '565184679196631041.txt')
         {
             $x = 1;
-        }*/
+        }
 
         $data  = file_get_contents($file->getPathname());
 
@@ -191,6 +191,8 @@ foreach($folders as $folder)
 
         fputcsv($features, $line);
     }
+
+    echo "\n\n";
 }
 
 fclose($features);
