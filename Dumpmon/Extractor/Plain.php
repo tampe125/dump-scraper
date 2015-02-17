@@ -35,4 +35,46 @@ class Plain extends Extractor
 
         $this->extracted = $data;
     }
+
+    /**
+     * Overwrites the parent function, so we can perform some sanity checks on the matched string
+     *
+     * @param array $matches
+     *
+     * @return string
+     */
+    protected function replaceMatches($matches)
+    {
+        if(isset($matches[1]))
+        {
+            // Let's perform some sanity checks on the matched string
+            $string = trim($matches[1]);
+
+            // Is it too long?
+            $skip = strlen($string) > 20;
+
+            if(!$skip)
+            {
+                // Does it contain some wrong character?
+                $chars = array(' ', "\t", "\n");
+
+                foreach($chars as $char)
+                {
+                    if(strpos($string, $char) !== false)
+                    {
+                        $skip = true;
+                        break;
+                    }
+                }
+            }
+
+            // If the skip flag is not set, let's add the string to the matches
+            if(!$skip)
+            {
+                $this->matches[] = $string;
+            }
+        }
+
+        return '';
+    }
 }
