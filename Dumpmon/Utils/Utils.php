@@ -1,4 +1,9 @@
 <?php
+/**
+ * @package     Dumpmon Scraper
+ * @copyright   2015 Davide Tampellini - FabbricaBinaria
+ * @license     GNU GPL version 3 or later
+ */
 
 namespace Dumpmon\Utils;
 

@@ -1,4 +1,9 @@
 <?php
+/**
+ * @package     Dumpmon Scraper
+ * @copyright   2015 Davide Tampellini - FabbricaBinaria
+ * @license     GNU GPL version 3 or later
+ */
 
 /**
  * A PSR-4 class autoloader. This is a modified version of Composer's ClassLoader class

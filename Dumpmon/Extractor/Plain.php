@@ -1,10 +1,15 @@
 <?php
+/**
+ * @package     Dumpmon Scraper
+ * @copyright   2015 Davide Tampellini - FabbricaBinaria
+ * @license     GNU GPL version 3 or later
+ */
 
 namespace Dumpmon\Extractor;
 
 class Plain extends Extractor
 {
-    protected $emailRegex = "[a-z0-9\-\._]+@[a-z0-9\-\.]+\.[a-z]{2,4}";
+    protected $emailRegex = '[a-z0-9\-\._]+@[a-z0-9\-\.]+\.[a-z]{2,4}';
 
     public function __construct()
     {
