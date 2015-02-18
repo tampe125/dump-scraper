@@ -7,5 +7,9 @@
   "max_id": null,
   "delay": 3,
   "limit": 50,
-  "processing_limit": 2000
+  "processing_limit": 2000,
+  "db_host" : "",
+  "db_user" : "",
+  "db_pwd"  : "",
+  "db_name" : ""
 }
