@@ -101,6 +101,41 @@ if($options->file)
 
     $files[] = $options->file;
 }
+else
+{
+    $baseDir = __DIR__.'/data/processed/plain/';
+    $folders[] = $baseDir.trim(($options->since));
+
+    if($options->until)
+    {
+        $date = strtotime(trim($options->since));
+        $end  = strtotime(trim($options->until));
+
+        $date = strtotime('+1 day', $date);
+
+        while($end >= $date)
+        {
+            $folders[] = $baseDir.date('Y-m-d', $date);
+            $date = strtotime('+1 day', $date);
+        }
+    }
+
+    // Ok, now that I have all the folders I can start extracting the single files
+    foreach($folders as $folder)
+    {
+        $directory = new \DirectoryIterator($folder);
+
+        foreach($directory as $fileInfo)
+        {
+            if($fileInfo->isDot() || $fileInfo->getFilename() == '.DS_Store')
+            {
+                continue;
+            }
+
+            $files[] = $fileInfo->getPathname();
+        }
+    }
+}
 
 foreach($files as $file)
 {
