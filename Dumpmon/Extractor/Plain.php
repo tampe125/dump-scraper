@@ -21,11 +21,11 @@ class Plain extends Extractor
             // Standalone passwords
             '/pass(?:word)?\s*?[:|=](.*?$)/im',
             // email - password
-            '/^"?'.$this->emailRegex."\s?[\/|;|:|\||,|".'\t'."]\s?(.*?)[:".'\n"'."]/im",
+            '/^"?'.$this->emailRegex."\s?[\/|;|:|\||,|".'\t'."]\s?(.*?)[,:".'\n"'."]/im",
             // password email
-            "/(?:.*?:)?(.*?)[\s|\/|;|:|\||,|".'\t'."]".$this->emailRegex."\s*?$/im",
+            "/^(?!email)(?:.*?:)?(.*?)[\s|\/|;|:|\||,|".'\t'."]".$this->emailRegex."\s*?$/im",
             // username - password
-            '/^[a-z0-9\-]{5,15}:(.*?)$/im'
+            '/^(?!http)[a-z0-9\-]{5,15}:(.*?)$/im'
         );
     }
 
@@ -55,12 +55,12 @@ class Plain extends Extractor
             // Let's perform some sanity checks on the matched string
             $string = trim($matches[1]);
 
-            // Is it too long?
-            $skip = strlen($string) > 20;
+            // Is it too long or too short?
+            $skip = strlen($string) > 20 || strlen($string) < 3;
 
+            // Does it contain some wrong character?
             if(!$skip)
             {
-                // Does it contain some wrong character?
                 $chars = array(' ', "\t", "\n");
 
                 foreach($chars as $char)
@@ -70,6 +70,15 @@ class Plain extends Extractor
                         $skip = true;
                         break;
                     }
+                }
+            }
+
+            // Is it an email address?
+            if(!$skip)
+            {
+                if(preg_match('/'.$this->emailRegex.'/i', $string))
+                {
+                    $skip = true;
                 }
             }
 
