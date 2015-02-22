@@ -215,10 +215,10 @@ SQL;
                 echo '.';
             }
 
-            if($i >= 70 * 100)
+            if($i >= 75 * 100)
             {
                 $multiplier += 1;
-                echo sprintf('%7s', $i * $multiplier)."\n";
+                echo sprintf('%8s', $i * $multiplier)."\n";
                 $i = 0;
             }
         }

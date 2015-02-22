@@ -5,3 +5,4 @@ vendor/*
 
 settings.json
 composer.phar
+settings.sh
