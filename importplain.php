@@ -35,28 +35,11 @@ if(!file_exists(__DIR__.'/settings.json'))
     die();
 }
 
-$settings  = json_decode(file_get_contents(__DIR__.'/settings.json'));
-
-if(!$settings->db_host || !$settings->db_user || !$settings->db_pwd || !$settings->db_name)
-{
-    echo "\nPlease fill the connection details to the database";
-    die();
-}
-
-// Ok, let's try to connect to the database
-$mysql = new \mysqli($settings->db_host, $settings->db_user, $settings->db_pwd, $settings->db_name);
-if($mysql->connect_error)
-{
-    echo "\nFailed to connect to MySQL: ".$mysql->connect_error;
-    die();
-}
-
 $def_options = array(
     's:' => 'since:',
     'u:' => 'until:',
     'h'  => 'help',
-    'f:' => 'file:',
-    'k:' => 'skip:'
+    'f:' => 'file:'
 );
 
 $cli_options = getopt(implode(array_keys($def_options)), array_values($def_options));
@@ -73,9 +56,6 @@ if((!$options->since && !$options->file) || $options->help)
   [-u]        Until date    Stop date for processing file dump, format YYYY-MM-DD
   [--until]
 
-  [-k]        Skip lines    Skip N lines at the beginning
-  [--skip]
-
   [-f]        File          Process a specific file
   [--file]
 
@@ -89,7 +69,6 @@ HELP;
 }
 
 $files = array();
-$skip  = (int) $options->skip;
 
 if($options->file)
 {
@@ -137,6 +116,10 @@ else
     }
 }
 
+$wordlist_temp = fopen(__DIR__.'/wordlists/temp.txt', 'w');
+$i = 0;
+$multiplier = 0;
+
 foreach($files as $file)
 {
     $handle = @fopen($file, 'r');
@@ -148,8 +131,6 @@ foreach($files as $file)
 
     $prev_data  = '';
     $buffer     = 65536;
-    $i          = 0;
-    $multiplier = 0;
 
     while ( !feof($handle))
     {
@@ -181,50 +162,22 @@ foreach($files as $file)
             }
         }
 
-        $lines = explode("\n", $data);
-
-        foreach($lines as $line)
-        {
-            $i++;
-
-            // Do I have to skip some lines?
-            if($i <= $skip)
-            {
-                continue;
-            }
-
-            $line = trim($line);
-            $line = $mysql->escape_string($line);
-
-            $query = <<<SQL
-INSERT `raw` (`word`, `occurrences`) VALUES ('$line', 1)
-ON DUPLICATE KEY UPDATE
-`occurrences` = `occurrences` + 1
-SQL;
-            $mysql->query($query);
-
-            if($mysql->error)
-            {
-                echo "\n\tAn error occurred while inserting a row: ".$mysql->error;
-                echo "\n\tError occurred at line ".$i;
-                die();
-            }
-
-            if($i % 100 == 0)
-            {
-                echo '.';
-            }
-
-            if($i >= 75 * 100)
-            {
-                $multiplier += 1;
-                echo sprintf('%8s', $i * $multiplier)."\n";
-                $i = 0;
-            }
-        }
+        fwrite($wordlist_temp, $data);
     }
 
-    echo "\n\n";
+    echo '.';
+    $i++;
+
+    if($i >= 75)
+    {
+        $multiplier += 1;
+        echo sprintf('%8s', $i * $multiplier)."\n";
+        $i = 0;
+    }
 
     fclose($handle);
 }
+
+echo "\n";
+
+fclose($wordlist_temp);

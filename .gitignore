@@ -2,6 +2,7 @@
 data/*
 training/*
 vendor/*
+wordlists/*
 
 settings.json
 composer.phar
