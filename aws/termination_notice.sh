@@ -1,5 +1,10 @@
 #!/bin/bash
 
+if [ ! -f settings.sh ]; then
+	echo "Please rename settings-dist.sh to settings.sh and fill the variables"
+	exit 0
+fi
+
 source settings.sh
 
 FORCE=false
@@ -14,7 +19,7 @@ done
 DONE=~/.ftp_done
 
 # Did I alredy uploaded everything?
-if [ -f $DONE ]; then
+if [ -f ${DONE} ]; then
 	exit 0
 fi
 
@@ -24,38 +29,38 @@ if [ "$FORCE" != true ]; then
 	CONTENTS=`curl -i -s http://169.254.169.254/latest/meta-data/spot/termination-time`
 	HEADER=`echo "${CONTENTS}" | head -n 1 | cut -d ' ' -f2`
 
-	if [ $HEADER != "200" ]; then
+	if [ ${HEADER} != "200" ]; then
         	exit 0
 	fi
 fi
 
 # Result files
 FILES=~/results/*
-for f in $FILES
+for f in ${FILES}
 do
   echo "Processing $f file..."
-  ftp -inp $FTP_HOST << EOF
-user $FTP_USER $FTP_PWD
-put "$f" "${f##*/}"
+  ftp -inp ${FTP_HOST} << EOF
+user ${FTP_USER} ${FTP_PWD}
+put "${f}" "${f##*/}"
 bye
 EOF
 done
 
 # Hashes file
 FILES=~/hashes/*
-for f in $FILES
+for f in ${FILES}
 do
   echo "Processing $f file..."
-  ftp -inp $FTP_HOST << EOF
-user $FTP_USER $FTP_PWD
-put "$f" "${f##*/}"
+  ftp -inp ${FTP_HOST} << EOF
+user ${FTP_USER} ${FTP_PWD}
+put "${f}" "${f##*/}"
 bye
 EOF
 done
 
 # HashCat restore files
-ftp -inp $FTP_HOST << EOF
-user $FTP_USER $FTP_PWD
+ftp -inp ${FTP_HOST} << EOF
+user ${FTP_USER} ${FTP_PWD}
 put ~/cudaHashcat.pot cudaHashcat.pot
 put ~/cudaHashcat.restore cudaHashcat.restore
 bye
