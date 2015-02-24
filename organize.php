@@ -111,8 +111,8 @@ foreach($folders as $folder)
 
     if(!is_dir($source))
     {
-        echo "Directory ".$source." does not exist!";
-        die();
+        echo "Directory ".$source." does not exist!\n";
+        continue;
     }
 
     echo "Directory    : ".$folder."\n";

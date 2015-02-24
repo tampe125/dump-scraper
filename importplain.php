@@ -102,6 +102,11 @@ else
     // Ok, now that I have all the folders I can start extracting the single files
     foreach($folders as $folder)
     {
+        if(!is_dir($folder))
+        {
+            continue;
+        }
+
         $directory = new \DirectoryIterator($folder);
 
         foreach($directory as $fileInfo)

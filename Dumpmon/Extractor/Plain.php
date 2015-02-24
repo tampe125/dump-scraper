@@ -56,7 +56,7 @@ class Plain extends Extractor
             $string = trim($matches[1]);
 
             // Is it too long or too short?
-            $skip = strlen($string) > 20 || strlen($string) < 3;
+            $skip = strlen($string) > 20 || strlen($string) < 4;
 
             // Does it contain some wrong character?
             if(!$skip)
