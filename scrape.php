@@ -20,7 +20,7 @@ license. See http://www.gnu.org/licenses/gpl-3.0.html for details.
 ===============================================================================
 BANNER;
 
-echo "\n".$banner."\n";
+echo "\n".$banner;
 
 if(!file_exists(__DIR__.'/settings.json'))
 {
@@ -115,7 +115,7 @@ while($processed <= $settings->processing_limit)
         if($day != $prev_day)
         {
             $prev_day = $day;
-            echo "Processing day: ".$day."\n";
+            echo "\nProcessing day: ".$day."\n";
         }
 
         $folder = $day;
@@ -128,6 +128,8 @@ while($processed <= $settings->processing_limit)
         sleep($settings->delay);
 
         curl_setopt($ch, CURLOPT_URL, $link);
+
+        echo '.';
 
         $data = curl_exec($ch);
 
@@ -155,6 +157,7 @@ while($processed <= $settings->processing_limit)
         file_put_contents(__DIR__.'/data/raw/'.$folder.'/'.$tweet->id.'.txt', $data);
     }
 
+    echo "\n";
     echo "    ...processed ".$processed." tweets\n";
     echo "      Found ".$garbage." garbage tweets in this batch\n";
 }
