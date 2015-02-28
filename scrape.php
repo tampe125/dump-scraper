@@ -39,9 +39,6 @@ if(!$settings->app_key || !$settings->app_secret || !$settings->token || !$setti
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-// Ordinato dal più frequente al meno frequente
-$ignore_list = array('has been removed');
-
 $prev_day  = '1970-05-01';
 $since_id  = $settings->last_id;
 $max_id    = $settings->max_id;
@@ -92,7 +89,7 @@ while($processed <= $settings->processing_limit)
         break;
     }
 
-    $garbage    = 0;
+    $removed    = 0;
     $processed += count($tweets);
 
     foreach($tweets as $tweet)
@@ -144,22 +141,19 @@ while($processed <= $settings->processing_limit)
             break 2;
         }
 
-        // Ignore garbage as much as possible
-        foreach($ignore_list as $ignore)
+        // Ignore removed dumps
+        if(stripos($data, 'has been removed') !== false)
         {
-            if(stripos($data, $ignore) !== false)
-            {
-                $garbage++;
-                continue 2;
-            }
+            $removed++;
+            continue;
         }
 
         file_put_contents(__DIR__.'/data/raw/'.$folder.'/'.$tweet->id.'.txt', $data);
     }
 
     echo "\n";
-    echo "    ...processed ".$processed." tweets\n";
-    echo "      Found ".$garbage." garbage tweets in this batch\n";
+    echo "\tprocessed ".$processed." tweets\n";
+    echo "\tFound ".$removed." removed tweets in this batch\n";
 }
 
 echo "\nTotal processed tweets: ".$processed."\n";
