@@ -9,6 +9,7 @@ namespace Dumpmon;
 
 use Dumpmon\Extractor\Hash;
 use Dumpmon\Extractor\Plain;
+use Dumpmon\Utils\Clioptions;
 use Dumpmon\Utils\Utils;
 
 error_reporting(E_ALL);
@@ -31,9 +32,17 @@ BANNER;
 
 echo "\n".$banner."\n\n";
 
-$options = getopt('s:u:ht', array('since:', 'until:', 'help', 'train'));
+$def_options = array(
+    's:' => 'since:',
+    'u:' => 'until:',
+    'h'  => 'help',
+    't' => 'train'
+);
 
-if(isset($options['h']) || isset($options['help']))
+$cli_options = getopt(implode(array_keys($def_options)), array_values($def_options));
+$options     = new Clioptions($cli_options, $def_options);
+
+if($options->help)
 {
     $help = <<<HELP
   [-s]        Since date    Start date for processing file dump, format YYYY-MM-DD
@@ -50,10 +59,7 @@ HELP;
     die();
 }
 
-if(
-    (!isset($options['s']) && !isset($options['since'])) &&
-    (!isset($options['u']) && !isset($options['until']))
-)
+if(!$options->since && !$options->until)
 {
     echo "Please provide a start/until date\n";
     die();
@@ -61,15 +67,27 @@ if(
 
 $dates = array();
 
-if(isset($options['s']) || isset($options['since']))
+if($options->since)
 {
-    $dates[] = trim((isset($options['s']) ? $options['s'] : $options['since']));
+    if(strtotime($options->since) === false)
+    {
+        echo "Invalid format for SINCE argument. Please use format YYYY-MM-DD";
+        die();
+    }
+
+    $dates[] = trim($options->since);
 }
 
-if(isset($options['u']) || isset($options['until']))
+if($options->until)
 {
-    $date = trim(strtotime(isset($options['s']) ? $options['s'] : $options['since']));
-    $end  = trim(strtotime(isset($options['u']) ? $options['u'] : $options['until']));
+    if(strtotime($options->until) === false)
+    {
+        echo "Invalid format for UNTIL argument. Please use format YYYY-MM-DD";
+        die();
+    }
+
+    $date = strtotime(trim($options->since));
+    $end  = strtotime(trim($options->until));
 
     $date = strtotime('+1 day', $date);
 
