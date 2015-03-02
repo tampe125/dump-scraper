@@ -42,4 +42,31 @@ class Hash extends Extractor
 
         $this->extracted = $data;
     }
+
+    /**
+     * Overwrites the parent function, so we can perform some sanity checks on the matched string
+     *
+     * @param array $matches
+     *
+     * @return string
+     */
+    protected function replaceMatches($matches)
+    {
+        if(isset($matches[1]))
+        {
+            // Let's perform some sanity checks on the matched string
+            $string = trim($matches[1]);
+
+            // Is this a debug string?
+            $skip = (strpos($string, '000') !== false);
+
+            // If the skip flag is not set, let's add the string to the matches
+            if(!$skip)
+            {
+                $this->matches[] = $string;
+            }
+        }
+
+        return '';
+    }
 }
