@@ -104,6 +104,9 @@ class Trash extends Detector
         $score  += substr_count(strtolower($this->data), 'thread');
         $score  += substr_count(strtolower($this->data), 'uuid');
 
+        // Chat log 330e8f8887e4ea04b06a6cffc66cfce0 -1 Admin Ban G-SH
+        $score += preg_match_all('#[a-f0-9]{32} -\d{1}#', $this->data);
+
         return $score / $this->lines;
     }
 
