@@ -22,3 +22,6 @@ Finally, there are a couple of scripts for dealing with plain passwords and crea
    - SciPy module
    - Matplotlib (for charts only)
    - Sklearn module
+
+## Todo
+ -  Add a GUI 
