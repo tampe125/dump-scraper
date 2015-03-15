@@ -35,8 +35,7 @@ echo "\n".$banner."\n\n";
 $def_options = array(
     's:' => 'since:',
     'u:' => 'until:',
-    'h'  => 'help',
-    't' => 'train'
+    'h'  => 'help'
 );
 
 $cli_options = getopt(implode(array_keys($def_options)), array_values($def_options));
