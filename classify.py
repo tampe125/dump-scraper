@@ -21,6 +21,18 @@ print("")
 __DIR__ = os.path.dirname(os.path.realpath(__file__))
 dir_organized = __DIR__ + "/data/organized/"
 
+if not os.path.exists(__DIR__ + "/training/features.csv"):
+    print("Training data not found. Please collect some training data and calculate its score")
+    print("then run again this script.")
+    print("")
+    exit()
+
+if not os.path.exists(__DIR__ + "/data/raw/features.csv"):
+    print("Score data not found. Please calculate the score of the collected data,")
+    print("then run again this script.")
+    print("")
+    exit()
+
 training = sp.genfromtxt(__DIR__ + "/training/features.csv", delimiter=",", skip_header=1, usecols=(0, 1, 2))
 target = sp.genfromtxt(__DIR__ + "/training/features.csv", delimiter=",", skip_header=1, usecols=(-2))
 
