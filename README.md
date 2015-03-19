@@ -1,8 +1,8 @@
 # Dump Scraper
 
 Believe it or not, Internet is full of passwords (plain and hashed ones):
-when a leak occurs, usually they it's posted to [PasteBin](http://pastebin.com/).  
-The pace of these dumps is so high that it's not humanly possible to collect them all, so we have to rely on a bot, scraping PasteBin site for intersting file.  
+when a leak occurs, usually it's posted to [PasteBin](http://pastebin.com/).  
+The pace of these dumps is so high that it's not humanly possible to collect them all, so we have to rely on a bot, scraping PasteBin site for interesting files.  
 
 [Dump Monitor](https://twitter.com/dumpmon) will exactly do this: every time some leaked information are posted on PasteBin, he will tweet the link. 
 
