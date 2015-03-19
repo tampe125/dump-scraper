@@ -100,7 +100,7 @@ while($processing)
 
         if(!is_dir(__DIR__.'/data/raw/'.$folder))
         {
-            mkdir(__DIR__.'/data/raw/'.$folder);
+            mkdir(__DIR__.'/data/raw/'.$folder, 0777, true);
         }
 
         curl_setopt($pastebin, CURLOPT_URL, $pasteLink);
