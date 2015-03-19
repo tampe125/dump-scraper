@@ -5,9 +5,8 @@
  * @license     GNU GPL version 3 or later
  */
 
-require_once "vendor/autoload.php";
-
-use Abraham\TwitterOAuth\TwitterOAuth;
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 
 $banner  = <<<BANNER
 Dump Scraper - Twitter scraper
@@ -22,6 +21,17 @@ BANNER;
 
 echo "\n".$banner;
 
+if(!file_exists(__DIR__.'/vendor/autoload.php'))
+{
+    echo "\nYou don't have composer installed. Please install it from https://getcomposer.org/download \n";
+    echo "and run `php compose.phar install`";
+    die();
+}
+
+require_once "vendor/autoload.php";
+
+use Abraham\TwitterOAuth\TwitterOAuth;
+
 if(!file_exists(__DIR__.'/settings.json'))
 {
     echo "\nPlease rename the file settings-dist.json to settings.json and fill the required info\n";
@@ -35,9 +45,6 @@ if(!$settings->app_key || !$settings->app_secret || !$settings->token || !$setti
     echo "\nPlease fill the required info before continuing";
     die();
 }
-
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
 
 $prev_day  = '1970-05-01';
 $since_id  = $settings->last_id;
@@ -119,7 +126,7 @@ while($processed <= $settings->processing_limit)
 
         if(!is_dir(__DIR__.'/data/raw/'.$folder))
         {
-            mkdir(__DIR__.'/data/raw/'.$folder);
+            mkdir(__DIR__.'/data/raw/'.$folder, 0777, true);
         }
 
         sleep($settings->delay);
