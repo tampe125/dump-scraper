@@ -1,9 +1,14 @@
-import datetime
+from src.lib.detector.plain import PlainDetector
 
 __author__ = 'tampe125'
 
 import abs_command
 import os
+import datetime
+import csv
+import sys
+from lib.detector.trash import TrashDetector
+from lib.detector.hash import HashDetector
 
 
 class DumpScraperOrganize(abs_command.AbstractCommand):
@@ -20,7 +25,11 @@ class DumpScraperOrganize(abs_command.AbstractCommand):
                 folders.append(date.strftime('%Y-%m-%d'))
                 date += datetime.timedelta(days=1)
 
-        organizers = []
+        organizers = [TrashDetector(), PlainDetector(), HashDetector()]
+
+        features_handle = open('data/raw/features.csv', 'w')
+        features_writer = csv.DictWriter(features_handle, fieldnames=['trash', 'plain', 'hash', 'label', 'file'])
+        features_writer.writerow({'trash': 'Trash score', 'plain': 'Plain score', 'hash': 'Hash score', 'label': 'Label', 'file': 'Filename'})
 
         for folder in folders:
             source = 'data/raw/' + folder
@@ -35,15 +44,31 @@ class DumpScraperOrganize(abs_command.AbstractCommand):
 
             for root, dirs, files in os.walk(source):
                 for dump in files:
-                    print(".")
+                    sys.stdout.write('.')
+                    sys.stdout.flush()
 
                     with open(root + "/" + dump, 'r+') as handle:
                         data = handle.read()
 
+                    # Remove /r since they could mess up regex
                     data = data.replace("\r", "")
 
                     info = {'data': data, 'lines': max(data.count("\n"), 1)}
+                    csvline = {}
+                    results = {'trash': 0, 'plain': 0, 'hash': 0}
 
                     for organizer in organizers:
-                        pass
+                        organizer.reset().setinfo(info).analyze()
+
+                        score = min(organizer.score, 3)
+                        csvline[organizer.returnkey()] = round(score, 4)
+                        results[organizer.returnkey()] = round(score, 4)
+
+                    csvline['label'] = ''
+                    csvline['file']  = os.path.basename(root) + "/" + dump
+
+                    features_writer.writerow(csvline)
+
+        features_handle.close()
+
 
