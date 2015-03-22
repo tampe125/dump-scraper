@@ -60,7 +60,7 @@ class DumpScraper():
 
             return
 
-        #Let's load the correct object
+        # Let's load the correct object
         if self.args.command == 'scrape':
             runner = scrape.DumpScraperScrape(self.settings)
         else:
@@ -80,5 +80,10 @@ class DumpScraper():
                 json.dump(self.settings, update_settings, indent=4)
 
 
-scraper = DumpScraper()
-scraper.run()
+try:
+    scraper = DumpScraper()
+    scraper.run()
+except KeyboardInterrupt:
+    print("")
+    print("Operation aborted")
+    exit()

@@ -1,5 +1,9 @@
 .idea
 data/*
+src/build
+src/dist
+src/*.spec
+src/*.pyc
 training/*
 vendor/*
 wordlists/*
