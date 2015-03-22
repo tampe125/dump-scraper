@@ -12,10 +12,20 @@ import scrape
 class DumpScraper():
     def __init__(self):
         parser = argparse.ArgumentParser()
-        parser.add_argument('command', metavar='[command]')
+        # parser.add_argument('command', metavar='[command]')
+        subparsers = parser.add_subparsers(dest='command')
+
+        parser_scrape = subparsers.add_parser('scrape')
+
+        parser_organize = subparsers.add_parser('organize')
+        parser_organize.add_argument('-s', '--since',
+                                     help='Starting date for the analysis, format YYYY-MM-DD',
+                                     required=True)
+        parser_organize.add_argument('-u', '--until',
+                                     help='Stopping date for the analysis, format YYYY-MM-DD. If not supplied only the SINCE date will be processed')
 
         self.args = parser.parse_args()
-
+        
     def banner(self):
         print("Dump Scraper - A better way of scraping")
         print("Copyright (C) 2015 FabbricaBinaria - Davide Tampellini")
@@ -27,11 +37,11 @@ class DumpScraper():
         print("===============================================================================")
 
     def checkenv(self):
-        if not os.path.exists(os.path.realpath("../settings.json")):
+        if not os.path.exists(os.path.realpath("settings.json")):
             raise dump_exceptions.InvalidSettings("Please rename the file settings-dist.json to settings.json "
-                                                           "and fill the required info")
+                                                  "and fill the required info")
 
-        json_data = open(os.path.realpath("../settings.json"))
+        json_data = open(os.path.realpath("settings.json"))
         settings = json.load(json_data)
 
         required_keys = ['app_key', 'app_secret', 'token', 'token_secret']
@@ -76,7 +86,7 @@ class DumpScraper():
             print(error)
         # Always save the updated settings
         finally:
-            with open(os.path.realpath("../settings.json"), 'w+') as update_settings:
+            with open(os.path.realpath("settings.json"), 'w+') as update_settings:
                 json.dump(self.settings, update_settings, indent=4)
 
 
