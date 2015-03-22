@@ -3,9 +3,10 @@ __copyright__ = '2015 Davide Tampellini - FabbricaBinaria'
 __license__ = 'GNU GPL version 3 or later'
 
 import argparse
-import os
 import dump_exceptions
 import json
+import os
+import organize
 import scrape
 
 
@@ -25,7 +26,7 @@ class DumpScraper():
                                      help='Stopping date for the analysis, format YYYY-MM-DD. If not supplied only the SINCE date will be processed')
 
         self.args = parser.parse_args()
-        
+
     def banner(self):
         print("Dump Scraper - A better way of scraping")
         print("Copyright (C) 2015 FabbricaBinaria - Davide Tampellini")
@@ -43,6 +44,7 @@ class DumpScraper():
 
         json_data = open(os.path.realpath("settings.json"))
         settings = json.load(json_data)
+        json_data.close()
 
         required_keys = ['app_key', 'app_secret', 'token', 'token_secret']
 
@@ -72,7 +74,9 @@ class DumpScraper():
 
         # Let's load the correct object
         if self.args.command == 'scrape':
-            runner = scrape.DumpScraperScrape(self.settings)
+            runner = scrape.DumpScraperScrape(self.settings, self.args)
+        elif self.args.command == 'organize':
+            runner = organize.DumpScraperOrganize(self.settings, self.args)
         else:
             print("Unrecognized command")
             return

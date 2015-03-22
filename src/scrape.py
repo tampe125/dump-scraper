@@ -61,8 +61,8 @@ class DumpScraperScrape(abs_command.AbstractCommand):
 
                 folder = day
 
-                if not os.path.exists(os.path.realpath("../data/raw/" + folder)):
-                    os.makedirs(os.path.realpath("../data/raw/" + folder))
+                if not os.path.exists(os.path.realpath("data/raw/" + folder)):
+                    os.makedirs(os.path.realpath("data/raw/" + folder))
 
                 sleep(self.settings['delay'])
 
@@ -86,7 +86,7 @@ class DumpScraperScrape(abs_command.AbstractCommand):
                 sys.stdout.write('.')
                 sys.stdout.flush()
 
-                with open(os.path.realpath("../data/raw/" + folder + "/" + str(tweet.id) + ".txt"), 'w+') as dump_file:
+                with open(os.path.realpath("data/raw/" + folder + "/" + str(tweet.id) + ".txt"), 'w+') as dump_file:
                     dump_file.write(data.text.encode('utf-8'))
 
             print("")

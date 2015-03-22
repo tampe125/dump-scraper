@@ -8,8 +8,9 @@ from abc import ABCMeta, abstractmethod
 class AbstractCommand():
     __metaclass__ = ABCMeta
 
-    def __init__(self, settings):
+    def __init__(self, settings, arguments):
         self.settings = settings
+        self.parentArgs = arguments
 
     @abstractmethod
     def run(self):
