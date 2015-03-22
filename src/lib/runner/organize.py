@@ -2,16 +2,16 @@ from src.lib.detector.plain import PlainDetector
 
 __author__ = 'tampe125'
 
-import abs_command
 import os
 import datetime
 import csv
 import sys
 from lib.detector.trash import TrashDetector
 from lib.detector.hash import HashDetector
+from lib.runner.abstract import AbstractCommand
 
 
-class DumpScraperOrganize(abs_command.AbstractCommand):
+class DumpScraperOrganize(AbstractCommand):
     def run(self):
         folders = [self.parentArgs.since]
 

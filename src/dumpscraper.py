@@ -3,11 +3,11 @@ __copyright__ = '2015 Davide Tampellini - FabbricaBinaria'
 __license__ = 'GNU GPL version 3 or later'
 
 import argparse
-import dump_exceptions
 import json
 import os
-import organize
-import scrape
+
+from lib.exceptions import exceptions
+from lib.runner import scrape, organize
 
 
 class DumpScraper():
@@ -39,7 +39,7 @@ class DumpScraper():
 
     def checkenv(self):
         if not os.path.exists(os.path.realpath("settings.json")):
-            raise dump_exceptions.InvalidSettings("Please rename the file settings-dist.json to settings.json "
+            raise exceptions.InvalidSettings("Please rename the file settings-dist.json to settings.json "
                                                   "and fill the required info")
 
         json_data = open(os.path.realpath("settings.json"))
@@ -53,10 +53,10 @@ class DumpScraper():
                 value = settings[required]
 
                 if value == '':
-                    raise dump_exceptions.InvalidSettings("Please fill the required info before continuing")
+                    raise exceptions.InvalidSettings("Please fill the required info before continuing")
 
             except KeyError:
-                raise dump_exceptions.InvalidSettings("Please fill the required info before continuing")
+                raise exceptions.InvalidSettings("Please fill the required info before continuing")
 
         self.settings = settings
 
@@ -66,7 +66,7 @@ class DumpScraper():
         # Peform some sanity checks
         try:
             self.checkenv()
-        except dump_exceptions.InvalidSettings as error:
+        except exceptions.InvalidSettings as error:
             print("")
             print(error)
 
@@ -83,9 +83,10 @@ class DumpScraper():
 
         # And away we go!
         try:
+
             runner.run()
         # Ehm.. something wrong happened?
-        except dump_exceptions.RunningError as error:
+        except exceptions.RunningError as error:
             print("")
             print(error)
         # Always save the updated settings

@@ -2,14 +2,14 @@ __author__ = 'Davide Tampellini'
 __copyright__ = '2015 Davide Tampellini - FabbricaBinaria'
 __license__ = 'GNU GPL version 3 or later'
 
-import abs_command
 import datetime
-import dump_exceptions
 import twitter
 import os
 import requests
 import sys
 from time import sleep
+from lib.runner.abstract import AbstractCommand
+from lib.exceptions.exceptions import RunningError
 
 # Sadly there is a problem with shipping the certificate in the single executable, so I have to skip HTTPS verification
 # This is turn will raise an InsecureRequestWarning, so we hav e to suppress it
@@ -17,7 +17,7 @@ from time import sleep
 requests.packages.urllib3.disable_warnings()
 
 
-class DumpScraperScrape(abs_command.AbstractCommand):
+class DumpScraperScrape(AbstractCommand):
     def run(self):
         prev_day = '1970-05-01'
         since_id = self.settings['last_id']
@@ -73,7 +73,7 @@ class DumpScraperScrape(abs_command.AbstractCommand):
 
                 if "Pastebin.com has blocked your IP" in data.text:
                     self.settings['last_id'] = since_id
-                    raise dump_exceptions.RunningError(
+                    raise RunningError(
                         "Pastebin blocked your IP. Wait a couple of hours and try again, raising the delay between tweets"
                     )
 
