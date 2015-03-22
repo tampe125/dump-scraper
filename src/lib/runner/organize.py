@@ -1,5 +1,3 @@
-from src.lib.detector.plain import PlainDetector
-
 __author__ = 'tampe125'
 
 import os
@@ -9,9 +7,15 @@ import sys
 from lib.detector.trash import TrashDetector
 from lib.detector.hash import HashDetector
 from lib.runner.abstract import AbstractCommand
+from lib.detector.plain import PlainDetector
+from lib.exceptions.exceptions import RunningError
 
 
 class DumpScraperOrganize(AbstractCommand):
+    def check(self):
+        if not os.path.exists('data/raw'):
+            raise RunningError("There aren't any tweets to process. Scrape them before continuing.")
+
     def run(self):
         folders = [self.parentArgs.since]
 
@@ -70,5 +74,6 @@ class DumpScraperOrganize(AbstractCommand):
                     features_writer.writerow(csvline)
 
         features_handle.close()
+        print("")
 
 

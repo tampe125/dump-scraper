@@ -15,3 +15,6 @@ class AbstractCommand():
     @abstractmethod
     def run(self):
         pass
+
+    def check(self):
+        pass

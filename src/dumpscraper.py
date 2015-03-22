@@ -83,7 +83,7 @@ class DumpScraper():
 
         # And away we go!
         try:
-
+            runner.check()
             runner.run()
         # Ehm.. something wrong happened?
         except exceptions.RunningError as error:
