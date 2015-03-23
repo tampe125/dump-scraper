@@ -39,7 +39,7 @@ class TrashDetector(AbstractDetector):
         self.regex['htmlLinks'] = re.compile('\b(?:(?:https?|udp)://|www\.)[-A-Z0-9+&@#/%=~_|$?!:,.]*[A-Z0-9+&@#/%=~_|$]', re.I)
         self.regex['md5links'] = re.compile('(?:(?:https?|udp)://|www\.)[-A-Z0-9+&@#/%=~_|$?!:,.]*[A-Z0-9+&@#/%=~_|$]=[a-f0-9]{32}', re.I)
 
-    def analyze(self):
+    def analyze(self, results):
         for function, coefficient in self.functions.iteritems():
             self.score += getattr(self, function)() * coefficient
 
@@ -50,6 +50,8 @@ class TrashDetector(AbstractDetector):
         return 'trash'
 
     def fewLines(self):
+        # If I just have few lines, most likely it's trash. I have to do this since sometimes some debug output are
+        # crammed into a single line, screwing up all the stats
         if self.lines < 3:
             return 3
 

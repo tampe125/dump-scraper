@@ -5,7 +5,7 @@ from lib.detector.abstract import AbstractDetector
 
 class PlainDetector(AbstractDetector):
 
-    def analyze(self):
+    def analyze(self, results):
         pass
 
     def returnkey(self):
