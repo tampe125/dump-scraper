@@ -6,9 +6,11 @@ from abc import ABCMeta, abstractmethod
 class AbstractDetector():
     __metaclass__ = ABCMeta
 
-    score = 0
-    data  = ''
-    lines = 0
+    def __init__(self):
+        self.score = 0
+        self.data = ''
+        self.lines = 0
+        self.regex = {}
 
     def reset(self):
         self.score = 0
