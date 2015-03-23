@@ -59,12 +59,14 @@ class DumpScraperOrganize(AbstractCommand):
                     # Remove /r since they could mess up regex
                     data = data.replace("\r", "")
 
-                    info = {'data': data, 'lines': max(data.count("\n"), 1)}
+                    # Guess what? You need to pass a float during a division, otherwise Python will truncate the result
+                    # For crying it loud!!!
+                    info = {'data': data, 'lines': float(max(data.count("\n"), 1))}
                     csvline = {}
                     results = {'trash': 0, 'plain': 0, 'hash': 0}
 
                     for organizer in organizers:
-                        organizer.reset().setinfo(info).analyze()
+                        organizer.reset().setinfo(info).analyze(results)
 
                         score = min(organizer.score, 3)
                         csvline[organizer.returnkey()] = round(score, 4)

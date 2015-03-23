@@ -10,7 +10,7 @@ class PlainDetector(AbstractDetector):
     def __init__(self):
         super(PlainDetector, self).__init__()
 
-        self.regex['emailPwd'] = re.compile('^[\s"]?[a-z0-9\-\._]+@[a-z0-9\-\.]+\.[a-z]{2,4}\s?[/|;|:|\||,|\t].*?[:\n]', re.I | re.M)
+        self.regex['emailPwd'] = re.compile(r'^[\s"]?[a-z0-9\-\._]+@[a-z0-9\-\.]+\.[a-z]{2,4}\s?[/|;|:|\||,|\t].*?[:\n]', re.I | re.M)
         self.regex['pwd'] = re.compile('pass(?:word)?\s*?[:|=].*?$', re.I | re.M)
         self.regex['usrPwd'] = re.compile('[a-z0-9]{5,15}:.{1,10}$', re.I | re.M)
         self.regex['pwdEmail'] = re.compile('.{4,15}[\s|/|;|:|\||,|\t][a-z0-9\-\._]+@[a-z0-9\-\.]+\.[a-z]{2,4}\s*?$', re.I | re.M)
@@ -21,6 +21,13 @@ class PlainDetector(AbstractDetector):
         if results['trash'] >= 0.95:
             self.score = 0
             return
+
+        score  = self.detectEmailPwd()
+        score += self.detectPwdStandalone()
+        score += self.detectUsernamePwd() * 0.75
+        score += self.detectPwdEmails()
+
+        self.score = score
 
     def returnkey(self):
         return 'plain'

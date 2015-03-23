@@ -34,6 +34,7 @@ class TrashDetector(AbstractDetector):
 
         self.regex['mysqlTable'] = re.compile('\+-{10,}?\+', re.M)
         self.regex['startingDigits'] = re.compile('^\d{1,4},', re.M)
+        self.regex['ip'] = re.compile('\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b')
         self.regex['mysqlDates'] = re.compile('(19|20)\d\d[\-/.](0[1-9]|1[012])[\-/.](0[1-9]|[12][0-9]|3[01])')
         self.regex['engDates'] = re.compile('(0[1-9]|1[012])[\-/.](0[1-9]|[12][0-9]|3[01])[\-/.](19|20)\d\d')
         self.regex['time'] = re.compile('(?:2[0-3]|[01][0-9]):[0-5][0-9](?::[0-5][0-9])?')
