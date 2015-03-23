@@ -1,6 +1,8 @@
-import re
+__author__ = 'Davide Tampellini'
+__copyright__ = '2015 Davide Tampellini - FabbricaBinaria'
+__license__ = 'GNU GPL version 3 or later'
 
-__author__ = 'tampe125'
+import re
 from lib.detector.abstract import AbstractDetector
 
 
