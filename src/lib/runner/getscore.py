@@ -13,7 +13,7 @@ from lib.detector.plain import PlainDetector
 from lib.exceptions.exceptions import RunningError
 
 
-class DumpScraperOrganize(AbstractCommand):
+class DumpScraperGetscore(AbstractCommand):
     def check(self):
         if not os.path.exists('data/raw'):
             raise RunningError("There aren't any tweets to process. Scrape them before continuing.")
