@@ -19,26 +19,31 @@ class DumpScraperGetscore(AbstractCommand):
             raise RunningError("There aren't any dump files to process. Scrape them before continuing.")
 
     def run(self):
-        folders = [self.parentArgs.since]
+        if self.parentArgs.train:
+            targetfolder = 'training'
+            folders = ['trash', 'hash', 'plain']
+        else:
+            targetfolder = 'raw'
+            folders = [self.parentArgs.since]
 
-        if self.parentArgs.until:
-            date  = datetime.datetime.strptime(self.parentArgs.since, "%Y-%m-%d").date()
-            end   = datetime.datetime.strptime(self.parentArgs.until, "%Y-%m-%d").date()
+            if self.parentArgs.until:
+                date  = datetime.datetime.strptime(self.parentArgs.since, "%Y-%m-%d").date()
+                end   = datetime.datetime.strptime(self.parentArgs.until, "%Y-%m-%d").date()
 
-            date += datetime.timedelta(days=1)
-
-            while end >= date:
-                folders.append(date.strftime('%Y-%m-%d'))
                 date += datetime.timedelta(days=1)
+
+                while end >= date:
+                    folders.append(date.strftime('%Y-%m-%d'))
+                    date += datetime.timedelta(days=1)
 
         organizers = [TrashDetector(), PlainDetector(), HashDetector()]
 
-        features_handle = open('data/raw/features.csv', 'w')
+        features_handle = open('data/' + targetfolder + '/features.csv', 'w')
         features_writer = csv.DictWriter(features_handle, fieldnames=['trash', 'plain', 'hash', 'label', 'file'])
         features_writer.writerow({'trash': 'Trash score', 'plain': 'Plain score', 'hash': 'Hash score', 'label': 'Label', 'file': 'Filename'})
 
         for folder in folders:
-            source = 'data/raw/' + folder
+            source = 'data/' + targetfolder + '/' + folder
 
             print("")
 
@@ -72,7 +77,17 @@ class DumpScraperGetscore(AbstractCommand):
                         csvline[organizer.returnkey()] = round(score, 4)
                         results[organizer.returnkey()] = round(score, 4)
 
-                    csvline['label'] = ''
+                    label = os.path.basename(root)
+
+                    if label == 'hash':
+                        csvline['label'] = 1
+                    elif label == 'plain':
+                        csvline['label'] = 2
+                    elif label == 'trash':
+                        csvline['label'] = 0
+                    else:
+                        csvline['label'] = ''
+
                     csvline['file']  = os.path.basename(root) + "/" + dump
 
                     features_writer.writerow(csvline)

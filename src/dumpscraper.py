@@ -31,10 +31,12 @@ Dump Scraper - A better way of scraping
 
         parser_getscore = subparsers.add_parser('getscore')
         parser_getscore.add_argument('-s', '--since',
-                                     help='Starting date for the analysis, format YYYY-MM-DD',
-                                     required=True)
+                                     help='Starting date for the analysis, format YYYY-MM-DD')
         parser_getscore.add_argument('-u', '--until',
                                      help='Stopping date for the analysis, format YYYY-MM-DD. If not supplied only the SINCE date will be processed')
+        parser_getscore.add_argument('-t', '--train',
+                                     help="Calculate the scores on training data",
+                                     action='store_true')
 
         parser_training = subparsers.add_parser('training')
         parser_training.add_argument('-d', '--getdata',
@@ -42,6 +44,10 @@ Dump Scraper - A better way of scraping
                                      action='store_true')
 
         self.args = parser.parse_args()
+
+        # If I use the getscore command I have to supply the "train" or "since" param
+        if self.args.command == 'getscore' and (not self.args.since and not self.args.train):
+            parser.error("With the [getscore] command you have to supply the [train] or [since] argument")
 
     def banner(self):
         print("Dump Scraper - A better way of scraping")
