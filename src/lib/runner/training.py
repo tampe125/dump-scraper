@@ -37,6 +37,10 @@ class DumpScraperTraining(AbstractCommand):
         while 1:
             rfile = random.choice(files)
 
+            trash  = len(os.listdir('data/training/trash'))
+            plain  = len(os.listdir('data/training/plain'))
+            hashes = len(os.listdir('data/training/hash'))
+
             with open(rfile) as tfile:
                 i = 0
                 for line in tfile:
@@ -51,6 +55,7 @@ class DumpScraperTraining(AbstractCommand):
 
             print("")
             print rfile
+            print "Trash: " + str(trash) + " Plain: " + str(plain) + " Hash: " + str(hashes)
             answer = raw_input("[t]rash [p]lain [h]ash [s]kip [q]uit=> ")
 
             if answer == 't':
