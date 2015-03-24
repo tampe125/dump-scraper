@@ -5,6 +5,7 @@ __license__ = 'GNU GPL version 3 or later'
 import argparse
 import json
 import os
+import textwrap
 
 from lib.exceptions import exceptions
 from lib.runner import scrape, organize
@@ -12,8 +13,18 @@ from lib.runner import scrape, organize
 
 class DumpScraper():
     def __init__(self):
-        parser = argparse.ArgumentParser()
-        # parser.add_argument('command', metavar='[command]')
+        parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter, description=textwrap.dedent('''
+Dump Scraper - A better way of scraping
+ This is the main entry point of Dump Scraper, where you can perform all the actions.
+ Type:
+    dumpscraper [command] [options]
+ to run a specific command
+
+ Type:
+    dumpscraper [command] -h
+ to display the help for the specific command
+        '''))
+
         subparsers = parser.add_subparsers(dest='command')
 
         parser_scrape = subparsers.add_parser('scrape')
