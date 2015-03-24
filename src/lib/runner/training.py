@@ -8,7 +8,7 @@ import shutil
 
 from lib.runner.abstract import AbstractCommand
 from lib.exceptions.exceptions import RunningError
-
+from lib.runner import getscore
 
 class DumpScraperTraining(AbstractCommand):
     def check(self):
@@ -27,7 +27,8 @@ class DumpScraperTraining(AbstractCommand):
     def run(self):
         if self.parentArgs.getdata:
             self._gettrainingdata()
-            return
+        else:
+            self._getscore()
 
     def _gettrainingdata(self):
         files = [os.path.join(path, filename)
@@ -74,3 +75,8 @@ class DumpScraperTraining(AbstractCommand):
             else:
                 print("")
                 continue
+
+    def _getscore(self):
+        # Let's invoke the getscore runner and tell him to work on training data
+        running = getscore.DumpScraperGetscore(self.settings, self.parentArgs)
+        running.run(training=True)

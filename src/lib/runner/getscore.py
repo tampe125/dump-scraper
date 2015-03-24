@@ -18,8 +18,8 @@ class DumpScraperGetscore(AbstractCommand):
         if not os.path.exists('data/raw'):
             raise RunningError("There aren't any dump files to process. Scrape them before continuing.")
 
-    def run(self):
-        if self.parentArgs.train:
+    def run(self, **keyargs):
+        if 'training' in keyargs and keyargs['training']:
             targetfolder = 'training'
             folders = ['trash', 'hash', 'plain']
         else:
