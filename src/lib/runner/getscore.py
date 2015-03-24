@@ -16,7 +16,7 @@ from lib.exceptions.exceptions import RunningError
 class DumpScraperGetscore(AbstractCommand):
     def check(self):
         if not os.path.exists('data/raw'):
-            raise RunningError("There aren't any tweets to process. Scrape them before continuing.")
+            raise RunningError("There aren't any dump files to process. Scrape them before continuing.")
 
     def run(self):
         folders = [self.parentArgs.since]

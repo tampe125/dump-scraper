@@ -8,7 +8,7 @@ import os
 import textwrap
 
 from lib.exceptions import exceptions
-from lib.runner import scrape, getscore
+from lib.runner import scrape, getscore, training
 
 
 class DumpScraper():
@@ -27,7 +27,7 @@ Dump Scraper - A better way of scraping
 
         subparsers = parser.add_subparsers(dest='command')
 
-        parser_scrape = subparsers.add_parser('scrape')
+        subparsers.add_parser('scrape')
 
         parser_getscore = subparsers.add_parser('getscore')
         parser_getscore.add_argument('-s', '--since',
@@ -35,6 +35,11 @@ Dump Scraper - A better way of scraping
                                      required=True)
         parser_getscore.add_argument('-u', '--until',
                                      help='Stopping date for the analysis, format YYYY-MM-DD. If not supplied only the SINCE date will be processed')
+
+        parser_training = subparsers.add_parser('training')
+        parser_training.add_argument('-d', '--getdata',
+                                     help='Move some dump file interactively in order to create training data',
+                                     action='store_true')
 
         self.args = parser.parse_args()
 
@@ -88,6 +93,8 @@ Dump Scraper - A better way of scraping
             runner = scrape.DumpScraperScrape(self.settings, self.args)
         elif self.args.command == 'getscore':
             runner = getscore.DumpScraperGetscore(self.settings, self.args)
+        elif self.args.command == 'training':
+            runner = training.DumpScraperTraining(self.settings, self.args)
         else:
             print("Unrecognized command")
             return
