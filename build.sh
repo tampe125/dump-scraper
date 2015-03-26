@@ -1,2 +1,2 @@
 #!/usr/bin/env bash
-pyinstaller -F -c --clean src/dumpscraper.py
+pyinstaller -y --onedir --noupx -c src/dumpscraper.py
