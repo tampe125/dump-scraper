@@ -45,10 +45,9 @@ class DumpScraperGetscore(AbstractCommand):
         for folder in folders:
             source = 'data/' + targetfolder + '/' + folder
 
-            print("")
-
             if not os.path.exists(source):
                 print("Directory " + source + " does not exist!")
+                print("")
                 continue
 
             print("Directory   : " + folder)
@@ -91,6 +90,8 @@ class DumpScraperGetscore(AbstractCommand):
                     csvline['file']  = os.path.basename(root) + "/" + dump
 
                     features_writer.writerow(csvline)
+
+            print("")
 
         features_handle.close()
         print("")
