@@ -6,12 +6,11 @@ import os
 import csv
 import scipy
 import shutil
-import sklearn
-from sklearn import neighbors
-
+import sklearn.neighbors
 from lib.runner.abstract import AbstractCommand
 from lib.exceptions.exceptions import RunningError
 from lib.runner import getscore
+
 
 class DumpScraperClassify(AbstractCommand):
     def check(self):
@@ -37,7 +36,7 @@ class DumpScraperClassify(AbstractCommand):
         training = scipy.genfromtxt("data/training/features.csv", delimiter=",", skip_header=1, usecols=(0, 1, 2))
         target = scipy.genfromtxt("data/training/features.csv", delimiter=",", skip_header=1, usecols=(-2))
 
-        clf = neighbors.KNeighborsClassifier(10, weights='uniform')
+        clf = sklearn.neighbors.KNeighborsClassifier(10, weights='uniform')
         clf.fit(training, target)
 
         trash_count = hash_count = plain_count = 0

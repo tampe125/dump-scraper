@@ -9,6 +9,7 @@ wordlists/*
 dist
 build
 *.spec
+!onefolder.dumpscraper.spec
 settings.json
 composer.phar
 settings.sh

@@ -1,2 +1,2 @@
 #!/usr/bin/env bash
-pyinstaller -y --onedir --noupx -c src/dumpscraper.py
+pyinstaller -y --onefile --noupx -c onefolder.dumpscraper.spec
