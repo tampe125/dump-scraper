@@ -14,7 +14,11 @@ from lib.exceptions.exceptions import RunningError
 # Sadly there is a problem with shipping the certificate in the single executable, so I have to skip HTTPS verification
 # This is turn will raise an InsecureRequestWarning, so we hav e to suppress it
 # It's an ugly workaround while we found a way to make HTTPS connection work...
-requests.packages.urllib3.disable_warnings()
+try:
+    requests.packages.urllib3.disable_warnings()
+except AttributeError:
+    # Guess what? Under Linux I don't have the packages attribute
+    pass
 
 
 class DumpScraperScrape(AbstractCommand):

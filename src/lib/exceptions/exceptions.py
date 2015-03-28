@@ -4,16 +4,8 @@ __license__ = 'GNU GPL version 3 or later'
 
 
 class InvalidSettings(Exception):
-    def __init__(self, message):
-        super(InvalidSettings, self).__init__(message)
-
-    def __str__(self):
-        return self.message
+    pass
 
 
 class RunningError(Exception):
-    def __init__(self, message):
-        super(RunningError, self).__init__(message)
-
-    def __str__(self):
-        return self.message
+    pass

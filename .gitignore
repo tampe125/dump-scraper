@@ -6,10 +6,8 @@ training/*
 vendor/*
 wordlists/*
 
-dist
-build
-*.spec
-!onefolder.dumpscraper.spec
+release
+build/tmp
 settings.json
 composer.phar
 settings.sh

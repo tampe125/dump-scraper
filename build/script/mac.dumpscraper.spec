@@ -1,5 +1,5 @@
 # -*- mode: python -*-
-a = Analysis(['src/dumpscraper.py'],
+a = Analysis(['../../src/dumpscraper.py'],
              pathex=['/Users/tampe125/git/dumpmon-scraper'],
              hiddenimports=[
                     'sklearn.neighbors.typedefs',
