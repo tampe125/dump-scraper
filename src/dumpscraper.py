@@ -143,4 +143,3 @@ try:
 except KeyboardInterrupt:
     print("")
     print("Operation aborted")
-    exit()
