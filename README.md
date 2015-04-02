@@ -17,11 +17,4 @@ If you are using an Amazon EC2 spot instance to crack hashes, you will find some
 Finally, there are a couple of scripts for dealing with plain passwords and create your own wordlist.
 
 ## Requirements
- - PHP 5.3+
- - Python 2.7
-   - SciPy module
-   - Matplotlib (for charts only)
-   - Sklearn module
-
-## Todo
- -  Add a GUI 
+ There are no requirements, just run the executable file from CLI
