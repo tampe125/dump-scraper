@@ -1,9 +1,13 @@
 .idea
 data/*
+src/data
+src/**/*.pyc
 training/*
 vendor/*
 wordlists/*
 
+release
+build/tmp
 settings.json
 composer.phar
 settings.sh
