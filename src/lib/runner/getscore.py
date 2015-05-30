@@ -87,7 +87,7 @@ class DumpScraperGetscore(AbstractCommand):
                     else:
                         csvline['label'] = ''
 
-                    csvline['file']  = os.path.basename(root) + "/" + dump
+                    csvline['file'] = os.path.basename(root) + "/" + dump
 
                     features_writer.writerow(csvline)
 

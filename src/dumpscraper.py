@@ -8,7 +8,7 @@ import os
 import textwrap
 
 from lib.exceptions import exceptions
-from lib.runner import scrape, getscore, training, classify, extract
+from lib.runner import scrape, scrapeold, getscore, training, classify, extract
 
 
 class DumpScraper():
@@ -28,6 +28,14 @@ Dump Scraper - A better way of scraping
         subparsers = parser.add_subparsers(dest='command')
 
         subparsers.add_parser('scrape')
+
+        parser_old = subparsers.add_parser('scrapeold')
+        parser_old.add_argument('-s', '--since',
+                                help='Starting date for scraping old data, format YYYY-MM-DD',
+                                required=True)
+        parser_old.add_argument('-u', '--until',
+                                help='Stopping date for scraping old data, format YYYY-MM-DD. If not supplied only the SINCE date will be processed',
+                                required=True)
 
         parser_getscore = subparsers.add_parser('getscore')
         parser_getscore.add_argument('-s', '--since',
@@ -111,6 +119,8 @@ Dump Scraper - A better way of scraping
         # Let's load the correct object
         if self.args.command == 'scrape':
             runner = scrape.DumpScraperScrape(self.settings, self.args)
+        elif self.args.command == 'scrapeold':
+            runner = scrapeold.DumpScraperScrapeold(self.settings, self.args)
         elif self.args.command == 'getscore':
             runner = getscore.DumpScraperGetscore(self.settings, self.args)
         elif self.args.command == 'training':
