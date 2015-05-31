@@ -52,9 +52,11 @@ $pastebin = curl_init();
 
 curl_setopt($twitter, CURLOPT_FOLLOWLOCATION, true);
 curl_setopt($twitter, CURLOPT_RETURNTRANSFER, true);
+curl_setopt($twitter, CURLOPT_SSL_VERIFYPEER, false);
 
 curl_setopt($pastebin, CURLOPT_FOLLOWLOCATION, true);
 curl_setopt($pastebin, CURLOPT_RETURNTRANSFER, true);
+curl_setopt($pastebin, CURLOPT_SSL_VERIFYPEER, false);
 
 $since = isset($options['s']) ? $options['s'] : $options['since'];
 $until = isset($options['u']) ? $options['u'] : $options['until'];
