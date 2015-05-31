@@ -24,8 +24,8 @@ except AttributeError:
 class DumpScraperScrape(AbstractCommand):
     def run(self):
         prev_day = '1970-05-01'
-        since_id = self.settings['last_id']
-        max_id = self.settings['max_id']
+        since_id = None if not self.settings['last_id'] else self.settings['last_id']
+        max_id = None if not self.settings['max_id'] else self.settings['max_id']
         processed = 0
 
         connection = twitter.Api(consumer_key=self.settings['app_key'],
@@ -52,10 +52,10 @@ class DumpScraperScrape(AbstractCommand):
             processed += len(tweets)
 
             for tweet in tweets:
-                max_id = 0 if not max_id else min(max_id, tweet.id)
+                max_id = tweet.id if not max_id else min(max_id, tweet.id)
                 max_id -= 1
 
-                since_id = max(since_id, tweet.id)
+                self.settings['last_id'] = max(since_id, tweet.id)
 
                 try:
                     link = tweet.urls[0].expanded_url
@@ -105,5 +105,3 @@ class DumpScraperScrape(AbstractCommand):
 
         print("")
         print("Total processed tweets: " + str(processed))
-
-        self.settings['last_id'] = since_id
