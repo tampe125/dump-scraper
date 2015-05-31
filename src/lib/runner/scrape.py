@@ -33,6 +33,12 @@ class DumpScraperScrape(AbstractCommand):
                                  access_token_key=self.settings['token'],
                                  access_token_secret=self.settings['token_secret'])
 
+        # Let's check if we really have some valid credentials
+        try:
+            connection.VerifyCredentials()
+        except twitter.error.TwitterError as error:
+            raise RunningError('Twitter error: ' + error.message[0]['message'])
+
         while processed <= self.settings['processing_limit']:
 
             tweets = connection.GetUserTimeline(screen_name='dumpmon', max_id=max_id,
