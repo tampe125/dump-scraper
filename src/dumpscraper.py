@@ -11,7 +11,7 @@ from lib.exceptions import exceptions
 from lib.runner import scrape, scrapeold, getscore, training, classify, extract
 
 
-class DumpScraper():
+class DumpScraper:
     def __init__(self):
         parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter, description=textwrap.dedent('''
 Dump Scraper - A better way of scraping
