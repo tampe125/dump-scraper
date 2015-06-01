@@ -8,9 +8,11 @@ from lib.detector.abstract import AbstractDetector
 
 class HashDetector(AbstractDetector):
     def __init__(self):
+        # Order MATTERS! Functions to detect false positives MUST BE executed first
         self.functions = {
             'fewLines'       : 1,
             'longLines'      : 1,
+            'hashPlain'      : 1,
             'detectMd5'      : 1,
             'detectMd5Crypt' : 1,
             'detectSha512Crypt' : 1,
@@ -65,7 +67,7 @@ class HashDetector(AbstractDetector):
 
     def returnkey(self):
         return 'hash'
-    
+
     def fewLines(self):
         # If I just have few lines, most likely it's trash. I have to do this since sometimes some debug output are
         # crammed into a single line, screwing up all the stats
@@ -80,6 +82,19 @@ class HashDetector(AbstractDetector):
         for line in lines:
             if len(line) > 1000:
                 return -1
+
+        return 0
+
+    def hashPlain(self):
+        """
+        Do I have a hash:plain pair? If so this is a plain file, not an hash one!
+        """
+        # Let's check for some VERY common password
+        fakeHash = len(re.findall(r'[a-f0-9]{32}:password', self.data, re.I | re.M))
+        fakeHash += len(re.findall(r'[a-f0-9]{32}:123456', self.data, re.I | re.M))
+
+        if fakeHash:
+            return -1
 
         return 0
 
