@@ -1,6 +1,10 @@
 # -*- mode: python -*-
+
+block_cipher = None
+
+
 a = Analysis(['../../src/dumpscraper.py'],
-             pathex=['/Users/tampe125/git/dumpmon-scraper'],
+             pathex=['/home/tampe125/git/dump-scaper/build/script'],
              hiddenimports=[
                     'sklearn.neighbors.typedefs',
                     'sklearn.utils.sparsetools._graph_validation',
@@ -9,20 +13,18 @@ a = Analysis(['../../src/dumpscraper.py'],
                     'scipy.special._ufuncs_cxx'
                     ],
              hookspath=None,
-             runtime_hooks=None)
-pyz = PYZ(a.pure)
+             runtime_hooks=None,
+             excludes=None,
+             cipher=block_cipher)
+pyz = PYZ(a.pure,
+             cipher=block_cipher)
 exe = EXE(pyz,
           a.scripts,
-          exclude_binaries=True,
+          a.binaries,
+          a.zipfiles,
+          a.datas,
           name='dumpscraper',
           debug=False,
           strip=None,
           upx=False,
           console=True )
-coll = COLLECT(exe,
-               a.binaries,
-               a.zipfiles,
-               a.datas,
-               strip=None,
-               upx=False,
-               name='dumpscraper')
