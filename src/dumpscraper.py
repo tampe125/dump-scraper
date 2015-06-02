@@ -3,6 +3,7 @@ __copyright__ = '2015 Davide Tampellini - FabbricaBinaria'
 __license__ = 'GNU GPL version 3 or later'
 
 import argparse
+import colorama
 import json
 import os
 import textwrap
@@ -72,14 +73,14 @@ Dump Scraper - A better way of scraping
             parser.error("With the [training] command you have to supply the [getdata] or [getscore] argument")
 
     def banner(self):
-        print("Dump Scraper - A better way of scraping")
+        print(colorama.Fore.YELLOW + "Dump Scraper - A better way of scraping")
         print("Copyright (C) 2015 FabbricaBinaria - Davide Tampellini")
         print("===============================================================================")
         print("Dump Scraper is Free Software, distributed under the terms of the GNU General")
         print("Public License version 3 or, at your option, any later version.")
         print("This program comes with ABSOLUTELY NO WARRANTY as per sections 15 & 16 of the")
         print("license. See http://www.gnu.org/licenses/gpl-3.0.html for details.")
-        print("===============================================================================")
+        print("===============================================================================" + colorama.Fore.RESET)
 
     def checkenv(self):
         if not os.path.exists(os.path.realpath("settings.json")):
@@ -148,6 +149,7 @@ Dump Scraper - A better way of scraping
 
 
 try:
+    colorama.init()
     scraper = DumpScraper()
     scraper.run()
 except KeyboardInterrupt:
