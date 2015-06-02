@@ -7,6 +7,7 @@ import csv
 import scipy
 import shutil
 import sklearn.neighbors
+import colorama
 from lib.runner.abstract import AbstractCommand
 from lib.exceptions.exceptions import RunningError
 from lib.runner import getscore
@@ -15,7 +16,8 @@ from lib.runner import getscore
 class DumpScraperClassify(AbstractCommand):
     def check(self):
         if not os.path.exists('data/training/features.csv'):
-            raise RunningError("Training score was not calculated. Do it and then run this command again")
+            raise RunningError(colorama.Fore.RED + "Training score was not calculated. Do it and then run this command again"
+                               + colorama.Fore.RESET)
 
         if not os.path.exists('data/organized'):
             os.makedirs('data/organized')

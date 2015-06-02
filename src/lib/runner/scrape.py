@@ -2,6 +2,7 @@ __author__ = 'Davide Tampellini'
 __copyright__ = '2015 Davide Tampellini - FabbricaBinaria'
 __license__ = 'GNU GPL version 3 or later'
 
+import colorama
 import datetime
 import twitter
 import os
@@ -37,7 +38,7 @@ class DumpScraperScrape(AbstractCommand):
         try:
             connection.VerifyCredentials()
         except twitter.error.TwitterError as error:
-            raise RunningError('Twitter error: ' + error.message[0]['message'])
+            raise RunningError(colorama.Fore.RED + 'Twitter error: ' + error.message[0]['message'] + colorama.Fore.RESET)
 
         while processed <= self.settings['processing_limit']:
 
@@ -84,7 +85,8 @@ class DumpScraperScrape(AbstractCommand):
                 if "Pastebin.com has blocked your IP" in data.text:
                     self.settings['last_id'] = since_id
                     raise RunningError(
-                        "Pastebin blocked your IP. Wait a couple of hours and try again, raising the delay between tweets"
+                        colorama.Fore.RED + "Pastebin blocked your IP. Wait a couple of hours and try again, "
+                                            "raising the delay between tweets" + colorama.Fore.RESET
                     )
 
                 if "has been removed" in data.text:

@@ -2,6 +2,7 @@ __author__ = 'Davide Tampellini'
 __copyright__ = '2015 Davide Tampellini - FabbricaBinaria'
 __license__ = 'GNU GPL version 3 or later'
 
+import colorama
 import random
 import os
 import shutil
@@ -13,7 +14,8 @@ from lib.runner import getscore
 class DumpScraperTraining(AbstractCommand):
     def check(self):
         if not os.path.exists('data/raw'):
-            raise RunningError("There aren't any dump files to process. Scrape them before continuing.")
+            raise RunningError(colorama.Fore.RED + "There aren't any dump files to process. "
+                                                   "Scrape them before continuing." + colorama.Fore.RESET)
 
         if not os.path.exists('data/training'):
             os.makedirs('data/training')
