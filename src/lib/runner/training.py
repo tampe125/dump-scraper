@@ -14,8 +14,7 @@ from lib.runner import getscore
 class DumpScraperTraining(AbstractCommand):
     def check(self):
         if not os.path.exists('data/raw'):
-            raise RunningError(colorama.Fore.RED + "There aren't any dump files to process. "
-                                                   "Scrape them before continuing." + colorama.Fore.RESET)
+            raise RunningError(colorama.Fore.RED + "There aren't any dump files to process. Scrape them before continuing.")
 
         if not os.path.exists('data/training'):
             os.makedirs('data/training')
@@ -44,6 +43,12 @@ class DumpScraperTraining(AbstractCommand):
             plain  = len(os.listdir('data/training/plain'))
             hashes = len(os.listdir('data/training/hash'))
 
+            # Clear the screen before displaying the text
+            os.system('cls' if os.name == 'nt' else 'clear')
+
+            print colorama.Fore.YELLOW + rfile
+            print("")
+
             with open(rfile) as tfile:
                 i = 0
                 for line in tfile:
@@ -57,9 +62,20 @@ class DumpScraperTraining(AbstractCommand):
                         print line[0:80].strip('\n\r')
 
             print("")
-            print rfile
-            print "Trash: " + str(trash) + " Plain: " + str(plain) + " Hash: " + str(hashes)
-            answer = raw_input("[t]rash [p]lain [h]ash [s]kip [q]uit=> ")
+            print colorama.Fore.YELLOW + "Trash: " + str(trash) + " Plain: " + str(plain) + " Hash: " + str(hashes)
+
+            input_descr = colorama.Fore.MAGENTA + "[t]"
+            input_descr += colorama.Fore.CYAN + "rash "
+            input_descr += colorama.Fore.MAGENTA + "[p]"
+            input_descr += colorama.Fore.CYAN + "lain "
+            input_descr += colorama.Fore.MAGENTA + "[h]"
+            input_descr += colorama.Fore.CYAN + "ash "
+            input_descr += colorama.Fore.MAGENTA + "[s]"
+            input_descr += colorama.Fore.CYAN + "kip "
+            input_descr += colorama.Fore.MAGENTA + "[q]"
+            input_descr += colorama.Fore.CYAN + "uit=> "
+
+            answer = raw_input(input_descr)
 
             if answer == 't':
                 shutil.copyfile(rfile, 'data/training/trash/' + os.path.basename(rfile))
@@ -72,7 +88,7 @@ class DumpScraperTraining(AbstractCommand):
                 continue
             elif answer == 'q':
                 print("")
-                print("Training complete")
+                print(colorama.Fore.GREEN + "Training complete")
                 break
             else:
                 print("")

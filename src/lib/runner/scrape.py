@@ -38,7 +38,7 @@ class DumpScraperScrape(AbstractCommand):
         try:
             connection.VerifyCredentials()
         except twitter.error.TwitterError as error:
-            raise RunningError(colorama.Fore.RED + 'Twitter error: ' + error.message[0]['message'] + colorama.Fore.RESET)
+            raise RunningError(colorama.Fore.RED + 'Twitter error: ' + error.message[0]['message'])
 
         while processed <= self.settings['processing_limit']:
 
@@ -85,8 +85,7 @@ class DumpScraperScrape(AbstractCommand):
                 if "Pastebin.com has blocked your IP" in data.text:
                     self.settings['last_id'] = since_id
                     raise RunningError(
-                        colorama.Fore.RED + "Pastebin blocked your IP. Wait a couple of hours and try again, "
-                                            "raising the delay between tweets" + colorama.Fore.RESET
+                        colorama.Fore.RED + "Pastebin blocked your IP. Wait a couple of hours and try again, raising the delay between tweets"
                     )
 
                 if "has been removed" in data.text:

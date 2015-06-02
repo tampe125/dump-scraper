@@ -18,8 +18,7 @@ from lib.exceptions.exceptions import RunningError
 class DumpScraperGetscore(AbstractCommand):
     def check(self):
         if not os.path.exists('data/raw'):
-            raise RunningError(colorama.Fore.RED + "There aren't any dump files to process. "
-                                                   "Scrape them before continuing." + colorama.Fore.RESET)
+            raise RunningError(colorama.Fore.RED + "There aren't any dump files to process. Scrape them before continuing.")
 
     def run(self, **keyargs):
         if 'training' in keyargs and keyargs['training']:

@@ -15,8 +15,7 @@ from lib.runner.abstract import AbstractCommand
 class DumpScraperExtract(AbstractCommand):
     def check(self):
         if not os.path.exists('data/organized'):
-            raise RunningError(colorama.Fore.RED + "There aren't any organized dump files to process. "
-                                                   "Organize them before continuing." + colorama.Fore.RESET)
+            raise RunningError(colorama.Fore.RED + "There aren't any organized dump files to process. Organize them before continuing.")
 
         if not os.path.exists('data/processed'):
             os.makedirs('data/processed')

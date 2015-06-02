@@ -16,8 +16,7 @@ from lib.runner import getscore
 class DumpScraperClassify(AbstractCommand):
     def check(self):
         if not os.path.exists('data/training/features.csv'):
-            raise RunningError(colorama.Fore.RED + "Training score was not calculated. Do it and then run this command again"
-                               + colorama.Fore.RESET)
+            raise RunningError(colorama.Fore.RED + "Training score was not calculated. Do it and then run this command again")
 
         if not os.path.exists('data/organized'):
             os.makedirs('data/organized')

@@ -74,13 +74,13 @@ Dump Scraper - A better way of scraping
 
     def banner(self):
         print(colorama.Fore.YELLOW + "Dump Scraper - A better way of scraping")
-        print("Copyright (C) 2015 FabbricaBinaria - Davide Tampellini")
-        print("===============================================================================")
-        print("Dump Scraper is Free Software, distributed under the terms of the GNU General")
-        print("Public License version 3 or, at your option, any later version.")
-        print("This program comes with ABSOLUTELY NO WARRANTY as per sections 15 & 16 of the")
-        print("license. See http://www.gnu.org/licenses/gpl-3.0.html for details.")
-        print("===============================================================================" + colorama.Fore.RESET)
+        print(colorama.Fore.YELLOW + "Copyright (C) 2015 FabbricaBinaria - Davide Tampellini")
+        print(colorama.Fore.YELLOW + "===============================================================================")
+        print(colorama.Fore.YELLOW + "Dump Scraper is Free Software, distributed under the terms of the GNU General")
+        print(colorama.Fore.YELLOW + "Public License version 3 or, at your option, any later version.")
+        print(colorama.Fore.YELLOW + "This program comes with ABSOLUTELY NO WARRANTY as per sections 15 & 16 of the")
+        print(colorama.Fore.YELLOW + "license. See http://www.gnu.org/licenses/gpl-3.0.html for details.")
+        print(colorama.Fore.YELLOW + "===============================================================================")
 
     def checkenv(self):
         if not os.path.exists(os.path.realpath("settings.json")):
@@ -149,7 +149,7 @@ Dump Scraper - A better way of scraping
 
 
 try:
-    colorama.init()
+    colorama.init(autoreset=True)
     scraper = DumpScraper()
     scraper.run()
 except KeyboardInterrupt:
