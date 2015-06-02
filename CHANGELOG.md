@@ -1,4 +1,4 @@
-## 0.2.0 [Unreleased]
+## 0.2.0
 ### Added
 - Skip all numbers password
 - Added script to scrape old tweets
