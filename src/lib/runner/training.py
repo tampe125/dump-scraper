@@ -10,6 +10,7 @@ import shutil
 from lib.runner.abstract import AbstractCommand
 from lib.exceptions.exceptions import RunningError
 from lib.runner import getscore
+from lib.utils.terminalsize import get_terminal_size
 
 class DumpScraperTraining(AbstractCommand):
     def check(self):
@@ -46,6 +47,8 @@ class DumpScraperTraining(AbstractCommand):
             # Clear the screen before displaying the text
             os.system('cls' if os.name == 'nt' else 'clear')
 
+            cols, rows = get_terminal_size()
+
             print colorama.Fore.YELLOW + rfile
             print("")
 
@@ -53,13 +56,13 @@ class DumpScraperTraining(AbstractCommand):
                 i = 0
                 for line in tfile:
                     i += 1
-                    if i >= 20:
+                    if i >= (rows - 4):
                         break
 
-                    if len(line) <= 80:
+                    if len(line) <= cols:
                         print line.strip('\n\r')
                     else:
-                        print line[0:80].strip('\n\r')
+                        print line[0:cols].strip('\n\r')
 
             print("")
             print colorama.Fore.YELLOW + "Trash: " + str(trash) + " Plain: " + str(plain) + " Hash: " + str(hashes)
