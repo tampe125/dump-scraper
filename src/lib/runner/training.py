@@ -47,6 +47,7 @@ class DumpScraperTraining(AbstractCommand):
             # Clear the screen before displaying the text
             os.system('cls' if os.name == 'nt' else 'clear')
 
+            # Let's the terminal size, so I can fill it with the file text
             cols, rows = get_terminal_size()
 
             print colorama.Fore.YELLOW + rfile
