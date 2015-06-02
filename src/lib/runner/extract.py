@@ -2,6 +2,7 @@ __author__ = 'Davide Tampellini'
 __copyright__ = '2015 Davide Tampellini - FabbricaBinaria'
 __license__ = 'GNU GPL version 3 or later'
 
+import colorama
 import os
 import datetime
 import sys
@@ -14,7 +15,7 @@ from lib.runner.abstract import AbstractCommand
 class DumpScraperExtract(AbstractCommand):
     def check(self):
         if not os.path.exists('data/organized'):
-            raise RunningError("There aren't any organized dump files to process. Organize them before continuing.")
+            raise RunningError(colorama.Fore.RED + "There aren't any organized dump files to process. Organize them before continuing.")
 
         if not os.path.exists('data/processed'):
             os.makedirs('data/processed')

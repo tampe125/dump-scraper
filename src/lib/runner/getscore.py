@@ -6,6 +6,8 @@ import os
 import datetime
 import csv
 import sys
+import re
+import colorama
 from lib.detector.trash import TrashDetector
 from lib.detector.hash import HashDetector
 from lib.runner.abstract import AbstractCommand
@@ -16,7 +18,7 @@ from lib.exceptions.exceptions import RunningError
 class DumpScraperGetscore(AbstractCommand):
     def check(self):
         if not os.path.exists('data/raw'):
-            raise RunningError("There aren't any dump files to process. Scrape them before continuing.")
+            raise RunningError(colorama.Fore.RED + "There aren't any dump files to process. Scrape them before continuing.")
 
     def run(self, **keyargs):
         if 'training' in keyargs and keyargs['training']:
@@ -36,6 +38,7 @@ class DumpScraperGetscore(AbstractCommand):
                     folders.append(date.strftime('%Y-%m-%d'))
                     date += datetime.timedelta(days=1)
 
+        regex_empty_lines = re.compile(r'^\n', re.M)
         organizers = [TrashDetector(), PlainDetector(), HashDetector()]
 
         features_handle = open('data/' + targetfolder + '/features.csv', 'w')
@@ -63,9 +66,15 @@ class DumpScraperGetscore(AbstractCommand):
                     # Remove /r since they could mess up regex
                     data = data.replace("\r", "")
 
+                    # Let's count only the amount of non-empty lines
+                    all_lines = data.count("\n")
+                    empty_lines = len(re.findall(regex_empty_lines, data))
+
                     # Guess what? You need to pass a float during a division, otherwise Python will truncate the result
                     # For crying it loud!!!
-                    info = {'data': data, 'lines': float(max(data.count("\n"), 1))}
+                    lines = float(max(all_lines - empty_lines, 1))
+
+                    info = {'data': data, 'lines': lines}
                     csvline = {}
                     results = {'trash': 0, 'plain': 0, 'hash': 0}
 
@@ -87,7 +96,7 @@ class DumpScraperGetscore(AbstractCommand):
                     else:
                         csvline['label'] = ''
 
-                    csvline['file']  = os.path.basename(root) + "/" + dump
+                    csvline['file'] = os.path.basename(root) + "/" + dump
 
                     features_writer.writerow(csvline)
 

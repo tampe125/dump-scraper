@@ -23,8 +23,11 @@ class PlainExtractor(AbstractExtractor):
         # username - password
         self.regex['md5'] = re.compile(r'^(?!http)[a-z0-9\-]{5,15}:(.*?)$', re.I | re.M)
 
+        # Skip regexes
         # Email address
         self.regex['email'] = re.compile(r'[a-z0-9\-\._]+@[a-z0-9\-\.]+\.[a-z]{2,4}', re.I)
+        # Digits only
+        self.regex['digits'] = re.compile(r'^\d+$')
 
     def analyze(self):
         data = ''
@@ -57,6 +60,11 @@ class PlainExtractor(AbstractExtractor):
             # Is it an email address?
             if not skip:
                 if re.match(self.regex['email'], string):
+                    skip = True
+
+            # Is this a numbers only password?
+            if not skip:
+                if re.match(self.regex['digits'], string):
                     skip = True
 
             # If the skip flag is not set, let's add the string to the matches

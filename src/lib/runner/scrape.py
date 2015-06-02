@@ -2,6 +2,7 @@ __author__ = 'Davide Tampellini'
 __copyright__ = '2015 Davide Tampellini - FabbricaBinaria'
 __license__ = 'GNU GPL version 3 or later'
 
+import colorama
 import datetime
 import twitter
 import os
@@ -24,14 +25,20 @@ except AttributeError:
 class DumpScraperScrape(AbstractCommand):
     def run(self):
         prev_day = '1970-05-01'
-        since_id = self.settings['last_id']
-        max_id = self.settings['max_id']
+        since_id = None if not self.settings['last_id'] else self.settings['last_id']
+        max_id = None if not self.settings['max_id'] else self.settings['max_id']
         processed = 0
 
         connection = twitter.Api(consumer_key=self.settings['app_key'],
                                  consumer_secret=self.settings['app_secret'],
                                  access_token_key=self.settings['token'],
                                  access_token_secret=self.settings['token_secret'])
+
+        # Let's check if we really have some valid credentials
+        try:
+            connection.VerifyCredentials()
+        except twitter.error.TwitterError as error:
+            raise RunningError(colorama.Fore.RED + 'Twitter error: ' + error.message[0]['message'])
 
         while processed <= self.settings['processing_limit']:
 
@@ -46,10 +53,10 @@ class DumpScraperScrape(AbstractCommand):
             processed += len(tweets)
 
             for tweet in tweets:
-                max_id = 0 if not max_id else min(max_id, tweet.id)
+                max_id = tweet.id if not max_id else min(max_id, tweet.id)
                 max_id -= 1
 
-                since_id = max(since_id, tweet.id)
+                self.settings['last_id'] = max(since_id, tweet.id)
 
                 try:
                     link = tweet.urls[0].expanded_url
@@ -78,7 +85,7 @@ class DumpScraperScrape(AbstractCommand):
                 if "Pastebin.com has blocked your IP" in data.text:
                     self.settings['last_id'] = since_id
                     raise RunningError(
-                        "Pastebin blocked your IP. Wait a couple of hours and try again, raising the delay between tweets"
+                        colorama.Fore.RED + "Pastebin blocked your IP. Wait a couple of hours and try again, raising the delay between tweets"
                     )
 
                 if "has been removed" in data.text:
@@ -99,5 +106,3 @@ class DumpScraperScrape(AbstractCommand):
 
         print("")
         print("Total processed tweets: " + str(processed))
-
-        self.settings['last_id'] = since_id

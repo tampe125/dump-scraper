@@ -3,15 +3,16 @@ __copyright__ = '2015 Davide Tampellini - FabbricaBinaria'
 __license__ = 'GNU GPL version 3 or later'
 
 import argparse
+import colorama
 import json
 import os
 import textwrap
 
 from lib.exceptions import exceptions
-from lib.runner import scrape, getscore, training, classify, extract
+from lib.runner import scrape, scrapeold, getscore, training, classify, extract
 
 
-class DumpScraper():
+class DumpScraper:
     def __init__(self):
         parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter, description=textwrap.dedent('''
 Dump Scraper - A better way of scraping
@@ -28,6 +29,14 @@ Dump Scraper - A better way of scraping
         subparsers = parser.add_subparsers(dest='command')
 
         subparsers.add_parser('scrape')
+
+        parser_old = subparsers.add_parser('scrapeold')
+        parser_old.add_argument('-s', '--since',
+                                help='Starting date for scraping old data, format YYYY-MM-DD',
+                                required=True)
+        parser_old.add_argument('-u', '--until',
+                                help='Stopping date for scraping old data, format YYYY-MM-DD. If not supplied only the SINCE date will be processed',
+                                required=True)
 
         parser_getscore = subparsers.add_parser('getscore')
         parser_getscore.add_argument('-s', '--since',
@@ -64,14 +73,14 @@ Dump Scraper - A better way of scraping
             parser.error("With the [training] command you have to supply the [getdata] or [getscore] argument")
 
     def banner(self):
-        print("Dump Scraper - A better way of scraping")
-        print("Copyright (C) 2015 FabbricaBinaria - Davide Tampellini")
-        print("===============================================================================")
-        print("Dump Scraper is Free Software, distributed under the terms of the GNU General")
-        print("Public License version 3 or, at your option, any later version.")
-        print("This program comes with ABSOLUTELY NO WARRANTY as per sections 15 & 16 of the")
-        print("license. See http://www.gnu.org/licenses/gpl-3.0.html for details.")
-        print("===============================================================================")
+        print(colorama.Fore.YELLOW + "Dump Scraper - A better way of scraping")
+        print(colorama.Fore.YELLOW + "Copyright (C) 2015 FabbricaBinaria - Davide Tampellini")
+        print(colorama.Fore.YELLOW + "===============================================================================")
+        print(colorama.Fore.YELLOW + "Dump Scraper is Free Software, distributed under the terms of the GNU General")
+        print(colorama.Fore.YELLOW + "Public License version 3 or, at your option, any later version.")
+        print(colorama.Fore.YELLOW + "This program comes with ABSOLUTELY NO WARRANTY as per sections 15 & 16 of the")
+        print(colorama.Fore.YELLOW + "license. See http://www.gnu.org/licenses/gpl-3.0.html for details.")
+        print(colorama.Fore.YELLOW + "===============================================================================")
 
     def checkenv(self):
         if not os.path.exists(os.path.realpath("settings.json")):
@@ -111,6 +120,8 @@ Dump Scraper - A better way of scraping
         # Let's load the correct object
         if self.args.command == 'scrape':
             runner = scrape.DumpScraperScrape(self.settings, self.args)
+        elif self.args.command == 'scrapeold':
+            runner = scrapeold.DumpScraperScrapeold(self.settings, self.args)
         elif self.args.command == 'getscore':
             runner = getscore.DumpScraperGetscore(self.settings, self.args)
         elif self.args.command == 'training':
@@ -138,6 +149,7 @@ Dump Scraper - A better way of scraping
 
 
 try:
+    colorama.init(autoreset=True)
     scraper = DumpScraper()
     scraper.run()
 except KeyboardInterrupt:

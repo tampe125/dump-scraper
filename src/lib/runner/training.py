@@ -2,6 +2,7 @@ __author__ = 'Davide Tampellini'
 __copyright__ = '2015 Davide Tampellini - FabbricaBinaria'
 __license__ = 'GNU GPL version 3 or later'
 
+import colorama
 import random
 import os
 import shutil
@@ -9,11 +10,12 @@ import shutil
 from lib.runner.abstract import AbstractCommand
 from lib.exceptions.exceptions import RunningError
 from lib.runner import getscore
+from lib.utils.terminalsize import get_terminal_size
 
 class DumpScraperTraining(AbstractCommand):
     def check(self):
         if not os.path.exists('data/raw'):
-            raise RunningError("There aren't any dump files to process. Scrape them before continuing.")
+            raise RunningError(colorama.Fore.RED + "There aren't any dump files to process. Scrape them before continuing.")
 
         if not os.path.exists('data/training'):
             os.makedirs('data/training')
@@ -42,22 +44,42 @@ class DumpScraperTraining(AbstractCommand):
             plain  = len(os.listdir('data/training/plain'))
             hashes = len(os.listdir('data/training/hash'))
 
+            # Clear the screen before displaying the text
+            os.system('cls' if os.name == 'nt' else 'clear')
+
+            # Let's the terminal size, so I can fill it with the file text
+            cols, rows = get_terminal_size()
+
+            print colorama.Fore.YELLOW + rfile
+            print("")
+
             with open(rfile) as tfile:
                 i = 0
                 for line in tfile:
                     i += 1
-                    if i >= 20:
+                    if i >= (rows - 4):
                         break
 
-                    if len(line) <= 80:
+                    if len(line) <= cols:
                         print line.strip('\n\r')
                     else:
-                        print line[0:80].strip('\n\r')
+                        print line[0:cols].strip('\n\r')
 
             print("")
-            print rfile
-            print "Trash: " + str(trash) + " Plain: " + str(plain) + " Hash: " + str(hashes)
-            answer = raw_input("[t]rash [p]lain [h]ash [s]kip [q]uit=> ")
+            print colorama.Fore.YELLOW + "Trash: " + str(trash) + " Plain: " + str(plain) + " Hash: " + str(hashes)
+
+            input_descr = colorama.Fore.MAGENTA + "[t]"
+            input_descr += colorama.Fore.CYAN + "rash "
+            input_descr += colorama.Fore.MAGENTA + "[p]"
+            input_descr += colorama.Fore.CYAN + "lain "
+            input_descr += colorama.Fore.MAGENTA + "[h]"
+            input_descr += colorama.Fore.CYAN + "ash "
+            input_descr += colorama.Fore.MAGENTA + "[s]"
+            input_descr += colorama.Fore.CYAN + "kip "
+            input_descr += colorama.Fore.MAGENTA + "[q]"
+            input_descr += colorama.Fore.CYAN + "uit=> "
+
+            answer = raw_input(input_descr)
 
             if answer == 't':
                 shutil.copyfile(rfile, 'data/training/trash/' + os.path.basename(rfile))
@@ -70,7 +92,7 @@ class DumpScraperTraining(AbstractCommand):
                 continue
             elif answer == 'q':
                 print("")
-                print("Training complete")
+                print(colorama.Fore.GREEN + "Training complete")
                 break
             else:
                 print("")
