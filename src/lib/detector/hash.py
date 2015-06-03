@@ -20,6 +20,7 @@ class HashDetector(AbstractDetector):
             'phpassGen'      : 1,
             'detectSha1'     : 1,
             'detectMySQL'    : 1,
+            'detectMySQLOrig': 1,
             'detectCrypt'    : 1,
             'detectDrupal'   : 1,
             'detectBlowfish' : 1,
@@ -38,6 +39,7 @@ class HashDetector(AbstractDetector):
         self.regex['phpassGen'] = re.compile('\$P\$.{31}', re.M)
         self.regex['sha1'] = re.compile('\b[0-9a-f]{40}\b', re.I | re.M)
         self.regex['mysql'] = re.compile('\*[a-f0-9]{40}', re.I | re.M)
+        self.regex['mysqlOrig'] = re.compile('[a-f0-9]{16}', re.I | re.M)
         self.regex['crypt'] = re.compile('[\s\t:][a-zA-Z0-9/\.]{13}[,\s\n]?$', re.M)
         # Drupal $S$DugG4yZmhfIGhNJJZMzKzh4MzOCkpsPBR9HtDIvqQeIyqLM6wyuM
         self.regex['drupal'] = re.compile('\$S\$[a-zA-Z0-9/\.]{52}', re.M)
@@ -130,6 +132,11 @@ class HashDetector(AbstractDetector):
 
     def detectMySQL(self):
         hashes = len(re.findall(self.regex['mysql'], self.data))
+
+        return hashes / self.lines
+
+    def detectMySQLOrig(self):
+        hashes = len(re.findall(self.regex['mysqlOrig'], self.data))
 
         return hashes / self.lines
 
