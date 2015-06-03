@@ -56,6 +56,12 @@ class DumpScraperExtract(AbstractCommand):
 
             for root, dirs, files in os.walk(source):
                 for dump in files:
+                    # If the force param is set, skip all the files that do not match
+                    if self.parentArgs.force and self.parentArgs.force not in dump:
+                        sys.stdout.write('@')
+                        sys.stdout.flush()
+                        continue
+
                     sys.stdout.write('.')
                     sys.stdout.flush()
 

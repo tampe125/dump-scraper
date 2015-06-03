@@ -44,6 +44,8 @@ Dump Scraper - A better way of scraping
                                      required=True)
         parser_getscore.add_argument('-u', '--until',
                                      help='Stopping date for the analysis, format YYYY-MM-DD. If not supplied only the SINCE date will be processed')
+        parser_getscore.add_argument('-f', '--force',
+                                     help="Force a specific dump filename to process, used for debug only")
 
         parser_training = subparsers.add_parser('training')
         parser_training.add_argument('-d', '--getdata',
@@ -57,6 +59,9 @@ Dump Scraper - A better way of scraping
         parser_classify.add_argument('-s', '--since',
                                      help='Starting date for the analysis, format YYYY-MM-DD',
                                      required=True)
+        parser_classify.add_argument('-f', '--force',
+                                     help="Force a specific dump filename to process, used for debug only")
+
         parser_classify.add_argument('-u', '--until',
                                      help='Stopping date for the analysis, format YYYY-MM-DD. If not supplied only the SINCE date will be processed')
 
@@ -66,6 +71,8 @@ Dump Scraper - A better way of scraping
                                     required=True)
         parser_extract.add_argument('-u', '--until',
                                     help='Stopping date for the analysis, format YYYY-MM-DD. If not supplied only the SINCE date will be processed')
+        parser_extract.add_argument('-f', '--force',
+                                    help="Force a specific dump filename to process, used for debug only")
 
         self.args = parser.parse_args()
 
