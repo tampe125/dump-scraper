@@ -1,3 +1,4 @@
+# coding=utf-8
 __author__ = 'Davide Tampellini'
 __copyright__ = '2015 Davide Tampellini - FabbricaBinaria'
 __license__ = 'GNU GPL version 3 or later'
@@ -16,6 +17,7 @@ class PlainExtractor(AbstractExtractor):
         self.regex['columns'] = re.compile(r'^[a-z0-9\-\._]+@[a-z0-9\-\.]+\.[a-z]{2,4}\s?\t.*?\t.*?\t(.*?)$', re.I | re.M)
         # Standalone passwords
         self.regex['standalone'] = re.compile(r'pass(?:word)?\s*?[:|=](.*?$)', re.I | re.M)
+        self.regex['standaloneES'] = re.compile(r'Contraseña\s*?[:|=](.*?$)', re.I | re.M)
         # email - password
         self.regex['emailPwd'] = re.compile(r'^"?[a-z0-9\-\._]+@[a-z0-9\-\.]+\.[a-z]{2,4}\s?[/|;|:|\||,|\t]\s?(.*?)[,:\n"]', re.I | re.M)
         # password email
@@ -56,6 +58,11 @@ class PlainExtractor(AbstractExtractor):
                     if char in string:
                         skip = True
                         break
+
+            # Is it the "Username" label?
+            if not skip:
+                if string.lower() in ['user', 'correo']:
+                    skip = True
 
             # Is it an email address?
             if not skip:

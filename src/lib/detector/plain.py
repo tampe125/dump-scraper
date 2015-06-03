@@ -1,3 +1,4 @@
+# coding=utf-8
 __author__ = 'Davide Tampellini'
 __copyright__ = '2015 Davide Tampellini - FabbricaBinaria'
 __license__ = 'GNU GPL version 3 or later'
@@ -12,6 +13,7 @@ class PlainDetector(AbstractDetector):
 
         self.regex['emailPwd'] = re.compile(r'^[\s"]?[a-z0-9\-\._]+@[a-z0-9\-\.]+\.[a-z]{2,4}\s?[/|;|:|\||,|\t].*?[:\n]', re.I | re.M)
         self.regex['pwd'] = re.compile('pass(?:word)?\s*?[:|=].*?$', re.I | re.M)
+        self.regex['pwdES'] = re.compile(r'Contraseña\s*?[:|=].*?$', re.I | re.M)
         self.regex['usrPwd'] = re.compile('[a-z0-9]{5,15}:.{1,10}$', re.I | re.M)
         self.regex['pwdEmail'] = re.compile('.{4,15}[\s|/|;|:|\||,|\t][a-z0-9\-\._]+@[a-z0-9\-\.]+\.[a-z]{2,4}\s*?$', re.I | re.M)
 
@@ -49,6 +51,7 @@ class PlainDetector(AbstractDetector):
         :return:
         """
         results = len(re.findall(self.regex['pwd'], self.data))
+        results += len(re.findall(self.regex['pwdES'], self.data))
 
         return results / self.lines
 
