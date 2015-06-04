@@ -11,7 +11,7 @@ class TrashDetector(AbstractDetector):
         from collections import OrderedDict
 
         # Order MATTERS! Functions to detect false positives MUST BE executed first
-        self.function = OrderedDict()
+        self.functions = OrderedDict()
         
         self.functions['fewLines']        = 1
         self.functions['longLines']       = 1

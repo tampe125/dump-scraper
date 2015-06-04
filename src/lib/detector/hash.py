@@ -12,6 +12,7 @@ class HashDetector(AbstractDetector):
 
         # Order MATTERS! Functions to detect false positives MUST BE executed first
         self.functions = OrderedDict()
+
         self.functions['fewLines']      = 1
         self.functions['longLines']     = 1
         self.functions['hashPlain']     = 1
