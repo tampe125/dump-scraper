@@ -2,6 +2,7 @@
 - Added support for MySQL < 4.1 hashes
 - Added support for Apache MD5 hashes
 - Added support for standalone passwords in foreign language (Spanish)
+- Added support for MD5 salted hashes
 
 ## 0.2.0 [Unreleased]
 ### Added
