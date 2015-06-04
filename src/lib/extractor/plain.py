@@ -19,7 +19,7 @@ class PlainExtractor(AbstractExtractor):
         self.regex['standalone'] = re.compile(r'pass(?:word)?\s*?[:|=](.*?$)', re.I | re.M)
         self.regex['standaloneES'] = re.compile(r'Contraseña\s*?[:|=](.*?$)', re.I | re.M)
         # email - password
-        self.regex['emailPwd'] = re.compile(r'^"?[a-z0-9\-\._]+@[a-z0-9\-\.]+\.[a-z]{2,4}\s?[/|;|:|\||,|\t]\s?(.*?)[,:\n"]', re.I | re.M)
+        self.regex['emailPwd'] = re.compile(r'^"?[a-z0-9\-\._]+@[a-z0-9\-\.]+\.[a-z]{2,4}\s?[\-|/|;|:|\||,|\t]\s?(.*?)[,:\n"]', re.I | re.M)
         # password email
         self.regex['pwdEmail'] = re.compile(r'^(?!email)(?:.*?:)?(.*?)[\s|/|;|:|\||,|\t][a-z0-9\-\._]+@[a-z0-9\-\.]+\.[a-z]{2,4}\s*?$', re.I | re.M)
         # username - password
