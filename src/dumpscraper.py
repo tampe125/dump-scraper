@@ -13,6 +13,9 @@ from lib.exceptions import exceptions
 
 class DumpScraper:
     def __init__(self):
+
+        self.version = '0.2.0'
+
         parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter, description=textwrap.dedent('''
 Dump Scraper - A better way of scraping
  This is the main entry point of Dump Scraper, where you can perform all the actions.
@@ -76,10 +79,10 @@ Dump Scraper - A better way of scraping
         self.args = parser.parse_args()
 
         if self.args.command == 'training' and (not self.args.getdata and not self.args.getscore):
-            parser.error("With the [training] command you have to supply the [getdata] or [getscore] argument")
+            parser.error(colorama.Fore.RED + "With the [training] command you have to supply the [getdata] or [getscore] argument")
 
     def banner(self):
-        print(colorama.Fore.YELLOW + "Dump Scraper - A better way of scraping")
+        print(colorama.Fore.YELLOW + "Dump Scraper " + self.version + " - A better way of scraping")
         print(colorama.Fore.YELLOW + "Copyright (C) 2015 FabbricaBinaria - Davide Tampellini")
         print(colorama.Fore.YELLOW + "===============================================================================")
         print(colorama.Fore.YELLOW + "Dump Scraper is Free Software, distributed under the terms of the GNU General")
@@ -90,8 +93,8 @@ Dump Scraper - A better way of scraping
 
     def checkenv(self):
         if not os.path.exists(os.path.realpath("settings.json")):
-            raise exceptions.InvalidSettings("Please rename the file settings-dist.json to settings.json "
-                                                  "and fill the required info")
+            raise exceptions.InvalidSettings(colorama.Fore.RED + "Please rename the file settings-dist.json to settings.json "
+                                             "and fill the required info")
 
         json_data = open(os.path.realpath("settings.json"))
         settings = json.load(json_data)
@@ -104,10 +107,10 @@ Dump Scraper - A better way of scraping
                 value = settings[required]
 
                 if value == '':
-                    raise exceptions.InvalidSettings("Please fill the required info before continuing")
+                    raise exceptions.InvalidSettings(colorama.Fore.RED + "Please fill the required info before continuing")
 
             except KeyError:
-                raise exceptions.InvalidSettings("Please fill the required info before continuing")
+                raise exceptions.InvalidSettings(colorama.Fore.RED + "Please fill the required info before continuing")
 
         self.settings = settings
 
