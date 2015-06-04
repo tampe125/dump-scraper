@@ -38,7 +38,7 @@ class DumpScraperGetscore(AbstractCommand):
                     folders.append(date.strftime('%Y-%m-%d'))
                     date += datetime.timedelta(days=1)
 
-        regex_empty_lines = re.compile(r'^\n', re.M)
+        regex_empty_lines = re.compile(r'^\s*?\n', re.M)
         organizers = [TrashDetector(), PlainDetector(), HashDetector()]
 
         features_handle = open('data/' + targetfolder + '/features.csv', 'w')
