@@ -9,7 +9,6 @@ import os
 import textwrap
 
 from lib.exceptions import exceptions
-from lib.runner import scrape, scrapeold, getscore, training, classify, extract
 
 
 class DumpScraper:
@@ -126,16 +125,22 @@ Dump Scraper - A better way of scraping
 
         # Let's load the correct object
         if self.args.command == 'scrape':
+            from lib.runner import scrape
             runner = scrape.DumpScraperScrape(self.settings, self.args)
         elif self.args.command == 'scrapeold':
+            from lib.runner import scrapeold
             runner = scrapeold.DumpScraperScrapeold(self.settings, self.args)
         elif self.args.command == 'getscore':
+            from lib.runner import getscore
             runner = getscore.DumpScraperGetscore(self.settings, self.args)
         elif self.args.command == 'training':
+            from lib.runner import training
             runner = training.DumpScraperTraining(self.settings, self.args)
         elif self.args.command == 'classify':
+            from lib.runner import classify
             runner = classify.DumpScraperClassify(self.settings, self.args)
         elif self.args.command == 'extract':
+            from lib.runner import extract
             runner = extract.DumpScraperExtract(self.settings, self.args)
         else:
             print("Unrecognized command")
