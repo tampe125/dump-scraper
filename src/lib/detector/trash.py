@@ -25,22 +25,22 @@ class TrashDetector(AbstractDetector):
         super(TrashDetector, self).__init__()
 
         # Let's compile some regexes to speed up the execution
-        self.regex['emailsOnly'] = re.compile('^[\s"]?[a-z0-9\-\._]+@[a-z0-9\-\.]+\.[a-z]{2,4}[\s|\t]?$', re.I | re.M)
-        self.regex['debugHex'] = re.compile('0x[a-f0-9]{8}', re.I)
-        self.regex['winPath'] = re.compile('[A-Z]:\\\.*?\\\.*?\\\\', re.M)
+        self.regex['emailsOnly'] = re.compile(r'^[\s"]?[a-z0-9\-\._]+@[a-z0-9\-\.]+\.[a-z]{2,4}[\s|\t]?$', re.I | re.M)
+        self.regex['debugHex'] = re.compile(r'0x[a-f0-9]{8}', re.I)
+        self.regex['winPath'] = re.compile(r'[A-Z]:\\\.*?\\\.*?\\\\', re.M)
 
         # Chat log 330e8f8887e4ea04b06a6cffc66cfce0 -1 Admin Ban G-SH
-        self.regex['chat'] = re.compile('[a-f0-9]{32} -\d')
+        self.regex['chat'] = re.compile(r'[a-f0-9]{32} -\d')
 
-        self.regex['mysqlTable'] = re.compile('\+-{10,}?\+', re.M)
-        self.regex['startingDigits'] = re.compile('^\d{1,4},', re.M)
-        self.regex['ip'] = re.compile('\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b')
-        self.regex['mysqlDates'] = re.compile('(19|20)\d\d[\-/.](0[1-9]|1[012])[\-/.](0[1-9]|[12][0-9]|3[01])')
-        self.regex['engDates'] = re.compile('(0[1-9]|1[012])[\-/.](0[1-9]|[12][0-9]|3[01])[\-/.](19|20)\d\d')
-        self.regex['time'] = re.compile('(?:2[0-3]|[01][0-9]):[0-5][0-9](?::[0-5][0-9])?')
-        self.regex['htmlTags'] = re.compile('</?(?:html|div|p|div|script|link|span|u|ul|li|ol|a)+\s*/?>', re.I)
-        self.regex['htmlLinks'] = re.compile('\b(?:(?:https?|udp)://|www\.)[-A-Z0-9+&@#/%=~_|$?!:,.]*[A-Z0-9+&@#/%=~_|$]', re.I)
-        self.regex['md5links'] = re.compile('(?:(?:https?|udp)://|www\.)[-A-Z0-9+&@#/%=~_|$?!:,.]*[A-Z0-9+&@#/%=~_|$]=[a-f0-9]{32}', re.I)
+        self.regex['mysqlTable'] = re.compile(r'\+-{10,}?\+', re.M)
+        self.regex['startingDigits'] = re.compile(r'^\d{1,4},', re.M)
+        self.regex['ip'] = re.compile(r'\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b')
+        self.regex['mysqlDates'] = re.compile(r'(19|20)\d\d[\-/.](0[1-9]|1[012])[\-/.](0[1-9]|[12][0-9]|3[01])')
+        self.regex['engDates'] = re.compile(r'(0[1-9]|1[012])[\-/.](0[1-9]|[12][0-9]|3[01])[\-/.](19|20)\d\d')
+        self.regex['time'] = re.compile(r'(?:2[0-3]|[01][0-9]):[0-5][0-9](?::[0-5][0-9])?')
+        self.regex['htmlTags'] = re.compile(r'</?(?:html|div|p|div|script|link|span|u|ul|li|ol|a)+\s*/?>', re.I)
+        self.regex['htmlLinks'] = re.compile(r'\b(?:(?:https?|udp)://|www\.)[-A-Z0-9+&@#/%=~_|$?!:,.]*[A-Z0-9+&@#/%=~_|$]', re.I)
+        self.regex['md5links'] = re.compile(r'(?:(?:https?|udp)://|www\.)[-A-Z0-9+&@#/%=~_|$?!:,.]*[A-Z0-9+&@#/%=~_|$]=[a-f0-9]{32}', re.I)
 
     def analyze(self, results):
         for function, coefficient in self.functions.iteritems():

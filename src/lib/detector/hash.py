@@ -29,21 +29,21 @@ class HashDetector(AbstractDetector):
         super(HashDetector, self).__init__()
 
         # Let's compile some regexes to speed up the execution
-        self.regex['md5'] = re.compile('[a-f0-9]{32}', re.I | re.M)
+        self.regex['md5'] = re.compile(r'[a-f0-9]{32}', re.I | re.M)
         # Example (unsalted) $1$sCGfZOwq$K9M3ULuacSQln/e3/KnPN.
-        self.regex['md5Crypt'] = re.compile('\$1\$.{8}\$.{22}', re.I | re.M)
-        self.regex['sha512Crypt'] = re.compile('\$6\$[a-z0-9./]{8}\$[a-z0-9./]+', re.I | re.M)
+        self.regex['md5Crypt'] = re.compile(r'\$1\$.{8}\$.{22}', re.I | re.M)
+        self.regex['sha512Crypt'] = re.compile(r'\$6\$[a-z0-9./]{8}\$[a-z0-9./]+', re.I | re.M)
         # Example $H$9V1cX/WqUhsSWM0ipyB7HwFQqTQKxP1
-        self.regex['phpassMd5'] = re.compile('\$H\$9.{30}', re.M)
+        self.regex['phpassMd5'] = re.compile(r'\$H\$9.{30}', re.M)
         # Example $P$B52zg0z/Y5e96IpD4KJ7a9ByqcrKb01
-        self.regex['phpassGen'] = re.compile('\$P\$.{31}', re.M)
-        self.regex['sha1'] = re.compile('\b[0-9a-f]{40}\b', re.I | re.M)
-        self.regex['mysql'] = re.compile('\*[a-f0-9]{40}', re.I | re.M)
-        self.regex['mysqlOrig'] = re.compile('[a-f0-9]{16}', re.I | re.M)
-        self.regex['crypt'] = re.compile('[\s\t:][a-zA-Z0-9/\.]{13}[,\s\n]?$', re.M)
+        self.regex['phpassGen'] = re.compile(r'\$P\$.{31}', re.M)
+        self.regex['sha1'] = re.compile(r'\b[0-9a-f]{40}\b', re.I | re.M)
+        self.regex['mysql'] = re.compile(r'\*[a-f0-9]{40}', re.I | re.M)
+        self.regex['mysqlOrig'] = re.compile(r'[a-f0-9]{16}', re.I | re.M)
+        self.regex['crypt'] = re.compile(r'[\s\t:][a-zA-Z0-9/\.]{13}[,\s\n]?$', re.M)
         # Drupal $S$DugG4yZmhfIGhNJJZMzKzh4MzOCkpsPBR9HtDIvqQeIyqLM6wyuM
-        self.regex['drupal'] = re.compile('\$S\$[a-zA-Z0-9/\.]{52}', re.M)
-        self.regex['blowfish'] = re.compile('\$2[axy]?\$[a-zA-Z0-9./]{8}\$[a-zA-Z0-9./]+', re.M)
+        self.regex['drupal'] = re.compile(r'\$S\$[a-zA-Z0-9/\.]{52}', re.M)
+        self.regex['blowfish'] = re.compile(r'\$2[axy]?\$[a-zA-Z0-9./]{8}\$[a-zA-Z0-9./]+', re.M)
 
     def analyze(self, results):
         # If the Trash Detector has an high value, don't process the file, otherwise we could end up with a false positive
