@@ -8,19 +8,22 @@ from lib.detector.abstract import AbstractDetector
 
 class TrashDetector(AbstractDetector):
     def __init__(self):
-        self.functions = {
-            'fewLines'         : 1,
-            'longLines'        : 1,
-            'privateKeys'      : 1,
-            'antivirusDump'    : 1,
-            'detectRawEmail'   : 1,
-            'detectEmailsOnly' : 1,
-            'detectDebug'      : 1.2,
-            'detectIP'         : 1.5,
-            'detectTimeStamps' : 1,
-            'detectHtml'       : 1,
-            'detectVarious'    : 1
-        }
+        from collections import OrderedDict
+
+        # Order MATTERS! Functions to detect false positives MUST BE executed first
+        self.function = OrderedDict()
+        
+        self.functions['fewLines']        = 1
+        self.functions['longLines']       = 1
+        self.functions['privateKeys']     = 1
+        self.functions['antivirusDump']   = 1
+        self.functions['detectRawEmail']  = 1
+        self.functions['detectEmailsOnly'] = 1
+        self.functions['detectDebug']     = 1.2
+        self.functions['detectIP']        = 1.5
+        self.functions['detectTimeStamps'] = 1
+        self.functions['detectHtml']      = 1
+        self.functions['detectVarious']   = 1
 
         super(TrashDetector, self).__init__()
 

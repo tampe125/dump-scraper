@@ -10,10 +10,12 @@ class AbstractExtractor():
     __metaclass__ = ABCMeta
 
     def __init__(self):
+        from collections import OrderedDict
+
         self.data = ''
         self.extracted = ''
         self.matches = []
-        self.regex = {}
+        self.regex = OrderedDict()
 
     def reset(self):
         self.data = ''

@@ -8,24 +8,25 @@ from lib.detector.abstract import AbstractDetector
 
 class HashDetector(AbstractDetector):
     def __init__(self):
+        from collections import OrderedDict
+
         # Order MATTERS! Functions to detect false positives MUST BE executed first
-        self.functions = {
-            'fewLines'       : 1,
-            'longLines'      : 1,
-            'hashPlain'      : 1,
-            'detectMd5'      : 1,
-            'detectMd5Crypt' : 1,
-            'detectMd5Apache': 1,
-            'detectSha512Crypt' : 1,
-            'phpassMd5'      : 1,
-            'phpassGen'      : 1,
-            'detectSha1'     : 1,
-            'detectMySQL'    : 1,
-            'detectMySQLOrig': 1,
-            'detectCrypt'    : 1,
-            'detectDrupal'   : 1,
-            'detectBlowfish' : 1,
-        }
+        self.functions = OrderedDict()
+        self.functions['fewLines']      = 1
+        self.functions['longLines']     = 1
+        self.functions['hashPlain']     = 1
+        self.functions['detectMd5']     = 1
+        self.functions['detectMd5Crypt'] = 1
+        self.functions['detectMd5Apache'] = 1
+        self.functions['detectSha512Crypt'] = 1
+        self.functions['phpassMd5']     = 1
+        self.functions['phpassGen']     = 1
+        self.functions['detectSha1']    = 1
+        self.functions['detectMySQL']   = 1
+        self.functions['detectMySQLOrig'] = 1
+        self.functions['detectCrypt']   = 1
+        self.functions['detectDrupal']  = 1
+        self.functions['detectBlowfish'] = 1
 
         super(HashDetector, self).__init__()
 
