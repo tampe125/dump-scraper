@@ -32,7 +32,7 @@ class HashDetector(AbstractDetector):
         super(HashDetector, self).__init__()
 
         # Let's compile some regexes to speed up the execution
-        self.regex['md5'] = re.compile(r'[a-f0-9]{32}', re.I | re.M)
+        self.regex['md5'] = re.compile(r'[a-f0-9]{32}')
         # Example $apr1$bHcedXBW$rdg78bAXeX0ndndEPgMY/.
         self.regex['md5Apache'] = re.compile(r'\$apr1\$.{8}\$.{22}')
         # Example (unsalted) $1$sCGfZOwq$K9M3ULuacSQln/e3/KnPN.
@@ -44,7 +44,7 @@ class HashDetector(AbstractDetector):
         self.regex['phpassGen'] = re.compile(r'\$P\$.{31}', re.M)
         self.regex['sha1'] = re.compile(r'\b[0-9a-f]{40}\b', re.I | re.M)
         self.regex['mysql'] = re.compile(r'\*[a-f0-9]{40}', re.I | re.M)
-        self.regex['mysqlOrig'] = re.compile(r'[a-f0-9]{16}', re.I | re.M)
+        self.regex['mysqlOrig'] = re.compile(r'[a-f0-9]{16}')
         self.regex['crypt'] = re.compile(r'[\s\t:][a-zA-Z0-9/\.]{13}[,\s\n]?$', re.M)
         # Drupal $S$DugG4yZmhfIGhNJJZMzKzh4MzOCkpsPBR9HtDIvqQeIyqLM6wyuM
         self.regex['drupal'] = re.compile(r'\$S\$[a-zA-Z0-9/\.]{52}', re.M)
