@@ -1,3 +1,7 @@
+## 0.3.0 [Unreleased]
+- Added support for MySQL < 4.1 hashes
+- Added support for standalone passwords in foreign language (Spanish)
+
 ## 0.2.0 [Unreleased]
 ### Added
 - Skip all numbers password
