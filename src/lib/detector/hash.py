@@ -15,6 +15,7 @@ class HashDetector(AbstractDetector):
             'hashPlain'      : 1,
             'detectMd5'      : 1,
             'detectMd5Crypt' : 1,
+            'detectMd5Apache': 1,
             'detectSha512Crypt' : 1,
             'phpassMd5'      : 1,
             'phpassGen'      : 1,
@@ -30,6 +31,8 @@ class HashDetector(AbstractDetector):
 
         # Let's compile some regexes to speed up the execution
         self.regex['md5'] = re.compile(r'[a-f0-9]{32}', re.I | re.M)
+        # Example $apr1$bHcedXBW$rdg78bAXeX0ndndEPgMY/.
+        self.regex['md5Apache'] = re.compile(r'\$apr1\$.{8}\$.{22}')
         # Example (unsalted) $1$sCGfZOwq$K9M3ULuacSQln/e3/KnPN.
         self.regex['md5Crypt'] = re.compile(r'\$1\$.{8}\$.{22}', re.I | re.M)
         self.regex['sha512Crypt'] = re.compile(r'\$6\$[a-z0-9./]{8}\$[a-z0-9./]+', re.I | re.M)
@@ -107,6 +110,11 @@ class HashDetector(AbstractDetector):
 
     def detectMd5Crypt(self):
         hashes = len(re.findall(self.regex['md5Crypt'], self.data))
+
+        return hashes / self.lines
+
+    def detectMd5Apache(self):
+        hashes = len(re.findall(self.regex['md5Apache'], self.data))
 
         return hashes / self.lines
 

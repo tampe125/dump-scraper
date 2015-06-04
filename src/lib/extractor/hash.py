@@ -12,6 +12,7 @@ class HashExtractor(AbstractExtractor):
 
         self.regex['phpass'] = re.compile(r'(\$P\$.{31})', re.M)
         self.regex['md5crypt'] = re.compile(r'(\$1\$.{8}\$.{22})', re.I | re.M)
+        self.regex['md5Apache'] = re.compile(r'(\$apr1\$.{8}\$.{22})')
         self.regex['phpassMd5'] = re.compile(r'(\$H\$9.{30})', re.M)
         self.regex['drupal'] = re.compile(r'(\$S\$.{52})', re.M)
         self.regex['mysql'] = re.compile(r'(\*[a-f0-9]{40})', re.I | re.M)
