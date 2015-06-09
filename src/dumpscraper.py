@@ -6,9 +6,21 @@ import argparse
 import colorama
 import json
 import os
+import requests
 import textwrap
 
 from lib.exceptions import exceptions
+from distutils.version import StrictVersion
+
+
+# Sadly there is a problem with shipping the certificate in the single executable, so I have to skip HTTPS verification
+# This is turn will raise an InsecureRequestWarning, so we have to suppress it
+# It's an ugly workaround while we found a way to make HTTPS connection work...
+try:
+    requests.packages.urllib3.disable_warnings()
+except AttributeError:
+    # Guess what? Under Linux I don't have the packages attribute
+    pass
 
 
 class DumpScraper:
@@ -114,8 +126,19 @@ Dump Scraper - A better way of scraping
 
         self.settings = settings
 
+    def check_updates(self):
+        r = requests.get('https://api.github.com/repos/tampe125/dump-scraper/releases/latest')
+        json_data = json.loads(r.content)
+
+        if StrictVersion(json_data['tag_name']) > StrictVersion(self.version):
+            print(colorama.Fore.WHITE + colorama.Back.RED + "A new version is available, please download it from https://github.com/tampe125/dump-scraper/releases")
+            print(colorama.Fore.RESET + colorama.Back.RESET + "")
+
+        pass
+
     def run(self):
         self.banner()
+        self.check_updates()
 
         # Peform some sanity checks
         try:

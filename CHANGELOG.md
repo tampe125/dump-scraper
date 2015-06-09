@@ -3,6 +3,7 @@
 - Added support for Apache MD5 hashes
 - Added support for standalone passwords in foreign language (Spanish)
 - Added support for MD5 salted hashes
+- Added warning when a new release is found
 
 ## 0.2.0 [Unreleased]
 ### Added
