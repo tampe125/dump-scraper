@@ -157,7 +157,7 @@ class TrashDetector(AbstractDetector):
         # Do I have lines starting with a number? Maybe it's a table dump without any MySQL markup
         digits = len(re.findall(self.regex['startingDigits'], self.data)) / self.lines
 
-        if insert > 3 or mysql > 5 or digits > 0.25:
+        if insert > 1 or mysql > 1 or digits > 0.25:
             multiplier = 0.01
 
         ip = len(re.findall(self.regex['ip'], self.data)) * multiplier
@@ -178,7 +178,7 @@ class TrashDetector(AbstractDetector):
         # Do I have lines starting with a number? Maybe it's a table dump without any MySQL markup
         digits = len(re.findall(self.regex['startingDigits'], self.data)) / self.lines
 
-        if insert > 3 or mysql > 5 or digits > 0.25:
+        if insert > 1 or mysql > 1 or digits > 0.25:
             multiplier = 0.01
 
         # MySQL dates - 2015-11-02

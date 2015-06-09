@@ -12,6 +12,7 @@ class PlainDetector(AbstractDetector):
         super(PlainDetector, self).__init__()
 
         self.regex['emailPwd'] = re.compile(r'^[\s"]?[a-z0-9\-\._]+@[a-z0-9\-\.]+\.[a-z]{2,4}\s?[\-|/|;|:|\||,|\t].*?[:\n]', re.I | re.M)
+        self.regex['txtEmail:pwd'] = re.compile(r'login:\s+[a-z0-9\-\._]+@[a-z0-9\-\.]+\.[a-z]{2,4}:.*?\n', re.I)
         self.regex['pwd'] = re.compile(r'pass(?:word)?\s*?[:|=].*?$', re.I | re.M)
         self.regex['pwdES'] = re.compile(r'Contraseña\s*?[:|=].*?$', re.I | re.M)
         self.regex['usrPwd'] = re.compile(r'[a-z0-9]{5,15}:.{1,10}$', re.I | re.M)
@@ -50,8 +51,9 @@ class PlainDetector(AbstractDetector):
         pass=foobar
         :return:
         """
-        results = len(re.findall(self.regex['pwd'], self.data))
+        results  = len(re.findall(self.regex['pwd'], self.data))
         results += len(re.findall(self.regex['pwdES'], self.data))
+        results += len(re.findall(self.regex['txtEmail:pwd'], self.data))
 
         return results / self.lines
 
