@@ -1,4 +1,5 @@
 ## 0.3.0 [Unreleased]
+- Avoid errors when calculating training data score
 - Added support for MySQL < 4.1 hashes
 - Added support for Apache MD5 hashes
 - Added support for standalone passwords in foreign language (Spanish)

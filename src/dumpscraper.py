@@ -90,8 +90,10 @@ Dump Scraper - A better way of scraping
 
         self.args = parser.parse_args()
 
-        if self.args.command == 'training' and (not self.args.getdata and not self.args.getscore):
-            parser.error(colorama.Fore.RED + "With the [training] command you have to supply the [getdata] or [getscore] argument")
+        if self.args.command == 'training':
+            self.args.force = None
+            if not self.args.getdata and not self.args.getscore:
+                parser.error(colorama.Fore.RED + "With the [training] command you have to supply the [getdata] or [getscore] argument")
 
     def banner(self):
         print(colorama.Fore.YELLOW + "Dump Scraper " + self.version + " - A better way of scraping")
