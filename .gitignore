@@ -1,6 +1,6 @@
 .idea
 data/*
-src/data
+data_save/*
 src/**/*.pyc
 training/*
 vendor/*
