@@ -3,7 +3,7 @@ __copyright__ = '2015 Davide Tampellini - FabbricaBinaria'
 __license__ = 'GNU GPL version 3 or later'
 
 import requests
-import time
+from time import sleep
 from abc import ABCMeta, abstractmethod
 
 
@@ -61,7 +61,7 @@ class AbstractScrape:
 
             while self.empty():
                 # logging.debug('[*] No results... sleeping')
-                time.sleep(self.sleep)
+                sleep(self.sleep)
                 self.update()
 
     def get_paste_text(self, paste):
