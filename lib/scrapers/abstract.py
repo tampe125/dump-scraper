@@ -1,3 +1,6 @@
+from datetime import date
+from os import path, makedirs
+
 __author__ = 'Davide Tampellini'
 __copyright__ = '2015 Davide Tampellini - FabbricaBinaria'
 __license__ = 'GNU GPL version 3 or later'
@@ -70,6 +73,14 @@ class AbstractScrape:
         tweet = None
 
         if paste.match():
+            day = date.today().strftime('%Y-%m-%d')
+
+            if not path.exists(path.realpath("data/raw/" + day)):
+                    makedirs(path.realpath("data/raw/" + day))
+
+            with open(path.realpath("data/raw/" + day + "/" + str(paste.id) + ".txt"), 'w+') as dump_file:
+                    dump_file.write(paste.text.encode('utf-8'))
+
             tweet = paste.url
 
             if paste.type == 'db_dump':
