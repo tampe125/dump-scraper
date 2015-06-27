@@ -3,7 +3,7 @@ __copyright__ = '2015 Davide Tampellini - FabbricaBinaria'
 __license__ = 'GNU GPL version 3 or later'
 
 from abc import ABCMeta
-from lib.utils import regexes
+from lib.utils.regexes import regexes
 import re
 
 

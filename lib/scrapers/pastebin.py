@@ -31,6 +31,7 @@ class PastebinScraper(AbstractScrape):
                 # logging.info('Error with pastebin')
                 raw = None
                 sleep(5)
+
         results = BeautifulSoup.BeautifulSoup(raw).findAll(
             lambda tag: tag.name == 'td' and tag.a and '/archive/' not in tag.a['href'] and tag.a['href'][1:])
 
@@ -43,6 +44,9 @@ class PastebinScraper(AbstractScrape):
             if paste.id == self.ref_id:
                 break
             new_pastes.append(paste)
+
+        # Let's save the starting id, so I can skip already processed pastes
+        self.ref_id = results[0].a['href'][1:]
 
         for entry in new_pastes[::-1]:
             # logging.info('Adding URL: ' + entry.url)

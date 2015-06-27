@@ -54,20 +54,48 @@ class AbstractScrape:
                 paste = self.get()
                 self.ref_id = paste.id
                 # logging.info('[*] Checking ' + paste.url)
-                paste.text = self.get_paste_text(paste)
-                # helper.build_tweet(paste)
-
-            self.update()
+                paste.text = requests.get(paste.url).content
+                self.build_tweet(paste)
 
             while self.empty():
                 # logging.debug('[*] No results... sleeping')
                 sleep(self.sleep)
                 self.update()
 
-    def get_paste_text(self, paste):
-        r = requests.get(paste.url)
+    def build_tweet(self, paste):
+        """
+        build_tweet(url, paste) - Determines if the paste is interesting and, if so, builds and returns the tweet accordingly
 
-        return r.content
+        """
+        tweet = None
+
+        if paste.match():
+            tweet = paste.url
+
+            if paste.type == 'db_dump':
+                if paste.num_emails > 0:
+                    tweet += ' Emails: ' + str(paste.num_emails)
+                if paste.num_hashes > 0:
+                    tweet += ' Hashes: ' + str(paste.num_hashes)
+                if paste.num_hashes > 0 and paste.num_emails > 0:
+                    tweet += ' E/H: ' + str(round(
+                        paste.num_emails / float(paste.num_hashes), 2))
+                tweet += ' Keywords: ' + str(paste.db_keywords)
+            elif paste.type == 'google_api':
+                tweet += ' Found possible Google API key(s)'
+            elif paste.type in ['cisco', 'juniper']:
+                tweet += ' Possible ' + paste.type + ' configuration'
+            elif paste.type == 'ssh_private':
+                tweet += ' Possible SSH private key'
+            elif paste.type == 'honeypot':
+                tweet += ' Dionaea Honeypot Log'
+            elif paste.type == 'pgp_private':
+                tweet += ' Found possible PGP Private Key'
+            tweet += ' #infoleak'
+
+        if paste.num_emails > 0:
+            print(paste.emails)
+        return tweet
 
     @abstractmethod
     def update(self):

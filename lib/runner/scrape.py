@@ -8,13 +8,30 @@ import twitter
 import os
 import requests
 import sys
+import threading
 from time import sleep
 from lib.runner.abstract import AbstractCommand
+from lib.scrapers.pastebin import PastebinScraper
 from lib.exceptions.exceptions import RunningError
 
 
 class DumpScraperScrape(AbstractCommand):
     def run(self):
+        # Ok, let's start a daemon that will search for new dumps
+        pastebin_thread = threading.Thread(target=PastebinScraper().monitor)
+
+        for thread in (pastebin_thread, ):
+            thread.daemon = True
+            thread.start()
+
+        # Let threads run
+        try:
+            while 1:
+                sleep(5)
+        except KeyboardInterrupt:
+            print 'Stopped.'
+
+    def run_save(self):
         prev_day = '1970-05-01'
         since_id = None if not self.settings['last_id'] else self.settings['last_id']
         max_id = None if not self.settings['max_id'] else self.settings['max_id']

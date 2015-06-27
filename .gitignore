@@ -1,7 +1,7 @@
 .idea
 data/*
 data_save/*
-src/**/*.pyc
+lib/**/*.pyc
 training/*
 vendor/*
 wordlists/*
