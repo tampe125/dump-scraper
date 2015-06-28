@@ -73,13 +73,14 @@ class AbstractScrape:
         tweet = None
 
         if paste.match():
+            print("Dump found: " + paste.id)
             day = date.today().strftime('%Y-%m-%d')
 
             if not path.exists(path.realpath("data/raw/" + day)):
                     makedirs(path.realpath("data/raw/" + day))
 
             with open(path.realpath("data/raw/" + day + "/" + str(paste.id) + ".txt"), 'w+') as dump_file:
-                    dump_file.write(paste.text.encode('utf-8'))
+                    dump_file.write(unicode(paste.text, 'utf-8'))
 
             tweet = paste.url
 
@@ -104,8 +105,6 @@ class AbstractScrape:
                 tweet += ' Found possible PGP Private Key'
             tweet += ' #infoleak'
 
-        if paste.num_emails > 0:
-            print(paste.emails)
         return tweet
 
     @abstractmethod
