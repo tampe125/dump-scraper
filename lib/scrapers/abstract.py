@@ -80,13 +80,16 @@ class AbstractScrape:
         tweet = None
 
         if paste.match():
-            print("Dump found: " + paste.id)
+            filename = str(date.today()) + "_" + paste.id
+
+            print("Dump found: " + filename)
+
             day = date.today().strftime('%Y-%m-%d')
 
             if not path.exists(path.realpath("data/raw/" + day)):
                     makedirs(path.realpath("data/raw/" + day))
 
-            with open(path.realpath("data/raw/" + day + "/" + str(date.today() + "_" + paste.id) + ".txt"), 'w+') as dump_file:
+            with open(path.realpath("data/raw/" + day + "/" + filename + ".txt"), 'w+') as dump_file:
                     dump_file.write(paste.text)
 
             tweet = paste.url
