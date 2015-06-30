@@ -7,7 +7,7 @@ __license__ = 'GNU GPL version 3 or later'
 import requests
 from time import sleep
 from abc import ABCMeta, abstractmethod
-from datetime import date
+from datetime import datetime
 from os import path, makedirs
 
 
@@ -79,16 +79,16 @@ class AbstractScrape:
         tweet = None
 
         if paste.match():
-            filename = str(date.today().strftime('%Y%m%d%H%M%S')) + "_" + paste.id
+            filename = str(datetime.now().strftime('%Y%m%d%H%M%S')) + "_" + paste.id
 
             print("Dump found: " + filename)
 
-            day = date.today().strftime('%Y-%m-%d')
+            day = datetime.now().strftime('%Y-%m-%d')
 
-            if not path.exists(path.realpath(self.settings['data_dir'] + day)):
-                    makedirs(path.realpath(self.settings['data_dir'] + day))
+            if not path.exists(path.realpath(self.settings['data_dir'] + "/" + day)):
+                    makedirs(path.realpath(self.settings['data_dir'] + "/" + day))
 
-            with open(path.realpath(self.settings['data_dir'] + day + "/" + filename + ".txt"), 'w+') as dump_file:
+            with open(path.realpath(self.settings['data_dir'] + "/" + day + "/" + filename + ".txt"), 'w+') as dump_file:
                     dump_file.write(paste.text)
 
             tweet = paste.url
