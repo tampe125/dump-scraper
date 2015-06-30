@@ -14,11 +14,12 @@ from os import path, makedirs
 class AbstractScrape:
     __metaclass__ = ABCMeta
 
-    def __init__(self, settings):
+    def __init__(self, settings, bot):
         self.ref_id = None
         self.sleep  = 3
         self.queue = []
         self.settings = settings
+        self.bot = bot
 
     def empty(self):
         return len(self.queue) == 0
@@ -64,7 +65,9 @@ class AbstractScrape:
                     sleep(5)
                     continue
 
-                self.build_tweet(paste)
+                tweet = self.build_tweet(paste)
+                if tweet and self.bot:
+                    self.bot.PostUpdate(tweet)
 
             while self.empty():
                 # logging.debug('[*] No results... sleeping')

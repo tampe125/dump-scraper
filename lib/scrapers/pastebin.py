@@ -13,8 +13,8 @@ from requests.packages.urllib3.connection import ConnectionError
 
 
 class PastebinScraper(AbstractScrape):
-    def __init__(self, settings):
-        super(PastebinScraper, self).__init__(settings)
+    def __init__(self, settings, bot):
+        super(PastebinScraper, self).__init__(settings, bot)
 
         self.ref_id = None
 

@@ -17,8 +17,22 @@ from lib.exceptions.exceptions import RunningError
 
 class DumpScraperScrape(AbstractCommand):
     def run(self):
+        bot = None
+
+        try:
+            bot = twitter.Api(consumer_key=self.settings['bot']['raw']['consumer_key'],
+                              consumer_secret=self.settings['bot']['raw']['consumer_secret'],
+                              access_token_key=self.settings['bot']['raw']['access_token_key'],
+                              access_token_secret=self.settings['bot']['raw']['access_token_secret'])
+            bot.VerifyCredentials()
+        # Oh well, what the hell...
+        except KeyError:
+            pass
+        except twitter.error.TwitterError:
+            pass
+
         # Ok, let's start a daemon that will search for new dumps
-        pastebin_thread = threading.Thread(target=PastebinScraper(self.settings).monitor)
+        pastebin_thread = threading.Thread(target=PastebinScraper(self.settings, bot).monitor)
 
         print("Started monitoring paste sites")
 
