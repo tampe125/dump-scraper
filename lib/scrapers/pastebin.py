@@ -8,6 +8,7 @@ from lib.scrapers.abstract import AbstractScrape
 from lib.pastes.pastebin import PastebinPaste
 from bs4 import BeautifulSoup
 
+
 class PastebinScraper(AbstractScrape):
     def __init__(self, last_id=None):
         super(PastebinScraper, self).__init__()

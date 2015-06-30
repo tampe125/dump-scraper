@@ -20,6 +20,8 @@ class DumpScraperScrape(AbstractCommand):
         # Ok, let's start a daemon that will search for new dumps
         pastebin_thread = threading.Thread(target=PastebinScraper().monitor)
 
+        print("Started monitoring paste sites")
+
         for thread in (pastebin_thread, ):
             thread.daemon = True
             thread.start()
