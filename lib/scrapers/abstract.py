@@ -1,5 +1,4 @@
-from datetime import date
-from os import path, makedirs
+# encoding=utf8
 
 __author__ = 'Davide Tampellini'
 __copyright__ = '2015 Davide Tampellini - FabbricaBinaria'
@@ -8,6 +7,8 @@ __license__ = 'GNU GPL version 3 or later'
 import requests
 from time import sleep
 from abc import ABCMeta, abstractmethod
+from datetime import date
+from os import path, makedirs
 
 
 class AbstractScrape:
@@ -80,7 +81,7 @@ class AbstractScrape:
                     makedirs(path.realpath("data/raw/" + day))
 
             with open(path.realpath("data/raw/" + day + "/" + str(paste.id) + ".txt"), 'w+') as dump_file:
-                    dump_file.write(unicode(paste.text, 'utf-8'))
+                    dump_file.write(paste.text)
 
             tweet = paste.url
 
