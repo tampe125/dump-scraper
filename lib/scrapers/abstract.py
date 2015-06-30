@@ -58,7 +58,13 @@ class AbstractScrape:
                 paste = self.get()
                 self.ref_id = paste.id
                 # logging.info('[*] Checking ' + paste.url)
-                paste.text = requests.get(paste.url).content
+                try:
+                    paste.text = requests.get(paste.url).content
+                except:
+                    # Mhm... something wrong happened, let's wait some time and try again later
+                    sleep(5)
+                    continue
+
                 self.build_tweet(paste)
 
             while self.empty():
