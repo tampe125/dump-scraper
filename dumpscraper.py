@@ -46,14 +46,6 @@ Dump Scraper - A better way of scraping
 
         subparsers.add_parser('scrape')
 
-        parser_old = subparsers.add_parser('scrapeold')
-        parser_old.add_argument('-s', '--since',
-                                help='Starting date for scraping old data, format YYYY-MM-DD',
-                                required=True)
-        parser_old.add_argument('-u', '--until',
-                                help='Stopping date for scraping old data, format YYYY-MM-DD. If not supplied only the SINCE date will be processed',
-                                required=True)
-
         parser_getscore = subparsers.add_parser('getscore')
         parser_getscore.add_argument('-s', '--since',
                                      help='Starting date for the analysis, format YYYY-MM-DD',
@@ -168,9 +160,6 @@ Dump Scraper - A better way of scraping
         if self.args.command == 'scrape':
             from lib.runner import scrape
             runner = scrape.DumpScraperScrape(self.settings, self.args)
-        elif self.args.command == 'scrapeold':
-            from lib.runner import scrapeold
-            runner = scrapeold.DumpScraperScrapeold(self.settings, self.args)
         elif self.args.command == 'getscore':
             from lib.runner import getscore
             runner = getscore.DumpScraperGetscore(self.settings, self.args)
