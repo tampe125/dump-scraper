@@ -9,17 +9,19 @@ from time import sleep
 from abc import ABCMeta, abstractmethod
 from datetime import datetime
 from os import path, makedirs
+from bitly_api import BitlyError
 
 
 class AbstractScrape:
     __metaclass__ = ABCMeta
 
-    def __init__(self, settings, bot):
+    def __init__(self, settings, bot, bitly):
         self.ref_id = None
         self.sleep  = 3
         self.queue = []
         self.settings = settings
         self.bot = bot
+        self.bitly = bitly
 
     def empty(self):
         return len(self.queue) == 0
@@ -94,7 +96,15 @@ class AbstractScrape:
             with open(path.realpath(self.settings['data_dir'] + "/" + day + "/" + filename + ".txt"), 'w+') as dump_file:
                     dump_file.write(paste.text)
 
-            tweet = paste.url
+            url = paste.url
+
+            if self.bitly:
+                try:
+                    url = self.bitly.shorten(paste.url)['url']
+                except BitlyError:
+                    url = paste.url
+
+            tweet = url
 
             if paste.type == 'db_dump':
                 if paste.num_emails > 0:

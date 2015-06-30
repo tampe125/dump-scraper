@@ -2,6 +2,7 @@ __author__ = 'Davide Tampellini'
 __copyright__ = '2015 Davide Tampellini - FabbricaBinaria'
 __license__ = 'GNU GPL version 3 or later'
 
+import bitly_api
 import colorama
 import datetime
 import twitter
@@ -18,6 +19,16 @@ from lib.exceptions.exceptions import RunningError
 class DumpScraperScrape(AbstractCommand):
     def run(self):
         bot = None
+        bitly = None
+
+        try:
+            bitly = bitly_api.Connection(self.settings['bot']['raw']['bitly']['username'],
+                                         self.settings['bot']['raw']['bitly']['key'])
+        # Oh well, what the hell...
+        except KeyError:
+            pass
+        except bitly_api.BitlyError:
+            pass
 
         try:
             bot = twitter.Api(consumer_key=self.settings['bot']['raw']['consumer_key'],
@@ -32,7 +43,7 @@ class DumpScraperScrape(AbstractCommand):
             pass
 
         # Ok, let's start a daemon that will search for new dumps
-        pastebin_thread = threading.Thread(target=PastebinScraper(self.settings, bot).monitor)
+        pastebin_thread = threading.Thread(target=PastebinScraper(self.settings, bot, bitly).monitor)
 
         print("Started monitoring paste sites")
 

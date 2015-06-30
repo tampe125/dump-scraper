@@ -2,6 +2,10 @@
   "data_dir" : "",
   "bot" : {
     "raw" : {
+      "bitly" : {
+        "username" : "",
+        "key" : ""
+      },
       "consumer_key" : "",
       "consumer_secret" : "",
       "access_token_key" : "",
