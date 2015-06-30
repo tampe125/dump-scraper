@@ -9,6 +9,7 @@ import os
 import requests
 import textwrap
 
+from os import path
 from lib.exceptions import exceptions
 from distutils.version import StrictVersion
 
@@ -127,6 +128,16 @@ Dump Scraper - A better way of scraping
 
             except KeyError:
                 raise exceptions.InvalidSettings(colorama.Fore.RED + "Please fill the required info '" + required + "' before continuing")
+
+        try:
+            if not settings['data_dir']:
+                settings['data_dir'] = path.realpath("data/raw/")
+            else:
+                if not path.exists(settings['data_dir']):
+                    print(colorama.Fore.RED + "Path " + settings['data_dir'] + " does not exist, using the default 'data/raw' one")
+                    settings['data_dir'] = path.realpath("data/raw/")
+        except KeyError:
+            settings['data_dir'] = path.realpath("data/raw/")
 
         self.settings = settings
 
