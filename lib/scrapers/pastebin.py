@@ -10,13 +10,10 @@ from bs4 import BeautifulSoup
 
 
 class PastebinScraper(AbstractScrape):
-    def __init__(self, last_id=None):
-        super(PastebinScraper, self).__init__()
+    def __init__(self, settings):
+        super(PastebinScraper, self).__init__(settings)
 
-        if not last_id:
-            last_id = None
-
-        self.ref_id = last_id
+        self.ref_id = None
 
     def update(self):
         """update(self) - Fill Queue with new Pastebin IDs"""

@@ -18,7 +18,7 @@ from lib.exceptions.exceptions import RunningError
 class DumpScraperScrape(AbstractCommand):
     def run(self):
         # Ok, let's start a daemon that will search for new dumps
-        pastebin_thread = threading.Thread(target=PastebinScraper().monitor)
+        pastebin_thread = threading.Thread(target=PastebinScraper(self.settings).monitor)
 
         print("Started monitoring paste sites")
 

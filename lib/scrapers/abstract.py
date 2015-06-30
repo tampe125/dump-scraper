@@ -14,12 +14,11 @@ from os import path, makedirs
 class AbstractScrape:
     __metaclass__ = ABCMeta
 
-    def __init__(self, queue=None):
+    def __init__(self, settings):
         self.ref_id = None
         self.sleep  = 3
-
-        if queue is None:
-            self.queue = []
+        self.queue = []
+        self.settings = settings
 
     def empty(self):
         return len(self.queue) == 0
@@ -86,10 +85,10 @@ class AbstractScrape:
 
             day = date.today().strftime('%Y-%m-%d')
 
-            if not path.exists(path.realpath("data/raw/" + day)):
-                    makedirs(path.realpath("data/raw/" + day))
+            if not path.exists(path.realpath(self.settings['data_dir'] + day)):
+                    makedirs(path.realpath(self.settings['data_dir'] + day))
 
-            with open(path.realpath("data/raw/" + day + "/" + filename + ".txt"), 'w+') as dump_file:
+            with open(path.realpath(self.settings['data_dir'] + day + "/" + filename + ".txt"), 'w+') as dump_file:
                     dump_file.write(paste.text)
 
             tweet = paste.url
