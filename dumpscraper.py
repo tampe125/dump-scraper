@@ -26,6 +26,7 @@ except AttributeError:
 class DumpScraper:
     def __init__(self):
 
+        self.settings = None
         self.version = '0.2.0'
 
         parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter, description=textwrap.dedent('''
@@ -114,17 +115,18 @@ Dump Scraper - A better way of scraping
         settings = json.load(json_data)
         json_data.close()
 
-        required_keys = ['app_key', 'app_secret', 'token', 'token_secret']
+        # At the moment there aren't required key, let's leave this check for future use
+        required_keys = []
 
         for required in required_keys:
             try:
                 value = settings[required]
 
                 if value == '':
-                    raise exceptions.InvalidSettings(colorama.Fore.RED + "Please fill the required info before continuing")
+                    raise exceptions.InvalidSettings(colorama.Fore.RED + "Please fill the required info '" + required + "' before continuing")
 
             except KeyError:
-                raise exceptions.InvalidSettings(colorama.Fore.RED + "Please fill the required info before continuing")
+                raise exceptions.InvalidSettings(colorama.Fore.RED + "Please fill the required info '" + required + "' before continuing")
 
         self.settings = settings
 
