@@ -3,10 +3,13 @@ __copyright__ = '2015 Davide Tampellini - FabbricaBinaria'
 __license__ = 'GNU GPL version 3 or later'
 
 import requests
+import colorama
 from time import sleep
 from lib.scrapers.abstract import AbstractScrape
 from lib.pastes.pastebin import PastebinPaste
 from bs4 import BeautifulSoup
+from lib.exceptions.exceptions import RunningError
+from requests.packages.urllib3.connection import ConnectionError
 
 
 class PastebinScraper(AbstractScrape):
@@ -24,16 +27,17 @@ class PastebinScraper(AbstractScrape):
         while not raw:
             try:
                 raw = requests.get('http://pastebin.com/archive').content
-            except:
+                if "Pastebin.com has blocked your IP" in raw:
+                    raise RunningError(
+                        colorama.Fore.RED + "Pastebin blocked your IP. Wait a couple of hours and try again"
+                    )
+            except ConnectionError:
                 # logging.info('Error with pastebin')
                 raw = None
                 sleep(5)
 
         results = BeautifulSoup(raw).findAll(
             lambda tag: tag.name == 'td' and tag.a and '/archive/' not in tag.a['href'] and tag.a['href'][1:])
-
-        if not self.ref_id:
-            results = results[:60]
 
         for entry in results:
             paste = PastebinPaste(entry.a['href'][1:])
@@ -42,8 +46,12 @@ class PastebinScraper(AbstractScrape):
                 break
             new_pastes.append(paste)
 
-        # Let's save the starting id, so I can skip already processed pastes
-        self.ref_id = results[0].a['href'][1:]
+        # Don't cry if we don't have any results
+        try:
+            # Let's save the starting id, so I can skip already processed pastes
+            self.ref_id = results[0].a['href'][1:]
+        except IndexError:
+            print "Archive links not found"
 
         for entry in new_pastes[::-1]:
             # logging.info('Adding URL: ' + entry.url)
