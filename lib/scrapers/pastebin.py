@@ -2,12 +2,11 @@ __author__ = 'Davide Tampellini'
 __copyright__ = '2015 Davide Tampellini - FabbricaBinaria'
 __license__ = 'GNU GPL version 3 or later'
 
-import BeautifulSoup
 import requests
 from time import sleep
 from lib.scrapers.abstract import AbstractScrape
 from lib.pastes.pastebin import PastebinPaste
-
+from bs4 import BeautifulSoup
 
 class PastebinScraper(AbstractScrape):
     def __init__(self, last_id=None):
@@ -32,7 +31,7 @@ class PastebinScraper(AbstractScrape):
                 raw = None
                 sleep(5)
 
-        results = BeautifulSoup.BeautifulSoup(raw).findAll(
+        results = BeautifulSoup(raw).findAll(
             lambda tag: tag.name == 'td' and tag.a and '/archive/' not in tag.a['href'] and tag.a['href'][1:])
 
         if not self.ref_id:
