@@ -80,7 +80,7 @@ class AbstractScrape:
         tweet = None
 
         if paste.match():
-            filename = str(date.today()) + "_" + paste.id
+            filename = str(date.today().strftime('%Y%m%d%H%M%S')) + "_" + paste.id
 
             print("Dump found: " + filename)
 
