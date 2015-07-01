@@ -9,7 +9,7 @@ from lib.scrapers.abstract import AbstractScrape
 from lib.pastes.pastebin import PastebinPaste
 from bs4 import BeautifulSoup
 from lib.exceptions.exceptions import RunningError
-from requests.packages.urllib3.connection import ConnectionError
+from requests.exceptions import ConnectionError
 
 
 class PastebinScraper(AbstractScrape):
