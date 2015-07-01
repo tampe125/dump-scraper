@@ -90,7 +90,7 @@ class AbstractScrape:
         if paste.match():
             filename = str(datetime.now().strftime('%Y%m%d%H%M%S')) + "_" + paste.id
 
-            print("Dump found: " + filename)
+            print(str(datetime.now().strftime('%Y-%m-%d %H:%M:%S')) + " Dump found: " + filename)
 
             day = datetime.now().strftime('%Y-%m-%d')
 
