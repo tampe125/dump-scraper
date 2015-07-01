@@ -9,7 +9,11 @@ from time import sleep
 from abc import ABCMeta, abstractmethod
 from datetime import datetime
 from os import path, makedirs
-from bitly_api import BitlyError
+
+try:
+    from bitly_api import BitlyError
+except ImportError:
+    pass
 
 
 class AbstractScrape:

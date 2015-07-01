@@ -2,18 +2,10 @@ __author__ = 'Davide Tampellini'
 __copyright__ = '2015 Davide Tampellini - FabbricaBinaria'
 __license__ = 'GNU GPL version 3 or later'
 
-import bitly_api
-import colorama
-import datetime
-import twitter
-import os
-import requests
-import sys
 import threading
 from time import sleep
 from lib.runner.abstract import AbstractCommand
 from lib.scrapers.pastebin import PastebinScraper
-from lib.exceptions.exceptions import RunningError
 
 
 class DumpScraperScrape(AbstractCommand):
@@ -22,21 +14,29 @@ class DumpScraperScrape(AbstractCommand):
         bitly = None
 
         try:
+            import bitly_api
+
             bitly = bitly_api.Connection(self.settings['bot']['raw']['bitly']['username'],
                                          self.settings['bot']['raw']['bitly']['key'])
         # Oh well, what the hell...
+        except ImportError:
+            pass
         except KeyError:
             pass
         except bitly_api.BitlyError:
             pass
 
         try:
+            import twitter
+
             bot = twitter.Api(consumer_key=self.settings['bot']['raw']['consumer_key'],
                               consumer_secret=self.settings['bot']['raw']['consumer_secret'],
                               access_token_key=self.settings['bot']['raw']['access_token_key'],
                               access_token_secret=self.settings['bot']['raw']['access_token_secret'])
             bot.VerifyCredentials()
         # Oh well, what the hell...
+        except ImportError:
+            pass
         except KeyError:
             pass
         except twitter.error.TwitterError:
