@@ -1,0 +1,4 @@
+Add the following regex while scraping + data detection and extraction
+
+Command Line Password '\-\-[pP]assword\=[^%^\$]'
+Email + password ‘[\s\|,;’]+[a-z0-9\-\._]+@[a-z0-9\-\.]+\.[a-z]{2,4}[\s\|,;:’]+'

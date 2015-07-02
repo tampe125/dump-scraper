@@ -49,6 +49,8 @@ regexes = {
         re.compile(r'Multi Theft Auto: ', re.I),
         re.compile(r'Initializing cgroup subsys cpuset', re.I),
         re.compile(r'Init vk network', re.I),
-        re.compile(r'MediaTomb UPnP Server', re.I)
+        re.compile(r'MediaTomb UPnP Server', re.I),
+        re.compile(r'Malwarebytes Anti-Malware', re.I),
+        re.compile(r'www.malwarebytes.org', re.I)
     ]
 }
