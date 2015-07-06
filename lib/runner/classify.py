@@ -2,12 +2,12 @@ __author__ = 'Davide Tampellini'
 __copyright__ = '2015 Davide Tampellini - FabbricaBinaria'
 __license__ = 'GNU GPL version 3 or later'
 
-import os
 import csv
 import scipy
 import shutil
 import sklearn.neighbors
 import colorama
+from os import path, makedirs
 from lib.runner.abstract import AbstractCommand
 from lib.exceptions.exceptions import RunningError
 from lib.runner import getscore
@@ -15,17 +15,17 @@ from lib.runner import getscore
 
 class DumpScraperClassify(AbstractCommand):
     def check(self):
-        if not os.path.exists('data/training/features.csv'):
+        if not path.exists(self.settings['data_dir'] + "/" + 'training/features.csv'):
             raise RunningError(colorama.Fore.RED + "Training score was not calculated. Do it and then run this command again")
 
-        if not os.path.exists('data/organized'):
-            os.makedirs('data/organized')
-        if not os.path.exists('data/organized/hash'):
-            os.makedirs('data/organized/hash')
-        if not os.path.exists('data/organized/plain'):
-            os.makedirs('data/organized/plain')
-        if not os.path.exists('data/organized/trash'):
-            os.makedirs('data/organized/trash')
+        if not path.exists(self.settings['data_dir'] + "/" + 'organized'):
+            makedirs(self.settings['data_dir'] + "/" + 'organized')
+        if not path.exists(self.settings['data_dir'] + "/" + 'organized/hash'):
+            makedirs(self.settings['data_dir'] + "/" + 'organized/hash')
+        if not path.exists(self.settings['data_dir'] + "/" + 'organized/plain'):
+            makedirs(self.settings['data_dir'] + "/" + 'organized/plain')
+        if not path.exists(self.settings['data_dir'] + "/" + 'organized/trash'):
+            makedirs(self.settings['data_dir'] + "/" + 'organized/trash')
 
     def run(self):
         # Let's invoke the getscore runner and tell him to work on training data
@@ -34,8 +34,8 @@ class DumpScraperClassify(AbstractCommand):
         running.run()
 
         # First of all let's feed the classifier with the training data
-        training = scipy.genfromtxt("data/training/features.csv", delimiter=",", skip_header=1, usecols=(0, 1, 2))
-        target = scipy.genfromtxt("data/training/features.csv", delimiter=",", skip_header=1, usecols=(-2))
+        training = scipy.genfromtxt(self.settings['data_dir'] + "/" + "training/features.csv", delimiter=",", skip_header=1, usecols=(0, 1, 2))
+        target = scipy.genfromtxt(self.settings['data_dir'] + "/" + "training/features.csv", delimiter=",", skip_header=1, usecols=(-2))
 
         clf = sklearn.neighbors.KNeighborsClassifier(10, weights='uniform')
         clf.fit(training, target)
@@ -62,12 +62,12 @@ class DumpScraperClassify(AbstractCommand):
                     folder = 'plain'
                     plain_count += 1
 
-                target_dir = 'data/organized/' + folder + "/" + line[-1]
+                target_dir = self.settings['data_dir'] + "/" + 'organized/' + folder + "/" + line[-1]
 
-                if not os.path.exists(os.path.dirname(target_dir)):
-                    os.makedirs(os.path.dirname(target_dir))
+                if not path.exists(path.dirname(target_dir)):
+                    makedirs(path.dirname(target_dir))
 
-                shutil.copyfile('data/raw/' + line[-1], target_dir)
+                shutil.copyfile(self.settings['data_dir'] + "/" + 'raw/' + line[-1], target_dir)
 
         print("Trash files: " + str(trash_count))
         print("Hash files: " + str(hash_count))

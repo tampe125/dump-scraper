@@ -9,6 +9,7 @@ import os
 import requests
 import textwrap
 
+from os import path
 from lib.exceptions import exceptions
 from distutils.version import StrictVersion
 
@@ -26,6 +27,7 @@ except AttributeError:
 class DumpScraper:
     def __init__(self):
 
+        self.settings = None
         self.version = '0.2.0'
 
         parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter, description=textwrap.dedent('''
@@ -43,14 +45,6 @@ Dump Scraper - A better way of scraping
         subparsers = parser.add_subparsers(dest='command')
 
         subparsers.add_parser('scrape')
-
-        parser_old = subparsers.add_parser('scrapeold')
-        parser_old.add_argument('-s', '--since',
-                                help='Starting date for scraping old data, format YYYY-MM-DD',
-                                required=True)
-        parser_old.add_argument('-u', '--until',
-                                help='Stopping date for scraping old data, format YYYY-MM-DD. If not supplied only the SINCE date will be processed',
-                                required=True)
 
         parser_getscore = subparsers.add_parser('getscore')
         parser_getscore.add_argument('-s', '--since',
@@ -114,17 +108,28 @@ Dump Scraper - A better way of scraping
         settings = json.load(json_data)
         json_data.close()
 
-        required_keys = ['app_key', 'app_secret', 'token', 'token_secret']
+        # At the moment there aren't required key, let's leave this check for future use
+        required_keys = []
 
         for required in required_keys:
             try:
                 value = settings[required]
 
                 if value == '':
-                    raise exceptions.InvalidSettings(colorama.Fore.RED + "Please fill the required info before continuing")
+                    raise exceptions.InvalidSettings(colorama.Fore.RED + "Please fill the required info '" + required + "' before continuing")
 
             except KeyError:
-                raise exceptions.InvalidSettings(colorama.Fore.RED + "Please fill the required info before continuing")
+                raise exceptions.InvalidSettings(colorama.Fore.RED + "Please fill the required info '" + required + "' before continuing")
+
+        try:
+            if not settings['data_dir']:
+                settings['data_dir'] = path.realpath("data/raw/")
+            else:
+                if not path.exists(settings['data_dir']):
+                    print(colorama.Fore.RED + "Path " + settings['data_dir'] + " does not exist, using the default 'data/raw' one")
+                    settings['data_dir'] = path.realpath("data/raw/")
+        except KeyError:
+            settings['data_dir'] = path.realpath("data/raw/")
 
         self.settings = settings
 
@@ -155,9 +160,6 @@ Dump Scraper - A better way of scraping
         if self.args.command == 'scrape':
             from lib.runner import scrape
             runner = scrape.DumpScraperScrape(self.settings, self.args)
-        elif self.args.command == 'scrapeold':
-            from lib.runner import scrapeold
-            runner = scrapeold.DumpScraperScrapeold(self.settings, self.args)
         elif self.args.command == 'getscore':
             from lib.runner import getscore
             runner = getscore.DumpScraperGetscore(self.settings, self.args)
