@@ -4,7 +4,7 @@ __license__ = 'GNU GPL version 3 or later'
 
 from abc import ABCMeta
 from lib.utils.regexes import regexes
-import re
+from re import search as re_search
 
 
 class AbstractPaste(object):
@@ -41,7 +41,7 @@ class AbstractPaste(object):
         self.num_hashes = len(self.hashes)
 
         if self.num_emails > 0:
-            self.sites = list(set([re.search('@(.*)$', email).group(1).lower() for email in self.emails]))
+            self.sites = list(set([re_search('@(.*)$', email).group(1).lower() for email in self.emails]))
 
         for regex in regexes['db_keywords']:
             if regex.search(self.text):

@@ -2,8 +2,8 @@ __author__ = 'Davide Tampellini'
 __copyright__ = '2015 Davide Tampellini - FabbricaBinaria'
 __license__ = 'GNU GPL version 3 or later'
 
-import requests
 import colorama
+from requests import get as requests_get
 from time import sleep
 from lib.scrapers.abstract import AbstractScrape
 from lib.pastes.pastebin import PastebinPaste
@@ -26,7 +26,7 @@ class PastebinScraper(AbstractScrape):
 
         while not raw:
             try:
-                raw = requests.get('http://pastebin.com/archive').content
+                raw = requests_get('http://pastebin.com/archive').content
                 if "Pastebin.com has blocked your IP" in raw:
                     raise RunningError(
                         colorama.Fore.RED + "Pastebin blocked your IP. Wait a couple of hours and try again"

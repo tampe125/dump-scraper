@@ -5,11 +5,10 @@ __license__ = 'GNU GPL version 3 or later'
 import argparse
 import colorama
 import json
-import os
-import requests
-import textwrap
 
-from os import path
+from os import path as os_path
+from requests import get as requests_get
+from textwrap import dedent as textwrap_dedent
 from lib.exceptions import exceptions
 from distutils.version import StrictVersion
 
@@ -18,7 +17,9 @@ from distutils.version import StrictVersion
 # This is turn will raise an InsecureRequestWarning, so we have to suppress it
 # It's an ugly workaround while we found a way to make HTTPS connection work...
 try:
-    requests.packages.urllib3.disable_warnings()
+    pass
+    # TODO Most likely this check is useless, since we're not going to connect to any HTTPS site
+    # requests.packages.urllib3.disable_warnings()
 except AttributeError:
     # Guess what? Under Linux I don't have the packages attribute
     pass
@@ -30,7 +31,7 @@ class DumpScraper:
         self.settings = None
         self.version = '0.2.0'
 
-        parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter, description=textwrap.dedent('''
+        parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter, description=textwrap_dedent('''
 Dump Scraper - A better way of scraping
  This is the main entry point of Dump Scraper, where you can perform all the actions.
  Type:
@@ -100,11 +101,11 @@ Dump Scraper - A better way of scraping
         print(colorama.Fore.YELLOW + "===============================================================================")
 
     def checkenv(self):
-        if not os.path.exists(os.path.realpath("settings.json")):
+        if not os_path.exists(os_path.realpath("settings.json")):
             raise exceptions.InvalidSettings(colorama.Fore.RED + "Please rename the file settings-dist.json to settings.json "
                                              "and fill the required info")
 
-        json_data = open(os.path.realpath("settings.json"))
+        json_data = open(os_path.realpath("settings.json"))
         settings = json.load(json_data)
         json_data.close()
 
@@ -123,18 +124,18 @@ Dump Scraper - A better way of scraping
 
         try:
             if not settings['data_dir']:
-                settings['data_dir'] = path.realpath("data/raw/")
+                settings['data_dir'] = os_path.realpath("data/raw/")
             else:
-                if not path.exists(settings['data_dir']):
+                if not os_path.exists(settings['data_dir']):
                     print(colorama.Fore.RED + "Path " + settings['data_dir'] + " does not exist, using the default 'data/raw' one")
-                    settings['data_dir'] = path.realpath("data/raw/")
+                    settings['data_dir'] = os_path.realpath("data/raw/")
         except KeyError:
-            settings['data_dir'] = path.realpath("data/raw/")
+            settings['data_dir'] = os_path.realpath("data/raw/")
 
         self.settings = settings
 
     def check_updates(self):
-        r = requests.get('https://api.github.com/repos/tampe125/dump-scraper/releases/latest')
+        r = requests_get('https://api.github.com/repos/tampe125/dump-scraper/releases/latest')
         json_data = json.loads(r.content)
 
         if StrictVersion(json_data['tag_name']) > StrictVersion(self.version):
@@ -186,7 +187,7 @@ Dump Scraper - A better way of scraping
             print(error)
         # Always save the updated settings
         finally:
-            with open(os.path.realpath("settings.json"), 'w+') as update_settings:
+            with open(os_path.realpath("settings.json"), 'w+') as update_settings:
                 json.dump(self.settings, update_settings, indent=4)
 
 

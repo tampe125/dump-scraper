@@ -2,7 +2,7 @@ __author__ = 'Davide Tampellini'
 __copyright__ = '2015 Davide Tampellini - FabbricaBinaria'
 __license__ = 'GNU GPL version 3 or later'
 
-import threading
+from threading import Thread as threading_Thread
 from time import sleep
 from lib.runner.abstract import AbstractCommand
 from lib.scrapers.pastebin import PastebinScraper
@@ -43,7 +43,7 @@ class DumpScraperScrape(AbstractCommand):
             pass
 
         # Ok, let's start a daemon that will search for new dumps
-        pastebin_thread = threading.Thread(target=PastebinScraper(self.settings, bot, bitly).monitor)
+        pastebin_thread = threading_Thread(target=PastebinScraper(self.settings, bot, bitly).monitor)
 
         print("Started monitoring paste sites")
 

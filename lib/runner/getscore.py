@@ -3,11 +3,11 @@ __copyright__ = '2015 Davide Tampellini - FabbricaBinaria'
 __license__ = 'GNU GPL version 3 or later'
 
 import datetime
-import csv
-import sys
 import re
 import colorama
+from csv import DictWriter as csv_DictWriter
 from os import path, walk
+from sys import stdout as sys_stdout
 from lib.detector.trash import TrashDetector
 from lib.detector.hash import HashDetector
 from lib.runner.abstract import AbstractCommand
@@ -42,7 +42,7 @@ class DumpScraperGetscore(AbstractCommand):
         organizers = [TrashDetector(), PlainDetector(), HashDetector()]
 
         features_handle = open(self.settings['data_dir'] + "/" + targetfolder + '/features.csv', 'w')
-        features_writer = csv.DictWriter(features_handle, fieldnames=['trash', 'plain', 'hash', 'label', 'file'])
+        features_writer = csv_DictWriter(features_handle, fieldnames=['trash', 'plain', 'hash', 'label', 'file'])
         features_writer.writerow({'trash': 'Trash score', 'plain': 'Plain score', 'hash': 'Hash score', 'label': 'Label', 'file': 'Filename'})
 
         for folder in folders:
@@ -59,12 +59,12 @@ class DumpScraperGetscore(AbstractCommand):
                 for dump in files:
                     # If the force param is set, skip all the files that do not match
                     if self.parentArgs.force and self.parentArgs.force not in dump:
-                        sys.stdout.write('@')
-                        sys.stdout.flush()
+                        sys_stdout.write('@')
+                        sys_stdout.flush()
                         continue
 
-                    sys.stdout.write('.')
-                    sys.stdout.flush()
+                    sys_stdout.write('.')
+                    sys_stdout.flush()
 
                     with open(root + "/" + dump, 'r+') as handle:
                         data = handle.read()

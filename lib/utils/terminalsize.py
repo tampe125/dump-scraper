@@ -2,11 +2,15 @@ __author__ = 'Davide Tampellini'
 __copyright__ = '2015 Davide Tampellini - FabbricaBinaria'
 __license__ = 'GNU GPL version 3 or later'
 
-import os
-import shlex
-import struct
-import platform
-import subprocess
+from os import open as os_open
+from os import close as os_close
+from os import ctermid as os_ctermid
+from os import O_RDONLY as os_O_RDONLY
+from os import environ as os_environ
+from shlex import split as shlex_split
+from platform import system as platform_system
+from struct import unpack as struct_unpack
+from subprocess import check_call as subprocess_check_call
 
 
 def get_terminal_size():
@@ -16,7 +20,7 @@ def get_terminal_size():
      originally retrieved from:
      http://stackoverflow.com/questions/566746/how-to-get-console-window-width-in-python
     """
-    current_os = platform.system()
+    current_os = platform_system()
     tuple_xy = None
     if current_os == 'Windows':
         tuple_xy = _get_terminal_size_windows()
@@ -43,7 +47,7 @@ def _get_terminal_size_windows():
         if res:
             (bufx, bufy, curx, cury, wattr,
              left, top, right, bottom,
-             maxx, maxy) = struct.unpack("hhhhHhhhhhh", csbi.raw)
+             maxx, maxy) = struct_unpack("hhhhHhhhhhh", csbi.raw)
             sizex = right - left + 1
             sizey = bottom - top + 1
             return sizex, sizey
@@ -55,8 +59,9 @@ def _get_terminal_size_tput():
     # get terminal width
     # src: http://stackoverflow.com/questions/263890/how-do-i-find-the-width-height-of-a-terminal-window
     try:
-        cols = int(subprocess.check_call(shlex.split('tput cols')))
-        rows = int(subprocess.check_call(shlex.split('tput lines')))
+        cols = int(subprocess_check_call(shlex_split('tput cols')))
+        rows = int(subprocess_check_call(shlex_split('tput lines')))
+
         return (cols, rows)
     except:
         pass
@@ -65,24 +70,24 @@ def _get_terminal_size_tput():
 def _get_terminal_size_linux():
     def ioctl_GWINSZ(fd):
         try:
-            import fcntl
+            from fcntl import ioctl as fcntl_ioctl
             import termios
-            cr = struct.unpack('hh',
-                               fcntl.ioctl(fd, termios.TIOCGWINSZ, '1234'))
+            cr = struct_unpack('hh',
+                               fcntl_ioctl(fd, termios.TIOCGWINSZ, '1234'))
             return cr
         except:
             pass
     cr = ioctl_GWINSZ(0) or ioctl_GWINSZ(1) or ioctl_GWINSZ(2)
     if not cr:
         try:
-            fd = os.open(os.ctermid(), os.O_RDONLY)
+            fd = os_open(os_ctermid(), os_O_RDONLY)
             cr = ioctl_GWINSZ(fd)
-            os.close(fd)
+            os_close(fd)
         except:
             pass
     if not cr:
         try:
-            cr = (os.environ['LINES'], os.environ['COLUMNS'])
+            cr = (os_environ['LINES'], os_environ['COLUMNS'])
         except:
             return None
     return int(cr[1]), int(cr[0])

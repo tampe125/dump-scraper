@@ -3,9 +3,9 @@ __copyright__ = '2015 Davide Tampellini - FabbricaBinaria'
 __license__ = 'GNU GPL version 3 or later'
 
 import colorama
-import random
-import shutil
 from os import path, makedirs, walk, listdir, system, name
+from random import choice as random_choice
+from shutil import copyfile as shutil_copyfile
 from lib.runner.abstract import AbstractCommand
 from lib.exceptions.exceptions import RunningError
 from lib.runner import getscore
@@ -38,7 +38,7 @@ class DumpScraperTraining(AbstractCommand):
                  for filename in files
                  if not filename.endswith(".csv")]
         while 1:
-            rfile = random.choice(files)
+            rfile = random_choice(files)
 
             trash  = len(listdir(self.settings['data_dir'] + "/" + 'training/trash'))
             plain  = len(listdir(self.settings['data_dir'] + "/" + 'training/plain'))
@@ -82,11 +82,11 @@ class DumpScraperTraining(AbstractCommand):
             answer = raw_input(input_descr)
 
             if answer == 't':
-                shutil.copyfile(rfile, self.settings['data_dir'] + "/" + 'training/trash/' + path.basename(rfile))
+                shutil_copyfile(rfile, self.settings['data_dir'] + "/" + 'training/trash/' + path.basename(rfile))
             elif answer == 'p':
-                shutil.copyfile(rfile, self.settings['data_dir'] + "/" + 'training/plain/' + path.basename(rfile))
+                shutil_copyfile(rfile, self.settings['data_dir'] + "/" + 'training/plain/' + path.basename(rfile))
             elif answer == 'h':
-                shutil.copyfile(rfile, self.settings['data_dir'] + "/" + 'training/hash/' + path.basename(rfile))
+                shutil_copyfile(rfile, self.settings['data_dir'] + "/" + 'training/hash/' + path.basename(rfile))
             elif answer == 's':
                 print("")
                 continue

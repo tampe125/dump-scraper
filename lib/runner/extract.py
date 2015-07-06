@@ -4,8 +4,8 @@ __license__ = 'GNU GPL version 3 or later'
 
 import colorama
 import datetime
-import sys
 from os import path, makedirs, walk
+from sys import stdout as sys_stdout
 from lib.exceptions.exceptions import RunningError
 from lib.extractor.hash import HashExtractor
 from lib.extractor.plain import PlainExtractor
@@ -58,12 +58,12 @@ class DumpScraperExtract(AbstractCommand):
                 for dump in files:
                     # If the force param is set, skip all the files that do not match
                     if self.parentArgs.force and self.parentArgs.force not in dump:
-                        sys.stdout.write('@')
-                        sys.stdout.flush()
+                        sys_stdout.write('@')
+                        sys_stdout.flush()
                         continue
 
-                    sys.stdout.write('.')
-                    sys.stdout.flush()
+                    sys_stdout.write('.')
+                    sys_stdout.flush()
 
                     with open(root + "/" + dump, 'r+') as handle:
                         data = handle.read()
