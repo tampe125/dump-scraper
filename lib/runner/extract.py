@@ -3,9 +3,9 @@ __copyright__ = '2015 Davide Tampellini - FabbricaBinaria'
 __license__ = 'GNU GPL version 3 or later'
 
 import colorama
-import os
 import datetime
 import sys
+from os import path, makedirs, walk
 from lib.exceptions.exceptions import RunningError
 from lib.extractor.hash import HashExtractor
 from lib.extractor.plain import PlainExtractor
@@ -14,15 +14,15 @@ from lib.runner.abstract import AbstractCommand
 
 class DumpScraperExtract(AbstractCommand):
     def check(self):
-        if not os.path.exists('data/organized'):
+        if not path.exists(self.settings['data_dir'] + "/" + 'organized'):
             raise RunningError(colorama.Fore.RED + "There aren't any organized dump files to process. Organize them before continuing.")
 
-        if not os.path.exists('data/processed'):
-            os.makedirs('data/processed')
-        if not os.path.exists('data/processed/hash'):
-            os.makedirs('data/processed/hash')
-        if not os.path.exists('data/processed/plain'):
-            os.makedirs('data/processed/plain')
+        if not path.exists(self.settings['data_dir'] + "/" + 'processed'):
+            makedirs(self.settings['data_dir'] + "/" + 'processed')
+        if not path.exists(self.settings['data_dir'] + "/" + 'processed/hash'):
+            makedirs(self.settings['data_dir'] + "/" + 'processed/hash')
+        if not path.exists(self.settings['data_dir'] + "/" + 'processed/plain'):
+            makedirs(self.settings['data_dir'] + "/" + 'processed/plain')
 
     def run(self):
         folders = []
@@ -45,16 +45,16 @@ class DumpScraperExtract(AbstractCommand):
         extractors = {'hash': HashExtractor(), 'plain': PlainExtractor()}
 
         for folder in folders:
-            source = 'data/organized/' + folder
+            source = self.settings['data_dir'] + "/" + 'organized/' + folder
 
-            if not os.path.exists(source):
+            if not path.exists(source):
                 print("Directory " + source + " does not exist!")
                 print("")
                 continue
 
             print("Directory   : " + folder)
 
-            for root, dirs, files in os.walk(source):
+            for root, dirs, files in walk(source):
                 for dump in files:
                     # If the force param is set, skip all the files that do not match
                     if self.parentArgs.force and self.parentArgs.force not in dump:
@@ -86,12 +86,12 @@ class DumpScraperExtract(AbstractCommand):
                     extracted = extractor.extracted.strip(' \n\t\r')
 
                     if extracted:
-                        destination = 'data/processed/' + label + '/' + os.path.basename(root)
+                        destination = self.settings['data_dir'] + "/" + 'processed/' + label + '/' + path.basename(root)
 
-                        if not os.path.exists(destination):
-                            os.makedirs(destination)
+                        if not path.exists(destination):
+                            makedirs(destination)
 
-                        with open(destination + '/' + os.path.basename(dump), 'w') as dump_file:
+                        with open(destination + '/' + path.basename(dump), 'w') as dump_file:
                             dump_file.write(extracted)
 
                 print("")

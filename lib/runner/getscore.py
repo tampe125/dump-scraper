@@ -2,12 +2,12 @@ __author__ = 'Davide Tampellini'
 __copyright__ = '2015 Davide Tampellini - FabbricaBinaria'
 __license__ = 'GNU GPL version 3 or later'
 
-import os
 import datetime
 import csv
 import sys
 import re
 import colorama
+from os import path, walk
 from lib.detector.trash import TrashDetector
 from lib.detector.hash import HashDetector
 from lib.runner.abstract import AbstractCommand
@@ -17,7 +17,7 @@ from lib.exceptions.exceptions import RunningError
 
 class DumpScraperGetscore(AbstractCommand):
     def check(self):
-        if not os.path.exists('data/raw'):
+        if not path.exists(self.settings['data_dir'] + "/" + 'raw'):
             raise RunningError(colorama.Fore.RED + "There aren't any dump files to process. Scrape them before continuing.")
 
     def run(self, **keyargs):
@@ -41,21 +41,21 @@ class DumpScraperGetscore(AbstractCommand):
         regex_empty_lines = re.compile(r'^\s*?\n', re.M)
         organizers = [TrashDetector(), PlainDetector(), HashDetector()]
 
-        features_handle = open('data/' + targetfolder + '/features.csv', 'w')
+        features_handle = open(self.settings['data_dir'] + "/" + targetfolder + '/features.csv', 'w')
         features_writer = csv.DictWriter(features_handle, fieldnames=['trash', 'plain', 'hash', 'label', 'file'])
         features_writer.writerow({'trash': 'Trash score', 'plain': 'Plain score', 'hash': 'Hash score', 'label': 'Label', 'file': 'Filename'})
 
         for folder in folders:
-            source = 'data/' + targetfolder + '/' + folder
+            source = self.settings['data_dir'] + "/" + targetfolder + '/' + folder
 
-            if not os.path.exists(source):
+            if not path.exists(source):
                 print("Directory " + source + " does not exist!")
                 print("")
                 continue
 
             print("Directory   : " + folder)
 
-            for root, dirs, files in os.walk(source):
+            for root, dirs, files in walk(source):
                 for dump in files:
                     # If the force param is set, skip all the files that do not match
                     if self.parentArgs.force and self.parentArgs.force not in dump:
@@ -91,7 +91,7 @@ class DumpScraperGetscore(AbstractCommand):
                         csvline[organizer.returnkey()] = round(score, 4)
                         results[organizer.returnkey()] = round(score, 4)
 
-                    label = os.path.basename(root)
+                    label = path.basename(root)
 
                     if label == 'hash':
                         csvline['label'] = 1
@@ -102,7 +102,7 @@ class DumpScraperGetscore(AbstractCommand):
                     else:
                         csvline['label'] = ''
 
-                    csvline['file'] = os.path.basename(root) + "/" + dump
+                    csvline['file'] = path.basename(root) + "/" + dump
 
                     features_writer.writerow(csvline)
 

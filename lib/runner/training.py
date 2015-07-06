@@ -4,27 +4,27 @@ __license__ = 'GNU GPL version 3 or later'
 
 import colorama
 import random
-import os
 import shutil
-
+from os import path, makedirs, walk, listdir, system, name
 from lib.runner.abstract import AbstractCommand
 from lib.exceptions.exceptions import RunningError
 from lib.runner import getscore
 from lib.utils.terminalsize import get_terminal_size
 
+
 class DumpScraperTraining(AbstractCommand):
     def check(self):
-        if not os.path.exists('data/raw'):
+        if not path.exists(self.settings['data_dir'] + "/" + 'raw'):
             raise RunningError(colorama.Fore.RED + "There aren't any dump files to process. Scrape them before continuing.")
 
-        if not os.path.exists('data/training'):
-            os.makedirs('data/training')
-        if not os.path.exists('data/training/hash'):
-            os.makedirs('data/training/hash')
-        if not os.path.exists('data/training/plain'):
-            os.makedirs('data/training/plain')
-        if not os.path.exists('data/training/trash'):
-            os.makedirs('data/training/trash')
+        if not path.exists(self.settings['data_dir'] + "/" + 'training'):
+            makedirs(self.settings['data_dir'] + "/" + 'training')
+        if not path.exists(self.settings['data_dir'] + "/" + 'training/hash'):
+            makedirs(self.settings['data_dir'] + "/" + 'training/hash')
+        if not path.exists(self.settings['data_dir'] + "/" + 'training/plain'):
+            makedirs(self.settings['data_dir'] + "/" + 'training/plain')
+        if not path.exists(self.settings['data_dir'] + "/" + 'training/trash'):
+            makedirs(self.settings['data_dir'] + "/" + 'training/trash')
 
     def run(self):
         if self.parentArgs.getdata:
@@ -33,19 +33,19 @@ class DumpScraperTraining(AbstractCommand):
             self._getscore()
 
     def _gettrainingdata(self):
-        files = [os.path.join(path, filename)
-                 for path, dirs, files in os.walk('data/raw')
+        files = [path.join(w_path, filename)
+                 for w_path, dirs, files in walk(self.settings['data_dir'] + "/" + 'raw')
                  for filename in files
                  if not filename.endswith(".csv")]
         while 1:
             rfile = random.choice(files)
 
-            trash  = len(os.listdir('data/training/trash'))
-            plain  = len(os.listdir('data/training/plain'))
-            hashes = len(os.listdir('data/training/hash'))
+            trash  = len(listdir(self.settings['data_dir'] + "/" + 'training/trash'))
+            plain  = len(listdir(self.settings['data_dir'] + "/" + 'training/plain'))
+            hashes = len(listdir(self.settings['data_dir'] + "/" + 'training/hash'))
 
             # Clear the screen before displaying the text
-            os.system('cls' if os.name == 'nt' else 'clear')
+            system('cls' if name == 'nt' else 'clear')
 
             # Let's the terminal size, so I can fill it with the file text
             cols, rows = get_terminal_size()
@@ -82,11 +82,11 @@ class DumpScraperTraining(AbstractCommand):
             answer = raw_input(input_descr)
 
             if answer == 't':
-                shutil.copyfile(rfile, 'data/training/trash/' + os.path.basename(rfile))
+                shutil.copyfile(rfile, self.settings['data_dir'] + "/" + 'training/trash/' + path.basename(rfile))
             elif answer == 'p':
-                shutil.copyfile(rfile, 'data/training/plain/' + os.path.basename(rfile))
+                shutil.copyfile(rfile, self.settings['data_dir'] + "/" + 'training/plain/' + path.basename(rfile))
             elif answer == 'h':
-                shutil.copyfile(rfile, 'data/training/hash/' + os.path.basename(rfile))
+                shutil.copyfile(rfile, self.settings['data_dir'] + "/" + 'training/hash/' + path.basename(rfile))
             elif answer == 's':
                 print("")
                 continue
