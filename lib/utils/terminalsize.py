@@ -4,7 +4,6 @@ __license__ = 'GNU GPL version 3 or later'
 
 from os import open as os_open
 from os import close as os_close
-from os import ctermid as os_ctermid
 from os import O_RDONLY as os_O_RDONLY
 from os import environ as os_environ
 from shlex import split as shlex_split
@@ -80,6 +79,7 @@ def _get_terminal_size_linux():
     cr = ioctl_GWINSZ(0) or ioctl_GWINSZ(1) or ioctl_GWINSZ(2)
     if not cr:
         try:
+            from os import ctermid as os_ctermid
             fd = os_open(os_ctermid(), os_O_RDONLY)
             cr = ioctl_GWINSZ(fd)
             os_close(fd)
