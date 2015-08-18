@@ -17,6 +17,7 @@ class PlainDetector(AbstractDetector):
         self.regex['pwdES'] = re.compile(r'Contraseña\s*?[:|=].*?$', re.I | re.M)
         self.regex['usrPwd'] = re.compile(r'[a-z0-9]{5,15}:.{1,10}$', re.I | re.M)
         self.regex['pwdEmail'] = re.compile(r'.{4,15}[\s|/|;|:|\||,|\t][a-z0-9\-\._]+@[a-z0-9\-\.]+\.[a-z]{2,4}\s*?$', re.I | re.M)
+        self.regex['insertPlain'] = re.compile(r'^INSERT INTO.*?\((.*?password.*?)\).*?$', re.M)
 
     def analyze(self, results):
         # If the Trash Detector has an high value, don't process the file, otherwise we could end up with a false positive
@@ -29,6 +30,7 @@ class PlainDetector(AbstractDetector):
         score += self.detectPwdStandalone()
         score += self.detectUsernamePwd() * 0.75
         score += self.detectPwdEmails()
+        score += self.mysqlInsertPlain()
 
         self.score = score
 
@@ -70,3 +72,56 @@ class PlainDetector(AbstractDetector):
         results = len(re.findall(self.regex['pwdEmail'], self.data))
 
         return results / self.lines
+
+    def mysqlInsertPlain(self):
+        """
+        Detects a MySQL dump where the passwords are plain ones
+        :return: ratio between lines and occurrences
+        """
+
+        # Ok, this is a thought  one, since we have to actually read and parse the whole file
+        # Is this a dump file that I can handle?
+        columns = re.findall(self.regex['insertPlain'], self.data)
+        if not len(columns):
+            return 0
+
+        try:
+            columns = str(columns[0]).split(',')
+            pwd_idx = [i for i, s in enumerate(columns) if 'password' in s][0]
+        except IndexError:
+            # The "password" field is not in the list
+            return 0
+
+        # Flag to know if I'm currently reading part of a query or simply reading garbage
+        in_query = False
+        pwd_counter = 0
+        counter = 0
+
+        # Ok, now I have the index of the password field, let's double check if these really are plain passwords
+        for line in self.data.split("\n"):
+            if 'INSERT' in line:
+                in_query = True
+                continue
+
+            if not in_query:
+                continue
+
+            try:
+                password = line.split(',')[pwd_idx]
+            except IndexError:
+                continue
+
+            counter += 1
+
+            # Most likey plain password have "123" inside them
+            if '123' in password:
+                pwd_counter += 1
+
+            if ');' in line:
+                in_query = False
+
+        # Did I hit enough possible passwords?
+        if pwd_counter > 10:
+            return counter / self.lines
+
+        return 0
