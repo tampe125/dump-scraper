@@ -5,6 +5,7 @@
 - Added support for standalone passwords in foreign language (Spanish)
 - Added support for MD5 salted hashes
 - Added warning when a new release is found
+- Added support for dump files containing plain passwords
 
 ## 0.2.0 [Unreleased]
 ### Added

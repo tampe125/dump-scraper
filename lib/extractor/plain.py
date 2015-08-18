@@ -37,6 +37,8 @@ class PlainExtractor(AbstractExtractor):
         for key, regex in self.regex.iteritems():
             data += self.extractdata(regex) + '\n'
 
+        data += self.mysqlInsertPlain()
+
         self.extracted = data
 
     def replacemateches(self, match):
@@ -83,3 +85,48 @@ class PlainExtractor(AbstractExtractor):
             pass
 
         return ''
+
+    def mysqlInsertPlain(self):
+        """
+        Extracts a MySQL dump where the passwords are plain ones
+        :return: ratio between lines and occurrences
+        """
+
+        # Ok, this is a thought  one, since we have to actually read and parse the whole file
+        # Is this a dump file that I can handle?
+        columns = re.findall(r'^INSERT INTO.*?\((.*?password.*?)\).*?$', self.data, re.M)
+
+        if not len(columns):
+            return
+
+        try:
+            columns = str(columns[0]).split(',')
+            pwd_idx = [i for i, s in enumerate(columns) if 'password' in s][0]
+        except IndexError:
+            # The "password" field is not in the list
+            return
+
+        # Flag to know if I'm currently reading part of a query or simply reading garbage
+        in_query = False
+        matches = []
+
+        # Ok, now I have the index of the password field, let's double check if these really are plain passwords
+        for line in self.data.split("\n"):
+            if 'INSERT' in line:
+                in_query = True
+                continue
+
+            if not in_query:
+                continue
+
+            try:
+                password = line.split(',')[pwd_idx]
+            except IndexError:
+                continue
+
+            matches.append(password.strip("\t `'"))
+
+            if ');' in line:
+                in_query = False
+
+        return '\n'.join(matches)
