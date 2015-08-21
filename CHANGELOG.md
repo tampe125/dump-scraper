@@ -6,6 +6,7 @@
 - Added support for MD5 salted hashes
 - Added warning when a new release is found
 - Added support for dump files containing plain passwords
+- Added "clean" parameter for the classify job, so you can automatically clean previous results
 
 ## 0.2.0 [Unreleased]
 ### Added

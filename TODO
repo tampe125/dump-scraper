@@ -1,4 +1,34 @@
 Add the following regex while scraping + data detection and extraction
 
 Command Line Password '\-\-[pP]assword\=[^%^\$]'
-Email + password ‘[\s\|,;’]+[a-z0-9\-\._]+@[a-z0-9\-\.]+\.[a-z]{2,4}[\s\|,;:’]+'
+SQLmap cracked password:
+    [INFO] cracked password '050582' for hash '70a03af219d66bad60a764d0f1e25520'
+    [INFO] cracked password 'testa' for user 'zlomjo@volja.net.1273568079'
+
+KeyLogger report:
+    ----------------------------------------------------------
+    Program: Google Chrome
+    Url/Host: http://account.thewa...getsteamkey.php
+    Login: brownBulyon
+    Password: 8Bor2CHli74GH
+    Computer: MICROSOF-B536DD
+    Date: 2012-12-30 10:21:14
+    Ip: 46.175.132.180
+    ----------------------------------------------------------
+
+    Software:	IE 7-9
+    Sitename:	http://www.facebook.com/
+    Login:		brucemat257@hotmail.com:
+    PC Name:	BRUCE-PC
+    Date:		2013-01-13 20:47:41
+    =====================================
+	
+	========/Аккаунт/========
+	iwrecktrainz@gmail.com:rangerguy5
+	========/Аккаунт/========
+	Дата Рождения: 1985-05-02
+	Дата создания: 2009-01-06
+	Дата редактирования: 2015-08-18
+	Страна: US
+	========/Игры [1]/========
+	- [1] Dragon Ageâ¢ II -

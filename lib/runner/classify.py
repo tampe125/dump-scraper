@@ -7,7 +7,7 @@ import colorama
 from csv import reader as csv_reader
 from os import path, makedirs
 from scipy import genfromtxt as scipy_genfromtxt
-from shutil import copyfile as shutil_copyfile
+from shutil import copyfile as shutil_copyfile, rmtree as shutil_rmtree
 from lib.runner.abstract import AbstractCommand
 from lib.exceptions.exceptions import RunningError
 from lib.runner import getscore
@@ -41,6 +41,7 @@ class DumpScraperClassify(AbstractCommand):
         clf.fit(training, target)
 
         trash_count = hash_count = plain_count = 0
+        cleared = []
 
         with open(self.settings['data_dir'] + "/" + 'raw/features.csv', 'rb') as csvfile:
             reader = csv_reader(csvfile)
@@ -62,12 +63,18 @@ class DumpScraperClassify(AbstractCommand):
                     folder = 'plain'
                     plain_count += 1
 
-                target_dir = self.settings['data_dir'] + "/" + 'organized/' + folder + "/" + line[-1]
+                target_file = self.settings['data_dir'] + "/" + 'organized/' + folder + "/" + line[-1]
+                target_dir = path.dirname(target_file)
 
-                if not path.exists(path.dirname(target_dir)):
-                    makedirs(path.dirname(target_dir))
+                # If asked for a clean run, let's delete the entire folder before copying any file
+                if self.parentArgs.clean and target_dir not in cleared:
+                    cleared.append(target_dir)
+                    shutil_rmtree(target_dir)
 
-                shutil_copyfile(self.settings['data_dir'] + "/" + 'raw/' + line[-1], target_dir)
+                if not path.exists(target_dir):
+                    makedirs(target_dir)
+
+                shutil_copyfile(self.settings['data_dir'] + "/" + 'raw/' + line[-1], target_file)
 
         print("Trash files: " + str(trash_count))
         print("Hash files: " + str(hash_count))
