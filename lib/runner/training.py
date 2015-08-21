@@ -3,9 +3,11 @@ __copyright__ = '2015 Davide Tampellini - FabbricaBinaria'
 __license__ = 'GNU GPL version 3 or later'
 
 import colorama
-from os import path, makedirs, walk, listdir, system, name
+from os import path, makedirs, walk, listdir, system, name, startfile as os_startfile
+from platform import system as platform_system
 from random import choice as random_choice
 from shutil import copyfile as shutil_copyfile
+from subprocess import call as subprocess_call
 from lib.runner.abstract import AbstractCommand
 from lib.exceptions.exceptions import RunningError
 from lib.runner import getscore
@@ -68,7 +70,9 @@ class DumpScraperTraining(AbstractCommand):
             print("")
             print colorama.Fore.YELLOW + "Trash: " + str(trash) + " Plain: " + str(plain) + " Hash: " + str(hashes)
 
-            input_descr = colorama.Fore.MAGENTA + "[t]"
+            input_descr = colorama.Fore.MAGENTA + "[o]"
+            input_descr += colorama.Fore.CYAN + "open "
+            input_descr += colorama.Fore.MAGENTA + "[t]"
             input_descr += colorama.Fore.CYAN + "rash "
             input_descr += colorama.Fore.MAGENTA + "[p]"
             input_descr += colorama.Fore.CYAN + "lain "
@@ -81,7 +85,16 @@ class DumpScraperTraining(AbstractCommand):
 
             answer = raw_input(input_descr)
 
-            if answer == 't':
+            # Opening a file with the default application AND being cross platform is a PITA...
+            if answer == 'o':
+                current_os = platform_system()
+                if current_os == 'Windows':
+                    os_startfile(rfile)
+                elif current_os == 'Linux':
+                    subprocess_call(["xdg-open", rfile])
+                elif current_os == 'Darwin':
+                    system("open " + rfile)
+            elif answer == 't':
                 shutil_copyfile(rfile, self.settings['data_dir'] + "/" + 'training/trash/' + path.basename(rfile))
             elif answer == 'p':
                 shutil_copyfile(rfile, self.settings['data_dir'] + "/" + 'training/plain/' + path.basename(rfile))
