@@ -43,7 +43,7 @@ class DumpScraperClassify(AbstractCommand):
         trash_count = hash_count = plain_count = 0
         cleared = []
 
-        with open(self.settings['data_dir'] + "/" + 'raw/features.csv', 'rb') as csvfile:
+        with open(self.settings['data_dir'] + "/" + 'features.csv', 'rb') as csvfile:
             reader = csv_reader(csvfile)
 
             for line in reader:

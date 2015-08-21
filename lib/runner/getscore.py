@@ -23,9 +23,11 @@ class DumpScraperGetscore(AbstractCommand):
     def run(self, **keyargs):
         if 'training' in keyargs and keyargs['training']:
             targetfolder = 'training'
+            feature_path = self.settings['data_dir'] + "/training/features.csv"
             folders = ['trash', 'hash', 'plain']
         else:
             targetfolder = 'raw'
+            feature_path = self.settings['data_dir'] + "/features.csv"
             folders = [self.parentArgs.since]
 
             if self.parentArgs.until:
@@ -41,7 +43,7 @@ class DumpScraperGetscore(AbstractCommand):
         regex_empty_lines = re.compile(r'^\s*?\n', re.M)
         organizers = [TrashDetector(), PlainDetector(), HashDetector()]
 
-        features_handle = open(self.settings['data_dir'] + "/" + targetfolder + '/features.csv', 'w')
+        features_handle = open(feature_path, 'w')
         features_writer = csv_DictWriter(features_handle, fieldnames=['trash', 'plain', 'hash', 'label', 'file'])
         features_writer.writerow({'trash': 'Trash score', 'plain': 'Plain score', 'hash': 'Hash score', 'label': 'Label', 'file': 'Filename'})
 
