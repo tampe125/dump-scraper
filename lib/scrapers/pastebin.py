@@ -13,8 +13,8 @@ from requests.exceptions import ConnectionError
 
 
 class PastebinScraper(AbstractScrape):
-    def __init__(self, settings, bot, bitly):
-        super(PastebinScraper, self).__init__(settings, bot, bitly)
+    def __init__(self, settings):
+        super(PastebinScraper, self).__init__(settings)
 
         self.ref_id = None
 

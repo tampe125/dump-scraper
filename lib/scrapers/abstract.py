@@ -10,22 +10,15 @@ from abc import ABCMeta, abstractmethod
 from datetime import datetime
 from os import path, makedirs
 
-try:
-    from bitly_api import BitlyError
-except ImportError:
-    pass
-
 
 class AbstractScrape:
     __metaclass__ = ABCMeta
 
-    def __init__(self, settings, bot, bitly):
+    def __init__(self, settings):
         self.ref_id = None
         self.sleep  = 3
         self.queue = []
         self.settings = settings
-        self.bot = bot
-        self.bitly = bitly
 
     def empty(self):
         return len(self.queue) == 0
@@ -71,9 +64,7 @@ class AbstractScrape:
                     sleep(5)
                     continue
 
-                tweet = self.build_tweet(paste)
-                if tweet and self.bot:
-                    self.bot.PostUpdate(tweet)
+                self.build_tweet(paste)
 
             while self.empty():
                 # logging.debug('[*] No results... sleeping')
@@ -101,13 +92,6 @@ class AbstractScrape:
                     dump_file.write(paste.text)
 
             url = paste.url
-
-            if self.bitly:
-                try:
-                    url = self.bitly.shorten(paste.url)['url']
-                except BitlyError:
-                    url = paste.url
-
             tweet = url
 
             if paste.type == 'db_dump':
