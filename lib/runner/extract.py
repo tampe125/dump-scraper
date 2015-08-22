@@ -6,6 +6,7 @@ import colorama
 import datetime
 from os import path, makedirs, walk
 from sys import stdout as sys_stdout
+from shutil import rmtree as shutil_rmtree
 from lib.exceptions.exceptions import RunningError
 from lib.extractor.hash import HashExtractor
 from lib.extractor.plain import PlainExtractor
@@ -54,6 +55,8 @@ class DumpScraperExtract(AbstractCommand):
 
             print("Directory   : " + folder)
 
+            cleared = []
+
             for root, dirs, files in walk(source):
                 for dump in files:
                     # If the force param is set, skip all the files that do not match
@@ -87,6 +90,11 @@ class DumpScraperExtract(AbstractCommand):
 
                     if extracted:
                         destination = self.settings['data_dir'] + "/" + 'processed/' + label + '/' + path.basename(root)
+
+                        # If asked for a clean run, let's delete the entire folder before copying any file
+                        if self.parentArgs.clean and destination not in cleared and path.exists(destination):
+                            cleared.append(destination)
+                            shutil_rmtree(destination)
 
                         if not path.exists(destination):
                             makedirs(destination)

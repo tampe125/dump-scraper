@@ -67,7 +67,7 @@ class DumpScraperClassify(AbstractCommand):
                 target_dir = path.dirname(target_file)
 
                 # If asked for a clean run, let's delete the entire folder before copying any file
-                if self.parentArgs.clean and target_dir not in cleared:
+                if self.parentArgs.clean and target_dir not in cleared and path.exists(target_dir):
                     cleared.append(target_dir)
                     shutil_rmtree(target_dir)
 

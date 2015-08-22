@@ -72,6 +72,9 @@ Dump Scraper - A better way of scraping
                                     help='Stopping date for the analysis, format YYYY-MM-DD. If not supplied only the SINCE date will be processed')
         parser_extract.add_argument('-f', '--force',
                                     help="Force a specific dump filename to process, used for debug only")
+        parser_extract.add_argument('-c', '--clean',
+                                    help='Before extracting the dumps of a day, clears the entire folder',
+                                    action='store_true')
 
         self.args = parser.parse_args()
 
