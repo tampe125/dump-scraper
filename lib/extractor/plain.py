@@ -11,6 +11,9 @@ class PlainExtractor(AbstractExtractor):
     def __init__(self):
         super(PlainExtractor, self).__init__()
 
+        # Keylogger output
+        self.regex['keylogger_1'] = re.compile(r'program:.*?\nurl/host:.*?\nlogin:.*?\npassword:\s(.*?)\ncomputer:.*?\n', re.I)
+        self.regex['keylogger_2'] = re.compile(r'software:.*?\nsitename:.*?\nlogin:.*?:(.*?)\npc name:.*?\n', re.I)
         # URL with passwords
         self.regex['urlPwd'] = re.compile(r'[ht|f]tp[s]*://\w+:(.*)@\w*\.\w*/')
         # Extracts data displayed in columns: Davison 	Yvonne 	library
@@ -26,10 +29,8 @@ class PlainExtractor(AbstractExtractor):
         self.regex['md5'] = re.compile(r'^(?!http)[a-z0-9\-]{5,15}:(.*?)$', re.I | re.M)
 
         # Skip regexes
-        # Email address
-        self.regex['email'] = re.compile(r'[a-z0-9\-\._]+@[a-z0-9\-\.]+\.[a-z]{2,4}', re.I)
-        # Digits only
-        self.regex['digits'] = re.compile(r'^\d+$')
+        self.skip_regex = {'email': re.compile(r'[a-z0-9\-\._]+@[a-z0-9\-\.]+\.[a-z]{2,4}', re.I),
+                           'digits': re.compile(r'^\d+$')}
 
     def analyze(self):
         data = ''
@@ -68,12 +69,12 @@ class PlainExtractor(AbstractExtractor):
 
             # Is it an email address?
             if not skip:
-                if re.match(self.regex['email'], string):
+                if re.match(self.skip_regex['email'], string):
                     skip = True
 
             # Is this a numbers only password?
             if not skip:
-                if re.match(self.regex['digits'], string):
+                if re.match(self.skip_regex['digits'], string):
                     skip = True
 
             # If the skip flag is not set, let's add the string to the matches
@@ -97,14 +98,14 @@ class PlainExtractor(AbstractExtractor):
         columns = re.findall(r'^INSERT INTO.*?\((.*?password.*?)\).*?$', self.data, re.M)
 
         if not len(columns):
-            return
+            return ''
 
         try:
             columns = str(columns[0]).split(',')
             pwd_idx = [i for i, s in enumerate(columns) if 'password' in s][0]
         except IndexError:
             # The "password" field is not in the list
-            return
+            return ''
 
         # Flag to know if I'm currently reading part of a query or simply reading garbage
         in_query = False
