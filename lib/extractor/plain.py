@@ -11,6 +11,8 @@ class PlainExtractor(AbstractExtractor):
     def __init__(self):
         super(PlainExtractor, self).__init__()
 
+        # SQLmap cracked password output
+        self.regex['sqlmap'] = re.compile(r"\[INFO\] (?:cracked|resuming) password '(.*?)' for")
         # Keylogger output
         self.regex['keylogger_1'] = re.compile(r'program:.*?\nurl/host:.*?\nlogin:.*?\npassword:\s(.*?)\ncomputer:.*?\n', re.I)
         self.regex['keylogger_2'] = re.compile(r'software:.*?\nsitename:.*?\nlogin:.*?:(.*?)\npc name:.*?\n', re.I)

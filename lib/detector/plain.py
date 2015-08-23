@@ -18,6 +18,7 @@ class PlainDetector(AbstractDetector):
         self.regex['usrPwd'] = re.compile(r'[a-z0-9]{5,15}:.{1,10}$', re.I | re.M)
         self.regex['pwdEmail'] = re.compile(r'.{4,15}[\s|/|;|:|\||,|\t][a-z0-9\-\._]+@[a-z0-9\-\.]+\.[a-z]{2,4}\s*?$', re.I | re.M)
         self.regex['insertPlain'] = re.compile(r'^INSERT INTO.*?\((.*?password.*?)\).*?$', re.M)
+        self.regex['sqlmap'] = re.compile(r'\[INFO\] (cracked|resuming) password', re.I)
         self.regex['keylogger_1'] = re.compile(r'program:.*?\nurl/host:.*?\nlogin:.*?\npassword:.*?\ncomputer:.*?\n', re.I)
         self.regex['keylogger_2'] = re.compile(r'software:.*?\nsitename:.*?\nlogin:.*?\npc name:.*?\n', re.I)
 
@@ -42,6 +43,7 @@ class PlainDetector(AbstractDetector):
         score += self.detectBulgarianKeylogger()
         score += self.detectKeylogger1()
         score += self.detectKeylogger2()
+        score += self.detectSqlMap()
 
         self.score = score
 
@@ -185,5 +187,17 @@ class PlainDetector(AbstractDetector):
         :return: ratio between occurrences and lines
         """
         results = len(re.findall(self.regex['keylogger_bg'], self.data))
+
+        return results / self.lines
+
+    def detectSqlMap(self):
+        """
+        Detects SQLmap output of cracked passwords:
+
+        [INFO] cracked password '050582' for hash '70a03af219d66bad60a764d0f1e25520'
+
+        :return: ratio between occurrences and lines
+        """
+        results = len(re.findall(self.regex['sqlmap'], self.data))
 
         return results / self.lines
