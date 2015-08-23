@@ -41,7 +41,7 @@ class TrashDetector(AbstractDetector):
         self.regex['mysqlDates'] = re.compile(r'(19|20)\d\d[\-/.](0[1-9]|1[012])[\-/.](0[1-9]|[12][0-9]|3[01])')
         self.regex['engDates'] = re.compile(r'(0[1-9]|1[012])[\-/.](0[1-9]|[12][0-9]|3[01])[\-/.](19|20)\d\d')
         self.regex['time'] = re.compile(r'(?:2[0-3]|[01][0-9]):[0-5][0-9](?::[0-5][0-9])?')
-        self.regex['htmlTags'] = re.compile(r'</?(?:html|div|p|div|script|link|span|u|ul|li|ol|a)+\s*/?>', re.I)
+        self.regex['htmlTags'] = re.compile(r'</?(?:html|head|body|div|p|div|script|link|span|u|ul|li|ol|a)+\s*/?>', re.I)
         self.regex['htmlLinks'] = re.compile(r'\b(?:(?:https?|udp)://|www\.)[-A-Z0-9+&@#/%=~_|$?!:,.]*[A-Z0-9+&@#/%=~_|$]', re.I)
         self.regex['md5links'] = re.compile(r'(?:(?:https?|udp)://|www\.)[-A-Z0-9+&@#/%=~_|$?!:,.]*[A-Z0-9+&@#/%=~_|$]=[a-f0-9]{32}', re.I)
 
@@ -214,6 +214,16 @@ class TrashDetector(AbstractDetector):
         return score / self.lines
 
     def detectVarious(self):
-        score = self.data.lower().count('e-mail found')
+        data_lower = self.data.lower();
+
+        score = data_lower.count('e-mail found')
+
+        # The #EXTINF signature flags a file we're not interested into
+        if data_lower.count('#extinf'):
+            return 3
+
+        # XML files
+        if data_lower.count('<?xml version="1.0" encoding="utf-8"?>'):
+            return 3
 
         return score / self.lines
