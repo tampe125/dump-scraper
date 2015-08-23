@@ -9,6 +9,8 @@
 - Added "clean" parameter for the classify job, so you can automatically clean previous results
 - Moved the features file up one level for better reading
 - Added shortcut to open the current file while training the system
+- Added support for SQLmap cracked passwords
+- Added support for keylogger files
 
 ## 0.2.0 [Unreleased]
 ### Added
