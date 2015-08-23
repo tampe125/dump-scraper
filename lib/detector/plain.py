@@ -18,6 +18,14 @@ class PlainDetector(AbstractDetector):
         self.regex['usrPwd'] = re.compile(r'[a-z0-9]{5,15}:.{1,10}$', re.I | re.M)
         self.regex['pwdEmail'] = re.compile(r'.{4,15}[\s|/|;|:|\||,|\t][a-z0-9\-\._]+@[a-z0-9\-\.]+\.[a-z]{2,4}\s*?$', re.I | re.M)
         self.regex['insertPlain'] = re.compile(r'^INSERT INTO.*?\((.*?password.*?)\).*?$', re.M)
+        self.regex['keylogger_1'] = re.compile(r'program:.*?\nurl/host:.*?\nlogin:.*?\npassword:.*?\ncomputer:.*?\n', re.I)
+        self.regex['keylogger_2'] = re.compile(r'software:.*?\nsitename:.*?\nlogin:.*?\npc name:.*?\n', re.I)
+
+        # Bulgarian keylogger, I have to add the ??? form since sometimes the encoding is screwed up
+        bg_regex  = r'(/Аккаунт/|Дата Рождения|Дата создания|Дата редактирования|Страна)'
+        bg_regex += r'|(/\?\?\?\?\?\?\?/|\?\?\?\? \?\?\?\?\?\?\?\?|\?\?\?\? \?\?\?\?\?\?\?\?|\?\?\?\? \?\?\?\?\?\?\?\?\?\?\?\?\?\?|\?\?\?\?\?\?)'
+
+        self.regex['keylogger_bg'] = re.compile(bg_regex, re.I)
 
     def analyze(self, results):
         # If the Trash Detector has an high value, don't process the file, otherwise we could end up with a false positive
@@ -31,6 +39,9 @@ class PlainDetector(AbstractDetector):
         score += self.detectUsernamePwd() * 0.75
         score += self.detectPwdEmails()
         score += self.mysqlInsertPlain()
+        score += self.detectBulgarianKeylogger()
+        score += self.detectKeylogger1()
+        score += self.detectKeylogger2()
 
         self.score = score
 
@@ -125,3 +136,54 @@ class PlainDetector(AbstractDetector):
             return counter / self.lines
 
         return 0
+
+    def detectKeylogger1(self):
+        """
+        Detects keylogger output in the form
+
+        Program: Google Chrome
+        Url/Host: xxx
+        Login: xxx
+        Password: xxx
+        Computer: xxx
+
+        :return: ratio between occurrences and lines
+        """
+        # I have to multiply the result by 5, since every occurrence spans on 5 lines
+        results = len(re.findall(self.regex['keylogger_1'], self.data)) * 5
+
+        return results / self.lines
+
+    def detectKeylogger2(self):
+        """
+        Detects keylogger output in the form
+
+        Software:	Chrome
+        Sitename:	xxx
+        Login:		xxx:xxx
+        PC Name:	xxx
+
+        :return: ratio between occurrences and lines
+        """
+        # I have to multiply the result by 4, since every occurrence spans on 4 lines
+        results = len(re.findall(self.regex['keylogger_2'], self.data)) * 4
+
+        return results / self.lines
+
+    def detectBulgarianKeylogger(self):
+        """
+        Detects keylogger output in the form
+
+        ========/Аккаунт/========
+        email:password
+        ========/Аккаунт/========
+        Дата Рождения: xxx
+        Дата создания: xxx
+        Дата редактирования: xxx
+        Страна: XX
+
+        :return: ratio between occurrences and lines
+        """
+        results = len(re.findall(self.regex['keylogger_bg'], self.data))
+
+        return results / self.lines
