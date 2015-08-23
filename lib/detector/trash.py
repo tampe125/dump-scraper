@@ -178,7 +178,10 @@ class TrashDetector(AbstractDetector):
         # Do I have lines starting with a number? Maybe it's a table dump without any MySQL markup
         digits = len(re.findall(self.regex['startingDigits'], self.data)) / self.lines
 
-        if insert > 1 or mysql > 1 or digits > 0.25:
+        # Do I have a SQLmap cracked password signature?
+        sqlmap = len(re.findall(r'\[INFO\] (cracked|resuming) password', self.data)) / self.lines
+
+        if insert > 1 or mysql > 1 or digits > 0.25 or sqlmap > 0.25:
             multiplier = 0.01
 
         # MySQL dates - 2015-11-02
@@ -214,7 +217,7 @@ class TrashDetector(AbstractDetector):
         return score / self.lines
 
     def detectVarious(self):
-        data_lower = self.data.lower();
+        data_lower = self.data.lower()
 
         score = data_lower.count('e-mail found')
 
