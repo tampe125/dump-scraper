@@ -77,11 +77,9 @@ Dump Scraper - A better way of scraping
                                     action='store_true')
 
         parser_review = subparsers.add_parser('review')
-        parser_review.add_argument('-s', '--since',
-                                   help='Starting date for the analysis, format YYYY-MM-DD',
+        parser_review.add_argument('-d', '--dir',
+                                   help='Date to analyze, format YYYY-MM-DD',
                                    required=True)
-        parser_review.add_argument('-u', '--until',
-                                   help='Stopping date for the analysis, format YYYY-MM-DD. If not supplied only the SINCE date will be processed')
 
         self.args = parser.parse_args()
 
