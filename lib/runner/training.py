@@ -8,10 +8,12 @@ from platform import system as platform_system
 from random import choice as random_choice
 from shutil import copyfile as shutil_copyfile
 from subprocess import call as subprocess_call
+from sys import stdout as sys_stdout
 from lib.runner.abstract import AbstractCommand
 from lib.exceptions.exceptions import RunningError
 from lib.runner import getscore
 from lib.utils.terminalsize import get_terminal_size
+from lib.utils.getch import getch
 
 
 class DumpScraperTraining(AbstractCommand):
@@ -59,7 +61,7 @@ class DumpScraperTraining(AbstractCommand):
                 i = 0
                 for line in tfile:
                     i += 1
-                    if i >= (rows - 4):
+                    if i >= (rows - 6):
                         break
 
                     if len(line) <= cols:
@@ -83,7 +85,13 @@ class DumpScraperTraining(AbstractCommand):
             input_descr += colorama.Fore.MAGENTA + "[q]"
             input_descr += colorama.Fore.CYAN + "uit=> "
 
-            answer = raw_input(input_descr)
+            sys_stdout.write(input_descr)
+            sys_stdout.flush()
+
+            answer = getch()
+
+            while answer == '':
+                pass
 
             # Opening a file with the default application AND being cross platform is a PITA...
             if answer == 'o':
