@@ -12,6 +12,7 @@
 - Added support for SQLmap cracked passwords
 - Added support for keylogger files
 - Removed the need to press "Enter" while screening for training files
+- Added "review" command to quickly review organized files
 
 ## 0.2.0 [Unreleased]
 ### Added
