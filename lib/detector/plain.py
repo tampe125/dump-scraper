@@ -11,6 +11,27 @@ class PlainDetector(AbstractDetector):
     def __init__(self, level):
         super(PlainDetector, self).__init__(level)
 
+        from collections import OrderedDict
+
+        # Order MATTERS! Functions to detect false positives MUST BE executed first
+        self.functions = OrderedDict()
+
+        # Accordingly to the level, process the right functions
+        if self.level >= 1:
+            self.functions['detectBulgarianKeylogger'] = 1
+            self.functions['detectKeylogger1'] = 1
+            self.functions['detectKeylogger2'] = 1
+            self.functions['detectPwdStandalone'] = 1
+            self.functions['detectSqlMap'] = 1
+            self.functions['detectEmailPwd'] = 1
+
+        if self.level >= 2:
+            self.functions['mysqlInsertPlain'] = 1
+
+        if self.level >= 3:
+            self.functions['detectUsernamePwd'] = 0.75
+            self.functions['detectPwdEmails'] = 1
+
         self.regex['emailPwd'] = re.compile(r'^[\s"]?[a-z0-9\-\._]+@[a-z0-9\-\.]+\.[a-z]{2,4}\s?[\-|/|;|:|\||,|\t].*?[:\n]', re.I | re.M)
         self.regex['txtEmail:pwd'] = re.compile(r'login:\s+[a-z0-9\-\._]+@[a-z0-9\-\.]+\.[a-z]{2,4}:.*?\n', re.I)
         self.regex['pwd'] = re.compile(r'pass(?:word)?\s*?[:|=].*?$', re.I | re.M)
@@ -35,17 +56,11 @@ class PlainDetector(AbstractDetector):
             self.score = 0
             return
 
-        score  = self.detectEmailPwd()
-        score += self.detectPwdStandalone()
-        score += self.detectUsernamePwd() * 0.75
-        score += self.detectPwdEmails()
-        score += self.mysqlInsertPlain()
-        score += self.detectBulgarianKeylogger()
-        score += self.detectKeylogger1()
-        score += self.detectKeylogger2()
-        score += self.detectSqlMap()
+        for function, coefficient in self.functions.iteritems():
+            self.score += getattr(self, function)() * coefficient
 
-        self.score = score
+            if self.score >= 3:
+                break
 
     def returnkey(self):
         return 'plain'
