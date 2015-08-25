@@ -76,6 +76,11 @@ Dump Scraper - A better way of scraping
                                     help='Before extracting the dumps of a day, clears the entire folder',
                                     action='store_true')
 
+        parser_review = subparsers.add_parser('review')
+        parser_review.add_argument('-d', '--dir',
+                                   help='Date to analyze, format YYYY-MM-DD',
+                                   required=True)
+
         self.args = parser.parse_args()
 
         if self.args.command == 'training':
@@ -166,6 +171,9 @@ Dump Scraper - A better way of scraping
         elif self.args.command == 'extract':
             from lib.runner import extract
             runner = extract.DumpScraperExtract(self.settings, self.args)
+        elif self.args.command == 'review':
+            from lib.runner import review
+            runner = review.DumpScraperReview(self.settings, self.args)
         else:
             print("Unrecognized command")
             return
