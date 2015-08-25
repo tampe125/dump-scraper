@@ -8,28 +8,34 @@ from lib.detector.abstract import AbstractDetector
 
 class HashDetector(AbstractDetector):
     def __init__(self, level):
+        super(HashDetector, self).__init__(level)
+
         from collections import OrderedDict
 
         # Order MATTERS! Functions to detect false positives MUST BE executed first
         self.functions = OrderedDict()
 
-        self.functions['fewLines']      = 1
-        self.functions['longLines']     = 1
-        self.functions['hashPlain']     = 1
-        self.functions['detectMd5']     = 1
-        self.functions['detectMd5Crypt'] = 1
-        self.functions['detectMd5Apache'] = 1
-        self.functions['detectSha512Crypt'] = 1
-        self.functions['phpassMd5']     = 1
-        self.functions['phpassGen']     = 1
-        self.functions['detectSha1']    = 1
-        self.functions['detectMySQL']   = 1
-        self.functions['detectMySQLOrig'] = 1
-        self.functions['detectCrypt']   = 1
-        self.functions['detectDrupal']  = 1
-        self.functions['detectBlowfish'] = 1
+        if self.level >= 1:
+            self.functions['fewLines']      = 1
+            self.functions['longLines']     = 1
+            self.functions['hashPlain']     = 1
+            self.functions['detectMd5']     = 1
+            self.functions['detectMd5Crypt'] = 1
+            self.functions['detectMd5Apache'] = 1
+            self.functions['detectSha512Crypt'] = 1
+            self.functions['phpassMd5']     = 1
+            self.functions['phpassGen']     = 1
+            self.functions['detectSha1']    = 1
+            self.functions['detectMySQL']   = 1
+            self.functions['detectMySQLOrig'] = 1
+            self.functions['detectDrupal']  = 1
+            self.functions['detectBlowfish'] = 1
 
-        super(HashDetector, self).__init__(level)
+        if self.level >= 2:
+            pass
+
+        if self.level >= 3:
+            self.functions['detectCrypt']   = 1
 
         # Let's compile some regexes to speed up the execution
         self.regex['md5'] = re.compile(r'[a-f0-9]{32}')
