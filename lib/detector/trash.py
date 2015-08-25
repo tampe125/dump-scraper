@@ -7,7 +7,7 @@ from lib.detector.abstract import AbstractDetector
 
 
 class TrashDetector(AbstractDetector):
-    def __init__(self):
+    def __init__(self, level):
         from collections import OrderedDict
 
         # Order MATTERS! Functions to detect false positives MUST BE executed first
@@ -25,7 +25,7 @@ class TrashDetector(AbstractDetector):
         self.functions['detectHtml']      = 1
         self.functions['detectVarious']   = 1
 
-        super(TrashDetector, self).__init__()
+        super(TrashDetector, self).__init__(level)
 
         # Let's compile some regexes to speed up the execution
         self.regex['emailsOnly'] = re.compile(r'^[\s"]?[a-z0-9\-\._]+@[a-z0-9\-\.]+\.[a-z]{2,4}[\s|\t]?$', re.I | re.M)

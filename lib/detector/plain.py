@@ -8,8 +8,8 @@ from lib.detector.abstract import AbstractDetector
 
 
 class PlainDetector(AbstractDetector):
-    def __init__(self):
-        super(PlainDetector, self).__init__()
+    def __init__(self, level):
+        super(PlainDetector, self).__init__(level)
 
         self.regex['emailPwd'] = re.compile(r'^[\s"]?[a-z0-9\-\._]+@[a-z0-9\-\.]+\.[a-z]{2,4}\s?[\-|/|;|:|\||,|\t].*?[:\n]', re.I | re.M)
         self.regex['txtEmail:pwd'] = re.compile(r'login:\s+[a-z0-9\-\._]+@[a-z0-9\-\.]+\.[a-z]{2,4}:.*?\n', re.I)

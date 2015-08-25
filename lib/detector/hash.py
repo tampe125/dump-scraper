@@ -7,7 +7,7 @@ from lib.detector.abstract import AbstractDetector
 
 
 class HashDetector(AbstractDetector):
-    def __init__(self):
+    def __init__(self, level):
         from collections import OrderedDict
 
         # Order MATTERS! Functions to detect false positives MUST BE executed first
@@ -29,7 +29,7 @@ class HashDetector(AbstractDetector):
         self.functions['detectDrupal']  = 1
         self.functions['detectBlowfish'] = 1
 
-        super(HashDetector, self).__init__()
+        super(HashDetector, self).__init__(level)
 
         # Let's compile some regexes to speed up the execution
         self.regex['md5'] = re.compile(r'[a-f0-9]{32}')
