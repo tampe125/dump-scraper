@@ -41,7 +41,8 @@ class DumpScraperGetscore(AbstractCommand):
                     date += datetime.timedelta(days=1)
 
         regex_empty_lines = re.compile(r'^\s*?\n', re.M)
-        organizers = [TrashDetector(), PlainDetector(), HashDetector()]
+        organizers = [TrashDetector(self.parentArgs.level), PlainDetector(self.parentArgs.level),
+                      HashDetector(self.parentArgs.level)]
 
         features_handle = open(feature_path, 'w')
         features_writer = csv_DictWriter(features_handle, fieldnames=['trash', 'plain', 'hash', 'label', 'file'])

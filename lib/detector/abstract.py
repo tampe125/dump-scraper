@@ -5,14 +5,16 @@ __license__ = 'GNU GPL version 3 or later'
 from abc import ABCMeta, abstractmethod
 
 
-class AbstractDetector():
+class AbstractDetector:
     __metaclass__ = ABCMeta
 
-    def __init__(self):
+    def __init__(self, level):
         self.score = 0
         self.data = ''
         self.lines = 0
         self.regex = {}
+
+        self.level = level
 
     def reset(self):
         self.score = 0

@@ -7,25 +7,32 @@ from lib.detector.abstract import AbstractDetector
 
 
 class TrashDetector(AbstractDetector):
-    def __init__(self):
+    def __init__(self, level):
+        super(TrashDetector, self).__init__(level)
+
         from collections import OrderedDict
 
         # Order MATTERS! Functions to detect false positives MUST BE executed first
         self.functions = OrderedDict()
-        
-        self.functions['fewLines']        = 1
-        self.functions['longLines']       = 1
-        self.functions['privateKeys']     = 1
-        self.functions['antivirusDump']   = 1
-        self.functions['detectRawEmail']  = 1
-        self.functions['detectEmailsOnly'] = 1
-        self.functions['detectDebug']     = 1.2
-        self.functions['detectIP']        = 1.5
-        self.functions['detectTimeStamps'] = 1
-        self.functions['detectHtml']      = 1
-        self.functions['detectVarious']   = 1
 
-        super(TrashDetector, self).__init__()
+        # Accordingly to the level, set the correct function list
+        # The higher the level, the more data I want to extract, so I can sustain false positives.
+        if self.level <= 3:
+            self.functions['fewLines']        = 1
+            self.functions['longLines']       = 1
+            self.functions['privateKeys']     = 1
+            self.functions['antivirusDump']   = 1
+            self.functions['detectRawEmail']  = 1
+            self.functions['detectEmailsOnly'] = 1
+            self.functions['detectDebug']     = 1.2
+            self.functions['detectHtml']      = 1
+            self.functions['detectVarious']   = 1
+
+        if self.level <= 2:
+            self.functions['detectTimeStamps'] = 1
+
+        if self.level <= 1:
+            self.functions['detectIP']        = 1.5
 
         # Let's compile some regexes to speed up the execution
         self.regex['emailsOnly'] = re.compile(r'^[\s"]?[a-z0-9\-\._]+@[a-z0-9\-\.]+\.[a-z]{2,4}[\s|\t]?$', re.I | re.M)
