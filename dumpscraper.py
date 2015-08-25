@@ -66,6 +66,7 @@ Dump Scraper - A better way of scraping
         parser_classify.add_argument('-l', '--level',
                                      help='How greedy we want to be. Higher level will give you more results, but also more false positives',
                                      default=1,
+                                     type=int,
                                      choices=[1, 2, 3])
 
         parser_extract = subparsers.add_parser('extract')
