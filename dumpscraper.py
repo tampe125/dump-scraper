@@ -6,7 +6,7 @@ import argparse
 import colorama
 import json
 import logging
-
+from colorlog import ColoredFormatter
 from os import path as os_path
 from requests import get as requests_get
 from textwrap import dedent as textwrap_dedent
@@ -29,7 +29,7 @@ class DumpScraper:
         console = logging.StreamHandler()
         console.setLevel(logging.INFO)
 
-        formatter = logging.Formatter('[%(asctime)s] [%(levelname)s] %(message)s', '%Y-%m-%d %H:%M')
+        formatter = ColoredFormatter("[%(log_color)s%(levelname)-4s%(reset)s] %(message)s")
         console.setFormatter(formatter)
         logging.getLogger('dumpscraper').addHandler(console)
 

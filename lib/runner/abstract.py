@@ -5,7 +5,7 @@ __license__ = 'GNU GPL version 3 or later'
 from abc import ABCMeta, abstractmethod
 
 
-class AbstractCommand():
+class AbstractCommand:
     __metaclass__ = ABCMeta
 
     def __init__(self, settings, arguments):
