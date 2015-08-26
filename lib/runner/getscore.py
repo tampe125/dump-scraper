@@ -4,7 +4,7 @@ __license__ = 'GNU GPL version 3 or later'
 
 import datetime
 import re
-import colorama
+import logging
 from csv import DictWriter as csv_DictWriter
 from os import path, walk
 from sys import stdout as sys_stdout
@@ -18,7 +18,7 @@ from lib.exceptions.exceptions import RunningError
 class DumpScraperGetscore(AbstractCommand):
     def check(self):
         if not path.exists(self.settings['data_dir'] + "/" + 'raw'):
-            raise RunningError(colorama.Fore.RED + "There aren't any dump files to process. Scrape them before continuing.")
+            raise RunningError("There aren't any dump files to process. Scrape them before continuing.")
 
     def run(self, **keyargs):
         if 'training' in keyargs and keyargs['training']:
@@ -48,15 +48,16 @@ class DumpScraperGetscore(AbstractCommand):
         features_writer = csv_DictWriter(features_handle, fieldnames=['trash', 'plain', 'hash', 'label', 'file'])
         features_writer.writerow({'trash': 'Trash score', 'plain': 'Plain score', 'hash': 'Hash score', 'label': 'Label', 'file': 'Filename'})
 
+        dump_logger = logging.getLogger('dumpscraper')
+
         for folder in folders:
             source = self.settings['data_dir'] + "/" + targetfolder + '/' + folder
 
             if not path.exists(source):
-                print("Directory " + source + " does not exist!")
-                print("")
+                dump_logger.info("Directory " + source + " does not exist!")
                 continue
 
-            print("Directory   : " + folder)
+            dump_logger.info("Directory   : " + folder)
 
             for root, dirs, files in walk(source):
                 for dump in files:
@@ -109,9 +110,4 @@ class DumpScraperGetscore(AbstractCommand):
 
                     features_writer.writerow(csvline)
 
-            print("")
-
         features_handle.close()
-        print("")
-
-

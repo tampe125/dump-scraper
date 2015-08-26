@@ -2,7 +2,7 @@ __author__ = 'Davide Tampellini'
 __copyright__ = '2015 Davide Tampellini - FabbricaBinaria'
 __license__ = 'GNU GPL version 3 or later'
 
-import colorama
+import logging
 import datetime
 from os import path, makedirs, walk
 from sys import stdout as sys_stdout
@@ -16,7 +16,7 @@ from lib.runner.abstract import AbstractCommand
 class DumpScraperExtract(AbstractCommand):
     def check(self):
         if not path.exists(self.settings['data_dir'] + "/" + 'organized'):
-            raise RunningError(colorama.Fore.RED + "There aren't any organized dump files to process. Organize them before continuing.")
+            raise RunningError("There aren't any organized dump files to process. Organize them before continuing.")
 
         if not path.exists(self.settings['data_dir'] + "/" + 'processed'):
             makedirs(self.settings['data_dir'] + "/" + 'processed')
@@ -53,7 +53,7 @@ class DumpScraperExtract(AbstractCommand):
                 print("")
                 continue
 
-            print("Directory   : " + folder)
+            logging.getLogger('dumpscraper').info("Directory   : " + folder)
 
             cleared = []
 
@@ -101,5 +101,3 @@ class DumpScraperExtract(AbstractCommand):
 
                         with open(destination + '/' + path.basename(dump), 'w') as dump_file:
                             dump_file.write(extracted)
-
-                print("")

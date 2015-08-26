@@ -2,7 +2,7 @@ __author__ = 'Davide Tampellini'
 __copyright__ = '2015 Davide Tampellini - FabbricaBinaria'
 __license__ = 'GNU GPL version 3 or later'
 
-import colorama
+import logging
 from requests import get as requests_get
 from time import sleep
 from lib.scrapers.abstract import AbstractScrape
@@ -28,9 +28,8 @@ class PastebinScraper(AbstractScrape):
             try:
                 raw = requests_get('http://pastebin.com/archive').content
                 if "Pastebin.com has blocked your IP" in raw:
-                    raise RunningError(
-                        colorama.Fore.RED + "Pastebin blocked your IP. Wait a couple of hours and try again"
-                    )
+                    logging.getLogger('dumpscraper').critical("Pastebin blocked your IP. Wait a couple of hours and try again")
+                    raise RunningError()
             except ConnectionError:
                 # logging.info('Error with pastebin')
                 raw = None
@@ -51,7 +50,7 @@ class PastebinScraper(AbstractScrape):
             # Let's save the starting id, so I can skip already processed pastes
             self.ref_id = results[0].a['href'][1:]
         except IndexError:
-            print "Archive links not found"
+            logging.getLogger('dumpscraper').info("Archive links not found")
 
         for entry in new_pastes[::-1]:
             # logging.info('Adding URL: ' + entry.url)

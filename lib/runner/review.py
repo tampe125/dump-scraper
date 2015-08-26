@@ -16,7 +16,7 @@ from lib.utils.getch import getch
 class DumpScraperReview(AbstractCommand):
     def check(self):
         if not os_path.exists(self.settings['data_dir'] + '/organized'):
-            raise RunningError(colorama.Fore.RED + "There aren't any organized dump files to process. Organize them before continuing.")
+            raise RunningError("There aren't any organized dump files to process. Organize them before continuing.")
 
     def run(self):
         stop = False
