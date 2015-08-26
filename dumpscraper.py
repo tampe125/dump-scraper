@@ -5,6 +5,7 @@ __license__ = 'GNU GPL version 3 or later'
 import argparse
 import colorama
 import json
+import logging
 
 from os import path as os_path
 from requests import get as requests_get
@@ -18,6 +19,21 @@ class DumpScraper:
 
         self.settings = None
         self.version = '0.2.0'
+
+        # Logging information
+        logging.basicConfig(level=logging.DEBUG,
+                            format='%(asctime)s| %(levelname)-8s: %(message)s',
+                            datefmt='%Y-%m-%d %H:%M:%S',
+                            filename='dumpscraper.log')
+
+        console = logging.StreamHandler()
+        console.setLevel(logging.INFO)
+
+        formatter = logging.Formatter('[%(asctime)s] [%(levelname)s] %(message)s', '%Y-%m-%d %H:%M')
+        console.setFormatter(formatter)
+        logging.getLogger('dumpscraper').addHandler(console)
+
+        logging.getLogger("requests").setLevel(logging.WARNING)
 
         parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter, description=textwrap_dedent('''
 Dump Scraper - A better way of scraping

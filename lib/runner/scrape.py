@@ -2,6 +2,7 @@ __author__ = 'Davide Tampellini'
 __copyright__ = '2015 Davide Tampellini - FabbricaBinaria'
 __license__ = 'GNU GPL version 3 or later'
 
+from logging import getLogger
 from threading import Thread as threading_Thread
 from time import sleep
 from lib.runner.abstract import AbstractCommand
@@ -13,7 +14,7 @@ class DumpScraperScrape(AbstractCommand):
         # Ok, let's start a daemon that will search for new dumps
         pastebin_thread = threading_Thread(target=PastebinScraper(self.settings).monitor)
 
-        print("Started monitoring paste sites")
+        getLogger('dumpscraper').info("Started monitoring paste sites")
 
         for thread in (pastebin_thread, ):
             thread.daemon = True
@@ -24,4 +25,4 @@ class DumpScraperScrape(AbstractCommand):
             while 1:
                 sleep(5)
         except KeyboardInterrupt:
-            print 'Stopped.'
+            getLogger('dumpscraper').info('Stopped')

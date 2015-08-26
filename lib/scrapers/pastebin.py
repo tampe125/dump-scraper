@@ -36,7 +36,7 @@ class PastebinScraper(AbstractScrape):
                 raw = None
                 sleep(5)
 
-        results = BeautifulSoup(raw).findAll(
+        results = BeautifulSoup(raw, "lxml").findAll(
             lambda tag: tag.name == 'td' and tag.a and '/archive/' not in tag.a['href'] and tag.a['href'][1:])
 
         for entry in results:

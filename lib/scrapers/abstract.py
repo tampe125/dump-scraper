@@ -5,6 +5,7 @@ __copyright__ = '2015 Davide Tampellini - FabbricaBinaria'
 __license__ = 'GNU GPL version 3 or later'
 
 import requests
+from logging import getLogger
 from time import sleep
 from abc import ABCMeta, abstractmethod
 from datetime import datetime
@@ -81,7 +82,7 @@ class AbstractScrape:
         if paste.match():
             filename = str(datetime.now().strftime('%Y%m%d%H%M%S')) + "_" + paste.id
 
-            print(str(datetime.now().strftime('%Y-%m-%d %H:%M:%S')) + " Dump found: " + filename)
+            getLogger('dumpscraper').info(" Dump found: " + filename)
 
             day = datetime.now().strftime('%Y-%m-%d')
 
