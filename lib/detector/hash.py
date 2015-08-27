@@ -11,11 +11,6 @@ class HashDetector(AbstractDetector):
     def __init__(self, level):
         super(HashDetector, self).__init__(level)
 
-        from collections import OrderedDict
-
-        # Order MATTERS! Functions to detect false positives MUST BE executed first
-        self.functions = OrderedDict()
-
         if self.level >= 1:
             self.functions['fewLines']      = 1
             self.functions['longLines']     = 1
@@ -38,23 +33,8 @@ class HashDetector(AbstractDetector):
         if self.level >= 3:
             self.functions['detectCrypt']   = 1
 
-        dump_logger = getLogger('dumpscraper')
-
         # Let's log the functions that will be applied
-        dump_logger.debug('Hash Detector setup')
-        dump_logger.debug("\tThe following rules will be applied:")
-
-        for name in self.functions:
-            dump_logger.debug('\t\t' + name)
-            descr = getattr(self, name).__doc__
-
-            if descr is not None:
-                descr = descr.strip(' \n\t')
-
-                if descr:
-                    descr = descr.split(':return:')
-                    descr = descr[0].strip(' \n\t')
-                    dump_logger.debug('\t\t\t' + descr)
+        self.logfunctions()
 
         # Let's compile some regexes to speed up the execution
         self.regex['md5'] = re.compile(r'[a-f0-9]{32}')
