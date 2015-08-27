@@ -50,8 +50,10 @@ class HashDetector(AbstractDetector):
 
             if descr is not None:
                 descr = descr.strip(' \n\t')
-                
+
                 if descr:
+                    descr = descr.split(':return:')
+                    descr = descr[0].strip(' \n\t')
                     dump_logger.debug('\t\t\t' + descr)
 
         # Let's compile some regexes to speed up the execution
@@ -99,6 +101,10 @@ class HashDetector(AbstractDetector):
         return 'hash'
 
     def fewLines(self):
+        """
+        Detects if there very few lines in the dump
+        :return: 0|-1
+        """
         # If I just have few lines, most likely it's trash. I have to do this since sometimes some debug output are
         # crammed into a single line, screwing up all the stats
         if self.lines < 3:
@@ -107,6 +113,10 @@ class HashDetector(AbstractDetector):
         return 0
     
     def longLines(self):
+        """
+        Detects if there are very long lines (>1000)
+        :return: 0|-1
+        """
         lines = self.data.split("\n")
 
         for line in lines:
@@ -117,7 +127,7 @@ class HashDetector(AbstractDetector):
 
     def hashPlain(self):
         """
-        Do I have a hash:plain pair? If so this is a plain file, not an hash one!
+        Detects if there are hash:plain lines, if so this is a plain file, not an hash one!
         """
         # Let's check for some VERY common password
         fakeHash = len(re.findall(r'[a-f0-9]{32}:password', self.data, re.I | re.M))
@@ -129,51 +139,91 @@ class HashDetector(AbstractDetector):
         return 0
 
     def detectMd5(self):
+        """
+        Detects MD5 hashes
+        :return: ratio between occurrences and lines
+        """
         hashes = len(re.findall(self.regex['md5'], self.data))
 
         return hashes / self.lines
 
     def detectMd5Crypt(self):
+        """
+        Detects MD5 hashes created with crypt
+        :return: ratio between occurrences and lines
+        """
         hashes = len(re.findall(self.regex['md5Crypt'], self.data))
 
         return hashes / self.lines
 
     def detectMd5Apache(self):
+        """
+        Detects MD5 hashes created with Apache
+        :return: ratio between occurrences and lines
+        """
         hashes = len(re.findall(self.regex['md5Apache'], self.data))
 
         return hashes / self.lines
 
     def detectSha512Crypt(self):
+        """
+        Detects SHA512 hashes created with crypt
+        :return: ratio between occurrences and lines
+        """
         hashes = len(re.findall(self.regex['sha512Crypt'], self.data))
 
         return hashes / self.lines
 
     def phpassMd5(self):
+        """
+        Detects MD5 hashes created with PHPass
+        :return: ratio between occurrences and lines
+        """
         hashes = len(re.findall(self.regex['phpassMd5'], self.data))
 
         return hashes / self.lines
 
     def phpassGen(self):
+        """
+        Detects PHPass hashes
+        :return: ratio between occurrences and lines
+        """
         hashes = len(re.findall(self.regex['phpassGen'], self.data))
 
         return hashes / self.lines
 
     def detectSha1(self):
+        """
+        Detects SHA1 hashes
+        :return: ratio between occurrences and lines
+        """
         hashes = len(re.findall(self.regex['sha1'], self.data))
 
         return hashes / self.lines
 
     def detectMySQL(self):
+        """
+        Detects MySQL hashes
+        :return: ratio between occurrences and lines
+        """
         hashes = len(re.findall(self.regex['mysql'], self.data))
 
         return hashes / self.lines
 
     def detectMySQLOrig(self):
+        """
+        Detects MySQL "original" hashes
+        :return: ratio between occurrences and lines
+        """
         hashes = len(re.findall(self.regex['mysqlOrig'], self.data))
 
         return hashes / self.lines
 
     def detectCrypt(self):
+        """
+        Detects Crypt hashes
+        :return: ratio between occurrences and lines
+        """
         # Sadly the crypt hash is very used and has a very common signature, this means that I can't simply search for it
         # in the whole document, or I'll have TONS of false positive. I have to shrink the range using more strict regex
         hashes = len(re.findall(self.regex['crypt'], self.data))
@@ -181,11 +231,19 @@ class HashDetector(AbstractDetector):
         return hashes / self.lines
 
     def detectDrupal(self):
+        """
+        Detects Drupal hashes
+        :return: ratio between occurrences and lines
+        """
         hashes = len(re.findall(self.regex['drupal'], self.data))
 
         return hashes / self.lines
 
     def detectBlowfish(self):
+        """
+        Detects Blowfish hashes
+        :return: ratio between occurrences and lines
+        """
         hashes = len(re.findall(self.regex['blowfish'], self.data))
 
         return hashes / self.lines
