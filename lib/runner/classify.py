@@ -3,7 +3,7 @@ __copyright__ = '2015 Davide Tampellini - FabbricaBinaria'
 __license__ = 'GNU GPL version 3 or later'
 
 import sklearn.neighbors
-import logging
+from logging import getLogger
 from csv import reader as csv_reader
 from os import path, makedirs
 from scipy import genfromtxt as scipy_genfromtxt
@@ -28,7 +28,7 @@ class DumpScraperClassify(AbstractCommand):
             makedirs(self.settings['data_dir'] + "/" + 'organized/trash')
 
     def run(self):
-        dump_logger = logging.getLogger('dumpscraper')
+        dump_logger = getLogger('dumpscraper')
         # Let's invoke the getscore runner and tell him to work on training data
         dump_logger.info("Calculating dump score...")
         running = getscore.DumpScraperGetscore(self.settings, self.parentArgs)

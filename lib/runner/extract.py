@@ -2,10 +2,9 @@ __author__ = 'Davide Tampellini'
 __copyright__ = '2015 Davide Tampellini - FabbricaBinaria'
 __license__ = 'GNU GPL version 3 or later'
 
-import logging
 import datetime
 from os import path, makedirs, walk
-from sys import stdout as sys_stdout
+from logging import getLogger
 from shutil import rmtree as shutil_rmtree
 from lib.exceptions.exceptions import RunningError
 from lib.extractor.hash import HashExtractor
@@ -49,11 +48,10 @@ class DumpScraperExtract(AbstractCommand):
             source = self.settings['data_dir'] + "/" + 'organized/' + folder
 
             if not path.exists(source):
-                print("Directory " + source + " does not exist!")
-                print("")
+                getLogger('dumpscraper').info("Directory " + source + " does not exist!")
                 continue
 
-            logging.getLogger('dumpscraper').info("Directory   : " + folder)
+            getLogger('dumpscraper').info("Directory   : " + folder)
 
             cleared = []
 
@@ -61,12 +59,7 @@ class DumpScraperExtract(AbstractCommand):
                 for dump in files:
                     # If the force param is set, skip all the files that do not match
                     if self.parentArgs.force and self.parentArgs.force not in dump:
-                        sys_stdout.write('@')
-                        sys_stdout.flush()
                         continue
-
-                    sys_stdout.write('.')
-                    sys_stdout.flush()
 
                     with open(root + "/" + dump, 'r+') as handle:
                         data = handle.read()

@@ -47,6 +47,11 @@ Dump Scraper - A better way of scraping
                                      help='Stopping date for the analysis, format YYYY-MM-DD. If not supplied only the SINCE date will be processed')
         parser_getscore.add_argument('-f', '--force',
                                      help="Force a specific dump filename to process, used for debug only")
+        parser_getscore.add_argument('-l', '--level',
+                                     help='How greedy we want to be. Higher level will give you more results, but also more false positives',
+                                     default=1,
+                                     type=int,
+                                     choices=[1, 2, 3])
 
         parser_training = subparsers.add_parser('training')
         parser_training.add_argument('-d', '--getdata',
@@ -182,13 +187,13 @@ Dump Scraper - A better way of scraping
 
         # Let's ouput some info
 
-        if self.args.level > 0:
+        if hasattr(self.args, 'level') and self.args.level > 0:
             dump_logger.debug('\tUsing a greedy level of ' + str(self.args.level))
 
-        if self.args.clean:
+        if hasattr(self.args, 'clean') and self.args.clean:
             dump_logger.debug("\tClean the target folder before attempting to write inside it")
 
-        if self.args.force:
+        if hasattr(self.args, 'force') and self.args.force:
             dump_logger.debug("\tForcing the execution only on file " + str(self.args.force))
 
         # Let's load the correct object

@@ -121,5 +121,6 @@ class DumpScraperTraining(AbstractCommand):
 
     def _getscore(self):
         # Let's invoke the getscore runner and tell him to work on training data
+        self.parentArgs.level = 1
         running = getscore.DumpScraperGetscore(self.settings, self.parentArgs)
         running.run(training=True)

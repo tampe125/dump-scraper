@@ -4,10 +4,9 @@ __license__ = 'GNU GPL version 3 or later'
 
 import datetime
 import re
-import logging
+from logging import getLogger
 from csv import DictWriter as csv_DictWriter
 from os import path, walk
-from sys import stdout as sys_stdout
 from lib.detector.trash import TrashDetector
 from lib.detector.hash import HashDetector
 from lib.runner.abstract import AbstractCommand
@@ -48,7 +47,7 @@ class DumpScraperGetscore(AbstractCommand):
         features_writer = csv_DictWriter(features_handle, fieldnames=['trash', 'plain', 'hash', 'label', 'file'])
         features_writer.writerow({'trash': 'Trash score', 'plain': 'Plain score', 'hash': 'Hash score', 'label': 'Label', 'file': 'Filename'})
 
-        dump_logger = logging.getLogger('dumpscraper')
+        dump_logger = getLogger('dumpscraper')
 
         for folder in folders:
             source = self.settings['data_dir'] + "/" + targetfolder + '/' + folder
@@ -63,12 +62,7 @@ class DumpScraperGetscore(AbstractCommand):
                 for dump in files:
                     # If the force param is set, skip all the files that do not match
                     if self.parentArgs.force and self.parentArgs.force not in dump:
-                        sys_stdout.write('@')
-                        sys_stdout.flush()
                         continue
-
-                    sys_stdout.write('.')
-                    sys_stdout.flush()
 
                     with open(root + "/" + dump, 'r+') as handle:
                         data = handle.read()
