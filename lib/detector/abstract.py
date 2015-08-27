@@ -35,7 +35,7 @@ class AbstractDetector:
     def logfunctions(self):
         dump_logger = getLogger('dumpscraper')
 
-        dump_logger.debug(self.returnkey().capitalize() + " detector setup")
+        dump_logger.debug('\t' + self.returnkey().capitalize() + " detector setup")
         dump_logger.debug("\tThe following rules will be applied:")
 
         for name in self.functions:
@@ -47,8 +47,9 @@ class AbstractDetector:
 
                 if descr:
                     descr = descr.split(':return:')
-                    descr = descr[0].strip(' \n\t')
-                    dump_logger.debug('\t\t\t' + descr)
+                    descr = descr[0].strip(' \n\t').split('\n')
+                    for row in descr:
+                        dump_logger.debug('\t\t\t' + row.strip(' \n\t'))
 
     @abstractmethod
     def analyze(self, results):

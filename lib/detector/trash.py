@@ -97,6 +97,10 @@ class TrashDetector(AbstractDetector):
         return 0
 
     def antivirusDump(self):
+        """
+        Detects anti-virus dumps
+        :return:
+        """
         signatures = ['Malwarebytes Anti-Malware', 'www.malwarebytes.org']
 
         for signature in signatures:
