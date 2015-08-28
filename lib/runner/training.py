@@ -3,7 +3,7 @@ __copyright__ = '2015 Davide Tampellini - FabbricaBinaria'
 __license__ = 'GNU GPL version 3 or later'
 
 import colorama
-from os import path, makedirs, walk, listdir, system, name, startfile as os_startfile
+from os import path, makedirs, walk, listdir, system, name
 from platform import system as platform_system
 from random import choice as random_choice
 from shutil import copyfile as shutil_copyfile
@@ -97,12 +97,20 @@ class DumpScraperTraining(AbstractCommand):
             if answer == 'o':
                 current_os = platform_system()
                 if current_os == 'Windows':
+                    from os import startfile as os_startfile
                     os_startfile(rfile)
                 elif current_os == 'Linux':
                     subprocess_call(["xdg-open", rfile])
                 elif current_os == 'Darwin':
                     system("open " + rfile)
-            elif answer == 't':
+
+                # Let's start the loop again to read the new key
+                answer = getch()
+
+                while answer == '':
+                    pass
+
+            if answer == 't':
                 shutil_copyfile(rfile, self.settings['data_dir'] + "/" + 'training/trash/' + path.basename(rfile))
             elif answer == 'p':
                 shutil_copyfile(rfile, self.settings['data_dir'] + "/" + 'training/plain/' + path.basename(rfile))

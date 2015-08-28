@@ -3,7 +3,7 @@ __copyright__ = '2015 Davide Tampellini - FabbricaBinaria'
 __license__ = 'GNU GPL version 3 or later'
 
 import colorama
-from os import path as os_path, walk as os_walk, system, name, startfile as os_startfile
+from os import path as os_path, walk as os_walk, system, name
 from platform import system as platform_system
 from subprocess import call as subprocess_call
 from sys import stdout as sys_stdout
@@ -91,12 +91,20 @@ class DumpScraperReview(AbstractCommand):
                 if answer == 'o':
                     current_os = platform_system()
                     if current_os == 'Windows':
+                        from os import startfile as os_startfile
                         os_startfile(rfile)
                     elif current_os == 'Linux':
                         subprocess_call(["xdg-open", rfile])
                     elif current_os == 'Darwin':
                         system("open " + rfile)
-                elif answer == 'n':
+
+                    # Let's start the loop again to read the new key
+                    answer = getch()
+
+                    while answer == '':
+                        pass
+
+                if answer == 'n':
                     print("")
                 elif answer == 'p':
                     if idx >= 2:
