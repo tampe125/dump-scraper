@@ -20,7 +20,6 @@ class PastebinScraper(AbstractScrape):
 
     def update(self):
         """update(self) - Fill Queue with new Pastebin IDs"""
-        # logging.info('Retrieving Pastebin ID\'s')
         new_pastes = []
         raw = None
 
@@ -31,7 +30,7 @@ class PastebinScraper(AbstractScrape):
                     getLogger('dumpscraper').critical("Pastebin blocked your IP. Wait a couple of hours and try again")
                     raise RunningError()
             except ConnectionError:
-                # logging.info('Error with pastebin')
+                getLogger('dumpscraper').warn('Connection error, trying again in 5 seconds')
                 raw = None
                 sleep(5)
 
@@ -50,8 +49,12 @@ class PastebinScraper(AbstractScrape):
             # Let's save the starting id, so I can skip already processed pastes
             self.ref_id = results[0].a['href'][1:]
         except IndexError:
-            getLogger('dumpscraper').info("Archive links not found")
+            dump_logger = getLogger('dumpscraper')
+            dump_logger.info("\tArchive links not found")
+            dump_logger.debug('\t\tFetched page:')
+
+            for row in results:
+                dump_logger.debug('\t\t\t' + row)
 
         for entry in new_pastes[::-1]:
-            # logging.info('Adding URL: ' + entry.url)
             self.put(entry)

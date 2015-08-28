@@ -3,7 +3,6 @@ __copyright__ = '2015 Davide Tampellini - FabbricaBinaria'
 __license__ = 'GNU GPL version 3 or later'
 
 import argparse
-import colorama
 import json
 import logging
 import logging.handlers
@@ -158,7 +157,7 @@ Dump Scraper - A better way of scraping
                 settings['data_dir'] = os_path.realpath("data/raw/")
             else:
                 if not os_path.exists(settings['data_dir']):
-                    logging.getLogger('dumpscraper').warn(colorama.Fore.RED + "Path " + settings['data_dir'] + " does not exist, using the default 'data/raw' one")
+                    logging.getLogger('dumpscraper').warn("Path " + settings['data_dir'] + " does not exist, using the default 'data/raw' one")
                     settings['data_dir'] = os_path.realpath("data/raw/")
         except KeyError:
             settings['data_dir'] = os_path.realpath("data/raw/")
@@ -233,8 +232,10 @@ Dump Scraper - A better way of scraping
 
 
 try:
-    colorama.init(autoreset=True)
     scraper = DumpScraper()
+    logging.getLogger('dumpscraper').debug("=========================================")
+    logging.getLogger('dumpscraper').debug("Application Started")
+    logging.getLogger('dumpscraper').debug("=========================================")
     scraper.run()
 except KeyboardInterrupt:
     print("")
