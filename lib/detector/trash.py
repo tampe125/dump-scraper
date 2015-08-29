@@ -21,7 +21,6 @@ class TrashDetector(AbstractDetector):
             self.functions['fewLines']        = 1
             self.functions['longLines']       = 1
             self.functions['privateKeys']     = 1
-            self.functions['antivirusDump']   = 1
             self.functions['detectRawEmail']  = 1
             self.functions['detectEmailsOnly'] = 1
             self.functions['detectDebug']     = 1.2
@@ -95,15 +94,6 @@ class TrashDetector(AbstractDetector):
         """
         if self.data.count('---BEGIN') > 0:
             return 3
-
-        return 0
-
-    def antivirusDump(self):
-        signatures = ['Malwarebytes Anti-Malware', 'www.malwarebytes.org']
-
-        for signature in signatures:
-            if self.data.lower().count(signature.lower()) > 0:
-                return 3
 
         return 0
 
@@ -228,12 +218,13 @@ class TrashDetector(AbstractDetector):
 
         score = data_lower.count('e-mail found')
 
+        # We moved these checks directly while scraping
         # The #EXTINF signature flags a file we're not interested into
-        if data_lower.count('#extinf'):
-            return 3
+        # if data_lower.count('#extinf'):
+        #    return 3
 
         # XML files
-        if data_lower.count('<?xml version="1.0" encoding="utf-8"?>'):
-            return 3
+        # if data_lower.count('<?xml version="1.0" encoding="utf-8"?>'):
+        #    return 3
 
         return score / self.lines

@@ -25,9 +25,10 @@ regexes = {
         re.compile(r'(table\s*?:)', re.I),
         re.compile(r'((available|current)\s*(databases?|dbs?)\W)', re.I),
         re.compile(r'(hacked\s*by)', re.I)
-    ],  # I was hoping to not have to make a blacklist, but it looks like I don't really have a choice
+    ],
+    # I was hoping to not have to make a blacklist, but it looks like I don't really have a choice
     'blacklist': [
-        re.compile(r'(select\s+.*?from|join|declare\s+.*?\s+as\s+|update.*?set|insert.*?into)', re.I),  # SQL
+        # re.compile(r'(select\s+.*?from|join|declare\s+.*?\s+as\s+|update.*?set|insert.*?into)', re.I),  # SQL
         re.compile(r'(define\(.*?\)|require_once\(.*?\))', re.I),  # PHP
         re.compile(r'(function.*?\(.*?\))', re.I),
         re.compile(r'(Configuration(\.Factory|\s*file))', re.I),
@@ -50,7 +51,12 @@ regexes = {
         re.compile(r'Initializing cgroup subsys cpuset', re.I),
         re.compile(r'Init vk network', re.I),
         re.compile(r'MediaTomb UPnP Server', re.I),
+        # Antivirus dump signatures
         re.compile(r'Malwarebytes Anti-Malware', re.I),
-        re.compile(r'www.malwarebytes.org', re.I)
+        re.compile(r'www\.malwarebytes\.org', re.I),
+        # IPTV links
+        re.compile(r'#EXTM3U\n#EXTINF:', re.I),
+        # XML files
+        re.compile(r'<\?xml version="1\.0" encoding="utf-8"\?>', re.I)
     ]
 }
