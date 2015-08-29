@@ -12,6 +12,15 @@ from textwrap import dedent as textwrap_dedent
 from lib.exceptions import exceptions
 from distutils.version import StrictVersion
 
+# Sadly there is a problem with shipping the certificate in the single executable, so I have to skip HTTPS verification
+# This is turn will raise an InsecureRequestWarning, so we have to suppress it
+# It's an ugly workaround while we found a way to make HTTPS connection work...
+try:
+    from requests import packages as requests_packages
+    requests_packages.urllib3.disable_warnings()
+except ImportError:
+    # Guess what? Under Linux I don't have the packages attribute
+    pass
 
 class DumpScraper:
     def __init__(self):
