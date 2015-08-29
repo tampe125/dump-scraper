@@ -85,10 +85,10 @@ class AbstractScrape:
 
             day = datetime.now().strftime('%Y-%m-%d')
 
-            if not path.exists(path.realpath(self.settings['data_dir'] + "/" + day)):
-                    makedirs(path.realpath(self.settings['data_dir'] + "/" + day))
+            if not path.exists(path.realpath(self.settings['data_dir'] + "/raw/" + day)):
+                    makedirs(path.realpath(self.settings['data_dir'] + "/raw/" + day))
 
-            with open(path.realpath(self.settings['data_dir'] + "/" + day + "/" + filename + ".txt"), 'w+') as dump_file:
+            with open(path.realpath(self.settings['data_dir'] + "/raw/" + day + "/" + filename + ".txt"), 'w+') as dump_file:
                     dump_file.write(paste.text)
 
             url = paste.url
