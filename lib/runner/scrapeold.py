@@ -25,9 +25,13 @@ class DumpScraperScrapeold(AbstractCommand):
 
         processing = True
         url = origurl
+        # We have to pass an user agent, otherwise Twitter will display an empty content
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64; rv:42.0) Gecko/20100101 Firefox/42.0'
+        }
 
         while processing:
-            r = requests.get(url)
+            r = requests.get(url, headers=headers)
             json_data = json.loads(r.content)
             raw_html = json_data['items_html'].strip()
 
