@@ -7,7 +7,6 @@ import datetime
 import twitter
 import os
 import requests
-import sys
 from logging import getLogger
 from time import sleep
 from lib.runner.abstract import AbstractCommand
