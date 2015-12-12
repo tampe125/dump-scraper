@@ -8,6 +8,7 @@ import twitter
 import os
 import requests
 import sys
+from logging import getLogger
 from time import sleep
 from lib.runner.abstract import AbstractCommand
 from lib.exceptions.exceptions import RunningError
@@ -40,6 +41,8 @@ class DumpScraperScrape(AbstractCommand):
         except twitter.error.TwitterError as error:
             raise RunningError(colorama.Fore.RED + 'Twitter error: ' + error.message[0]['message'])
 
+        dump_logger = getLogger('dumpscraper')
+
         while processed <= self.settings['processing_limit']:
 
             tweets = connection.GetUserTimeline(screen_name='dumpmon', max_id=max_id,
@@ -67,8 +70,7 @@ class DumpScraperScrape(AbstractCommand):
 
                 if day != prev_day:
                     prev_day = day
-                    print("")
-                    print("Processing day: " + day)
+                    dump_logger.info("Processing day: " + day)
 
                 folder = day
 
@@ -92,19 +94,12 @@ class DumpScraperScrape(AbstractCommand):
 
                 if "has been removed" in data.text:
                     removed += 1
-                    sys.stdout.write('x')
-                    sys.stdout.flush()
                     continue
-
-                sys.stdout.write('.')
-                sys.stdout.flush()
 
                 with open(target_dir + "/" + str(tweet.id) + ".txt", 'w+') as dump_file:
                     dump_file.write(data.text.encode('utf-8'))
 
-            print("")
-            print("\tprocessed " + str(processed) + " tweets")
-            print("\tFound " + str(removed) + " removed tweets in this batch")
+            dump_logger.info("Processed " + str(processed) + " tweets")
+            dump_logger.info("Found " + str(removed) + " removed tweets in this batch")
 
-        print("")
-        print("Total processed tweets: " + str(processed))
+        dump_logger.info("Total processed tweets: " + str(processed))
