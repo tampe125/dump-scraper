@@ -3,4 +3,5 @@ sklearn
 requests
 colorlog
 colorama
-beautifoulsoup4
+python-twitter
+beautifoulsoup

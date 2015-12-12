@@ -23,6 +23,7 @@ except ImportError:
     # Guess what? Under Linux I don't have the packages attribute
     pass
 
+
 class DumpScraper:
     def __init__(self):
 
@@ -46,6 +47,15 @@ Dump Scraper - A better way of scraping
         subparsers = parser.add_subparsers(dest='command')
 
         subparsers.add_parser('scrape')
+        subparsers.add_parser('scraperaw')
+
+        parser_old = subparsers.add_parser('scrapeold')
+        parser_old.add_argument('-s', '--since',
+                                help='Starting date for scraping old data, format YYYY-MM-DD',
+                                required=True)
+        parser_old.add_argument('-u', '--until',
+                                help='Stopping date for scraping old data, format YYYY-MM-DD. If not supplied only the SINCE date will be processed',
+                                required=True)
 
         parser_getscore = subparsers.add_parser('getscore')
         parser_getscore.add_argument('-s', '--since',
@@ -122,6 +132,8 @@ Dump Scraper - A better way of scraping
 
         # Let's silence the requests package logger
         logging.getLogger("requests").setLevel(logging.WARNING)
+        logging.getLogger("requests_oauthlib").setLevel(logging.WARNING)
+        logging.getLogger("oauthlib").setLevel(logging.WARNING)
 
         if self.args.command == 'training':
             self.args.force = None
@@ -186,7 +198,7 @@ Dump Scraper - A better way of scraping
 
         dump_logger = logging.getLogger('dumpscraper')
 
-        # Peform some sanity checks
+        # Perform some sanity checks
         try:
             self.checkenv()
         except exceptions.InvalidSettings as error:
@@ -194,7 +206,6 @@ Dump Scraper - A better way of scraping
             return
 
         # Let's ouput some info
-
         if hasattr(self.args, 'level') and self.args.level > 0:
             dump_logger.debug('\tUsing a greedy level of ' + str(self.args.level))
 
@@ -208,6 +219,12 @@ Dump Scraper - A better way of scraping
         if self.args.command == 'scrape':
             from lib.runner import scrape
             runner = scrape.DumpScraperScrape(self.settings, self.args)
+        elif self.args.command == 'scraperaw':
+            from lib.runner import scraperaw
+            runner = scraperaw.DumpScraperScraperaw(self.settings, self.args)
+        elif self.args.command == 'scrapeold':
+            from lib.runner import scrapeold
+            runner = scrapeold.DumpScraperScrapeold(self.settings, self.args)
         elif self.args.command == 'getscore':
             from lib.runner import getscore
             runner = getscore.DumpScraperGetscore(self.settings, self.args)
