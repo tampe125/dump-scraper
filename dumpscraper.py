@@ -123,6 +123,8 @@ Dump Scraper - A better way of scraping
 
         # Let's silence the requests package logger
         logging.getLogger("requests").setLevel(logging.WARNING)
+        logging.getLogger("requests_oauthlib").setLevel(logging.WARNING)
+        logging.getLogger("oauthlib").setLevel(logging.WARNING)
 
         if self.args.command == 'training':
             self.args.force = None
