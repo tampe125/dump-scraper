@@ -45,6 +45,7 @@ Dump Scraper - A better way of scraping
 
         subparsers = parser.add_subparsers(dest='command')
 
+        subparsers.add_parser('scrape')
         subparsers.add_parser('scraperaw')
 
         parser_getscore = subparsers.add_parser('getscore')
