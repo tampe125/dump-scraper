@@ -23,6 +23,7 @@ except ImportError:
     # Guess what? Under Linux I don't have the packages attribute
     pass
 
+
 class DumpScraper:
     def __init__(self):
 

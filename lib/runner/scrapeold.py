@@ -2,6 +2,7 @@ __author__ = 'Davide Tampellini'
 __copyright__ = '2015 Davide Tampellini - FabbricaBinaria'
 __license__ = 'GNU GPL version 3 or later'
 
+import colorama
 import datetime
 import lxml.html as LH
 import json
@@ -9,6 +10,7 @@ import requests
 import urllib
 import sys
 import os
+from logging import getLogger
 from time import sleep
 from lib.runner.abstract import AbstractCommand
 from lib.exceptions.exceptions import RunningError
@@ -29,6 +31,8 @@ class DumpScraperScrapeold(AbstractCommand):
         headers = {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64; rv:42.0) Gecko/20100101 Firefox/42.0'
         }
+
+        dump_logger = getLogger('dumpscraper')
 
         while processing:
             r = requests.get(url, headers=headers)
@@ -67,8 +71,7 @@ class DumpScraperScrapeold(AbstractCommand):
 
                 if day != prev_day:
                     prev_day = day
-                    print("")
-                    print("Processing day: " + day)
+                    dump_logger.info("Processing day: " + day)
 
                 folder = day
 
@@ -88,17 +91,12 @@ class DumpScraperScrapeold(AbstractCommand):
 
                 if "Pastebin.com has blocked your IP" in data.text:
                     raise RunningError(
-                        "Pastebin blocked your IP. Wait a couple of hours and try again, raising the delay between tweets"
+                        colorama.Fore.RED + "Pastebin blocked your IP. Wait a couple of hours and try again, raising the delay between tweets"
                     )
 
                 if "has been removed" in data.text:
                     removed += 1
-                    sys.stdout.write('x')
-                    sys.stdout.flush()
                     continue
-
-                sys.stdout.write('.')
-                sys.stdout.flush()
 
                 with open(os.path.realpath("data/raw/" + folder + "/" + str(tweetid) + ".txt"), 'w+') as dump_file:
                     dump_file.write(data.text.encode('utf-8'))
@@ -106,5 +104,4 @@ class DumpScraperScrapeold(AbstractCommand):
             # Let's setup the url for the next iteration
             url = origurl + '&scroll_cursor=' + json_data['scroll_cursor']
 
-        print("")
-        print("Total processed tweets: " + str(processed))
+        dump_logger.info("Total processed tweets: " + str(processed))
