@@ -9,7 +9,7 @@ from lib.runner.abstract import AbstractCommand
 from lib.scrapers.pastebin import PastebinScraper
 
 
-class DumpScraperScrape(AbstractCommand):
+class DumpScraperScraperaw(AbstractCommand):
     def run(self):
         # Ok, let's start a daemon that will search for new dumps
         pastebin_thread = threading_Thread(target=PastebinScraper(self.settings).monitor)

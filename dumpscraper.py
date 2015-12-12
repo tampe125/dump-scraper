@@ -45,7 +45,7 @@ Dump Scraper - A better way of scraping
 
         subparsers = parser.add_subparsers(dest='command')
 
-        subparsers.add_parser('scrape')
+        subparsers.add_parser('scraperaw')
 
         parser_getscore = subparsers.add_parser('getscore')
         parser_getscore.add_argument('-s', '--since',
@@ -208,6 +208,9 @@ Dump Scraper - A better way of scraping
         if self.args.command == 'scrape':
             from lib.runner import scrape
             runner = scrape.DumpScraperScrape(self.settings, self.args)
+        elif self.args.command == 'scraperaw':
+            from lib.runner import scraperaw
+            runner = scraperaw.DumpScraperScraperaw(self.settings, self.args)
         elif self.args.command == 'getscore':
             from lib.runner import getscore
             runner = getscore.DumpScraperGetscore(self.settings, self.args)
