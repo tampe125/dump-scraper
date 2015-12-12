@@ -75,8 +75,10 @@ class DumpScraperScrapeold(AbstractCommand):
 
                 folder = day
 
-                if not os.path.exists(os.path.realpath("data/raw/" + folder)):
-                    os.makedirs(os.path.realpath("data/raw/" + folder))
+                target_dir = os.path.realpath(self.settings['data_dir'] + "/raw/" + folder)
+
+                if not os.path.exists(target_dir):
+                    os.makedirs(target_dir)
 
                 sleep(self.settings['delay'])
 
@@ -98,7 +100,7 @@ class DumpScraperScrapeold(AbstractCommand):
                     removed += 1
                     continue
 
-                with open(os.path.realpath("data/raw/" + folder + "/" + str(tweetid) + ".txt"), 'w+') as dump_file:
+                with open(os.path.realpath(target_dir + "/" + str(tweetid) + ".txt"), 'w+') as dump_file:
                     dump_file.write(data.text.encode('utf-8'))
 
             # Let's setup the url for the next iteration
