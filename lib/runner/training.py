@@ -19,7 +19,7 @@ from lib.utils.getch import getch
 class DumpScraperTraining(AbstractCommand):
     def check(self):
         if not path.exists(self.settings['data_dir'] + "/" + 'raw'):
-            raise RunningError(colorama.Fore.RED + "There aren't any dump files to process. Scrape them before continuing.")
+            raise RunningError("There aren't any dump files to process. Scrape them before continuing.")
 
         if not path.exists(self.settings['data_dir'] + "/" + 'training'):
             makedirs(self.settings['data_dir'] + "/" + 'training')
@@ -129,5 +129,6 @@ class DumpScraperTraining(AbstractCommand):
 
     def _getscore(self):
         # Let's invoke the getscore runner and tell him to work on training data
+        self.parentArgs.level = 1
         running = getscore.DumpScraperGetscore(self.settings, self.parentArgs)
         running.run(training=True)

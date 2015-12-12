@@ -2,7 +2,7 @@ __author__ = 'Davide Tampellini'
 __copyright__ = '2015 Davide Tampellini - FabbricaBinaria'
 __license__ = 'GNU GPL version 3 or later'
 
-import colorama
+from logging import getLogger
 from requests import get as requests_get
 from time import sleep
 from lib.scrapers.abstract import AbstractScrape
@@ -20,7 +20,6 @@ class PastebinScraper(AbstractScrape):
 
     def update(self):
         """update(self) - Fill Queue with new Pastebin IDs"""
-        # logging.info('Retrieving Pastebin ID\'s')
         new_pastes = []
         raw = None
 
@@ -28,15 +27,14 @@ class PastebinScraper(AbstractScrape):
             try:
                 raw = requests_get('http://pastebin.com/archive').content
                 if "Pastebin.com has blocked your IP" in raw:
-                    raise RunningError(
-                        colorama.Fore.RED + "Pastebin blocked your IP. Wait a couple of hours and try again"
-                    )
+                    getLogger('dumpscraper').critical("Pastebin blocked your IP. Wait a couple of hours and try again")
+                    raise RunningError()
             except ConnectionError:
-                # logging.info('Error with pastebin')
+                getLogger('dumpscraper').warn('Connection error, trying again in 5 seconds')
                 raw = None
                 sleep(5)
 
-        results = BeautifulSoup(raw).findAll(
+        results = BeautifulSoup(raw, "lxml").findAll(
             lambda tag: tag.name == 'td' and tag.a and '/archive/' not in tag.a['href'] and tag.a['href'][1:])
 
         for entry in results:
@@ -51,8 +49,12 @@ class PastebinScraper(AbstractScrape):
             # Let's save the starting id, so I can skip already processed pastes
             self.ref_id = results[0].a['href'][1:]
         except IndexError:
-            print "Archive links not found"
+            dump_logger = getLogger('dumpscraper')
+            dump_logger.info("\tArchive links not found")
+            dump_logger.debug('\t\tFetched page:')
+
+            for row in results:
+                dump_logger.debug('\t\t\t' + row)
 
         for entry in new_pastes[::-1]:
-            # logging.info('Adding URL: ' + entry.url)
             self.put(entry)

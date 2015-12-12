@@ -3,7 +3,7 @@ __copyright__ = '2015 Davide Tampellini - FabbricaBinaria'
 __license__ = 'GNU GPL version 3 or later'
 
 import sklearn.neighbors
-import colorama
+from logging import getLogger
 from csv import reader as csv_reader
 from os import path, makedirs
 from scipy import genfromtxt as scipy_genfromtxt
@@ -16,7 +16,7 @@ from lib.runner import getscore
 class DumpScraperClassify(AbstractCommand):
     def check(self):
         if not path.exists(self.settings['data_dir'] + "/" + 'training/features.csv'):
-            raise RunningError(colorama.Fore.RED + "Training score was not calculated. Do it and then run this command again")
+            raise RunningError("Training score was not calculated. Do it and then run this command again")
 
         if not path.exists(self.settings['data_dir'] + "/" + 'organized'):
             makedirs(self.settings['data_dir'] + "/" + 'organized')
@@ -28,8 +28,9 @@ class DumpScraperClassify(AbstractCommand):
             makedirs(self.settings['data_dir'] + "/" + 'organized/trash')
 
     def run(self):
+        dump_logger = getLogger('dumpscraper')
         # Let's invoke the getscore runner and tell him to work on training data
-        print("Calculating dump score...")
+        dump_logger.info("Calculating dump score...")
         running = getscore.DumpScraperGetscore(self.settings, self.parentArgs)
         running.run()
 
@@ -76,7 +77,7 @@ class DumpScraperClassify(AbstractCommand):
 
                 shutil_copyfile(self.settings['data_dir'] + "/" + 'raw/' + line[-1], target_file)
 
-        print("Trash files: " + str(trash_count))
-        print("Hash files: " + str(hash_count))
-        print("Plain files: " + str(plain_count))
-        print("Operation completed")
+        dump_logger.info("Trash files: " + str(trash_count))
+        dump_logger.info("Hash files: " + str(hash_count))
+        dump_logger.info("Plain files: " + str(plain_count))
+        dump_logger.info("Operation completed")

@@ -3,9 +3,10 @@ __copyright__ = '2015 Davide Tampellini - FabbricaBinaria'
 __license__ = 'GNU GPL version 3 or later'
 
 import argparse
-import colorama
 import json
-
+import logging
+import logging.handlers
+from colorlog import ColoredFormatter
 from os import path as os_path
 from requests import get as requests_get
 from textwrap import dedent as textwrap_dedent
@@ -40,6 +41,8 @@ Dump Scraper - A better way of scraping
  to display the help for the specific command
         '''))
 
+        parser.add_argument('--verbose', action='store_true', help="Verbose flag")
+
         subparsers = parser.add_subparsers(dest='command')
 
         subparsers.add_parser('scrape')
@@ -52,6 +55,11 @@ Dump Scraper - A better way of scraping
                                      help='Stopping date for the analysis, format YYYY-MM-DD. If not supplied only the SINCE date will be processed')
         parser_getscore.add_argument('-f', '--force',
                                      help="Force a specific dump filename to process, used for debug only")
+        parser_getscore.add_argument('-l', '--level',
+                                     help='How greedy we want to be. Higher level will give you more results, but also more false positives',
+                                     default=1,
+                                     type=int,
+                                     choices=[1, 2, 3])
 
         parser_training = subparsers.add_parser('training')
         parser_training.add_argument('-d', '--getdata',
@@ -97,25 +105,44 @@ Dump Scraper - A better way of scraping
 
         self.args = parser.parse_args()
 
+        # Logging information
+        # TODO - Add a rotation logic
+        dump_logger = logging.getLogger('dumpscraper')
+        logging.basicConfig(level=logging.DEBUG,
+                            format='%(asctime)s|%(levelname)-8s: %(message)s',
+                            datefmt='%Y-%m-%d %H:%M:%S',
+                            filename='dumpscraper.log')
+
+        console = logging.StreamHandler()
+        console.setLevel(logging.DEBUG if self.args.verbose else logging.INFO)
+
+        formatter = ColoredFormatter("%(log_color)s[%(levelname)-4s] %(message)s%(reset)s")
+        console.setFormatter(formatter)
+        dump_logger.addHandler(console)
+
+        # Let's silence the requests package logger
+        logging.getLogger("requests").setLevel(logging.WARNING)
+
         if self.args.command == 'training':
             self.args.force = None
             if not self.args.getdata and not self.args.getscore:
-                parser.error(colorama.Fore.RED + "With the [training] command you have to supply the [getdata] or [getscore] argument")
+                dump_logger.error("With the [training] command you have to supply the [getdata] or [getscore] argument")
+                from sys import exit
+                exit(2)
 
     def banner(self):
-        print(colorama.Fore.YELLOW + "Dump Scraper " + self.version + " - A better way of scraping")
-        print(colorama.Fore.YELLOW + "Copyright (C) 2015 FabbricaBinaria - Davide Tampellini")
-        print(colorama.Fore.YELLOW + "===============================================================================")
-        print(colorama.Fore.YELLOW + "Dump Scraper is Free Software, distributed under the terms of the GNU General")
-        print(colorama.Fore.YELLOW + "Public License version 3 or, at your option, any later version.")
-        print(colorama.Fore.YELLOW + "This program comes with ABSOLUTELY NO WARRANTY as per sections 15 & 16 of the")
-        print(colorama.Fore.YELLOW + "license. See http://www.gnu.org/licenses/gpl-3.0.html for details.")
-        print(colorama.Fore.YELLOW + "===============================================================================")
+        print("Dump Scraper " + self.version + " - A better way of scraping")
+        print("Copyright (C) 2015 FabbricaBinaria - Davide Tampellini")
+        print("===============================================================================")
+        print("Dump Scraper is Free Software, distributed under the terms of the GNU General")
+        print("Public License version 3 or, at your option, any later version.")
+        print("This program comes with ABSOLUTELY NO WARRANTY as per sections 15 & 16 of the")
+        print("license. See http://www.gnu.org/licenses/gpl-3.0.html for details.")
+        print("===============================================================================")
 
     def checkenv(self):
         if not os_path.exists(os_path.realpath("settings.json")):
-            raise exceptions.InvalidSettings(colorama.Fore.RED + "Please rename the file settings-dist.json to settings.json "
-                                             "and fill the required info")
+            raise exceptions.InvalidSettings("Please rename the file settings-dist.json to settings.json and fill the required info")
 
         json_data = open(os_path.realpath("settings.json"))
         settings = json.load(json_data)
@@ -129,17 +156,17 @@ Dump Scraper - A better way of scraping
                 value = settings[required]
 
                 if value == '':
-                    raise exceptions.InvalidSettings(colorama.Fore.RED + "Please fill the required info '" + required + "' before continuing")
+                    raise exceptions.InvalidSettings("Please fill the required info '" + required + "' before continuing")
 
             except KeyError:
-                raise exceptions.InvalidSettings(colorama.Fore.RED + "Please fill the required info '" + required + "' before continuing")
+                raise exceptions.InvalidSettings("Please fill the required info '" + required + "' before continuing")
 
         try:
             if not settings['data_dir']:
                 settings['data_dir'] = os_path.realpath("data/raw/")
             else:
                 if not os_path.exists(settings['data_dir']):
-                    print(colorama.Fore.RED + "Path " + settings['data_dir'] + " does not exist, using the default 'data/raw' one")
+                    logging.getLogger('dumpscraper').warn("Path " + settings['data_dir'] + " does not exist, using the default 'data/raw' one")
                     settings['data_dir'] = os_path.realpath("data/raw/")
         except KeyError:
             settings['data_dir'] = os_path.realpath("data/raw/")
@@ -151,23 +178,31 @@ Dump Scraper - A better way of scraping
         json_data = json.loads(r.content)
 
         if StrictVersion(json_data['tag_name']) > StrictVersion(self.version):
-            print(colorama.Fore.WHITE + colorama.Back.RED + "A new version is available, please download it from https://github.com/tampe125/dump-scraper/releases")
-            print(colorama.Fore.RESET + colorama.Back.RESET + "")
-
-        pass
+            logging.getLogger('dumpscraper').warn("A new version is available, please download it from https://github.com/tampe125/dump-scraper/releases")
 
     def run(self):
         self.banner()
         self.check_updates()
 
+        dump_logger = logging.getLogger('dumpscraper')
+
         # Peform some sanity checks
         try:
             self.checkenv()
         except exceptions.InvalidSettings as error:
-            print("")
-            print(error)
-
+            dump_logger.error(error)
             return
+
+        # Let's ouput some info
+
+        if hasattr(self.args, 'level') and self.args.level > 0:
+            dump_logger.debug('\tUsing a greedy level of ' + str(self.args.level))
+
+        if hasattr(self.args, 'clean') and self.args.clean:
+            dump_logger.debug("\tClean the target folder before attempting to write inside it")
+
+        if hasattr(self.args, 'force') and self.args.force:
+            dump_logger.debug("\tForcing the execution only on file " + str(self.args.force))
 
         # Let's load the correct object
         if self.args.command == 'scrape':
@@ -189,7 +224,7 @@ Dump Scraper - A better way of scraping
             from lib.runner import review
             runner = review.DumpScraperReview(self.settings, self.args)
         else:
-            print("Unrecognized command")
+            dump_logger.error("Unrecognized command " + self.args.command)
             return
 
         # And away we go!
@@ -198,8 +233,7 @@ Dump Scraper - A better way of scraping
             runner.run()
         # Ehm.. something wrong happened?
         except exceptions.RunningError as error:
-            print("")
-            print(error)
+            dump_logger.error(error)
         # Always save the updated settings
         finally:
             with open(os_path.realpath("settings.json"), 'w+') as update_settings:
@@ -207,9 +241,11 @@ Dump Scraper - A better way of scraping
 
 
 try:
-    colorama.init(autoreset=True)
     scraper = DumpScraper()
+    logging.getLogger('dumpscraper').debug("=========================================")
+    logging.getLogger('dumpscraper').debug("Application Started")
+    logging.getLogger('dumpscraper').debug("=========================================")
     scraper.run()
 except KeyboardInterrupt:
     print("")
-    print("Operation aborted")
+    logging.getLogger('dumpscraper').info("Operation aborted")

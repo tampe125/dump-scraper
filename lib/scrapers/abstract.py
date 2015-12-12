@@ -5,6 +5,7 @@ __copyright__ = '2015 Davide Tampellini - FabbricaBinaria'
 __license__ = 'GNU GPL version 3 or later'
 
 import requests
+from logging import getLogger
 from time import sleep
 from abc import ABCMeta, abstractmethod
 from datetime import datetime
@@ -81,8 +82,6 @@ class AbstractScrape:
         if paste.match():
             filename = str(datetime.now().strftime('%Y%m%d%H%M%S')) + "_" + paste.id
 
-            print(str(datetime.now().strftime('%Y-%m-%d %H:%M:%S')) + " Dump found: " + filename)
-
             day = datetime.now().strftime('%Y-%m-%d')
 
             if not path.exists(path.realpath(self.settings['data_dir'] + "/raw/" + day)):
@@ -96,24 +95,25 @@ class AbstractScrape:
 
             if paste.type == 'db_dump':
                 if paste.num_emails > 0:
-                    tweet += ' Emails: ' + str(paste.num_emails)
+                    tweet += 'Emails: ' + str(paste.num_emails)
                 if paste.num_hashes > 0:
-                    tweet += ' Hashes: ' + str(paste.num_hashes)
+                    tweet += 'Hashes: ' + str(paste.num_hashes)
                 if paste.num_hashes > 0 and paste.num_emails > 0:
-                    tweet += ' E/H: ' + str(round(
+                    tweet += 'E/H: ' + str(round(
                         paste.num_emails / float(paste.num_hashes), 2))
-                tweet += ' Keywords: ' + str(paste.db_keywords)
+                tweet += 'Keywords: ' + str(paste.db_keywords)
             elif paste.type == 'google_api':
-                tweet += ' Found possible Google API key(s)'
+                tweet += 'Found possible Google API key(s)'
             elif paste.type in ['cisco', 'juniper']:
-                tweet += ' Possible ' + paste.type + ' configuration'
+                tweet += 'Possible ' + paste.type + ' configuration'
             elif paste.type == 'ssh_private':
-                tweet += ' Possible SSH private key'
+                tweet += 'Possible SSH private key'
             elif paste.type == 'honeypot':
-                tweet += ' Dionaea Honeypot Log'
+                tweet += 'Dionaea Honeypot Log'
             elif paste.type == 'pgp_private':
-                tweet += ' Found possible PGP Private Key'
-            tweet += ' #infoleak'
+                tweet += 'Found possible PGP Private Key'
+
+            getLogger('dumpscraper').info("\tDump found: " + filename + ' (' + tweet + ')')
 
         return tweet
 

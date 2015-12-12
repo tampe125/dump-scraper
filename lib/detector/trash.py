@@ -33,6 +33,9 @@ class TrashDetector(AbstractDetector):
         if self.level <= 1:
             self.functions['detectIP']        = 1.5
 
+        # Let's log the functions that will be applied
+        self.logfunctions()
+
         # Let's compile some regexes to speed up the execution
         self.regex['emailsOnly'] = re.compile(r'^[\s"]?[a-z0-9\-\._]+@[a-z0-9\-\.]+\.[a-z]{2,4}[\s|\t]?$', re.I | re.M)
         self.regex['debugHex'] = re.compile(r'0x[a-f0-9]{8}', re.I)
