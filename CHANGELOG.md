@@ -1,4 +1,4 @@
-## 0.3.0 [Unreleased]
+## 1.0.0
 - Avoid errors when calculating training data score
 - Added support for MySQL < 4.1 hashes
 - Added support for Apache MD5 hashes
@@ -15,7 +15,7 @@
 - Added "review" command to quickly review organized files
 - Added support for "greedy": a tradoff between data retrieved and amount of false positives
 
-## 0.2.0 [Unreleased]
+## 0.2.0
 ### Added
 - Skip all numbers password
 - Added script to scrape old tweets
