@@ -14,6 +14,7 @@
 - Removed the need to press "Enter" while screening for training files
 - Added "review" command to quickly review organized files
 - Added support for "greedy": a tradoff between data retrieved and amount of false positives
+- Added log file for extensive logging
 
 ## 0.2.0
 ### Added

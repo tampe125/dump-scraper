@@ -116,17 +116,21 @@ Dump Scraper - A better way of scraping
         self.args = parser.parse_args()
 
         # Logging information
-        # TODO - Add a rotation logic
         dump_logger = logging.getLogger('dumpscraper')
-        logging.basicConfig(level=logging.DEBUG,
-                            format='%(asctime)s|%(levelname)-8s: %(message)s',
-                            datefmt='%Y-%m-%d %H:%M:%S',
-                            filename='dumpscraper.log')
+        dump_logger.setLevel(logging.DEBUG)
+
+        # Create a rotation logging, so we won't have and endless file
+        rotate = logging.handlers.RotatingFileHandler('dumpscraper.log', maxBytes=(5 * 1024 * 1024), backupCount=3)
+        rotate.setLevel(logging.DEBUG)
+        formatter = logging.Formatter('%(asctime)s|%(levelname)-8s| %(message)s')
+        rotate.setFormatter(formatter)
+
+        dump_logger.addHandler(rotate)
 
         console = logging.StreamHandler()
         console.setLevel(logging.DEBUG if self.args.verbose else logging.INFO)
 
-        formatter = ColoredFormatter("%(log_color)s[%(levelname)-4s] %(message)s%(reset)s")
+        formatter = ColoredFormatter("%(log_color)s[%(levelname)-4s] %(message)s%(reset)s", '%Y-%m-%d %H:%M:%S')
         console.setFormatter(formatter)
         dump_logger.addHandler(console)
 

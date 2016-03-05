@@ -11,4 +11,4 @@ build/tmp
 settings.json
 composer.phar
 settings.sh
-dumpscraper.log
+dumpscraper.log*
