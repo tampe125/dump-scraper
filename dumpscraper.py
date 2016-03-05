@@ -175,13 +175,13 @@ Dump Scraper - A better way of scraping
 
         try:
             if not settings['data_dir']:
-                settings['data_dir'] = os_path.realpath("data/raw/")
+                settings['data_dir'] = os_path.realpath("data/")
             else:
                 if not os_path.exists(settings['data_dir']):
-                    logging.getLogger('dumpscraper').warn("Path " + settings['data_dir'] + " does not exist, using the default 'data/raw' one")
-                    settings['data_dir'] = os_path.realpath("data/raw/")
+                    logging.getLogger('dumpscraper').warn("Path " + settings['data_dir'] + " does not exist, using the default 'data' one")
+                    settings['data_dir'] = os_path.realpath("data/")
         except KeyError:
-            settings['data_dir'] = os_path.realpath("data/raw/")
+            settings['data_dir'] = os_path.realpath("data")
 
         self.settings = settings
 
