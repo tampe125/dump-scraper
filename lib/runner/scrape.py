@@ -64,8 +64,7 @@ class DumpScraperScrape(AbstractCommand):
                     dump_logger.info("Processing day: " + day)
 
                 # Let's create the folder name using year/month/(full-date) structure
-                folder  = dObject.strftime('%Y') + '/'
-                folder += dObject.strftime('%m') + '/' + day
+                folder  = dObject.strftime('%Y') + '/' + dObject.strftime('%m') + '/' + dObject.strftime('%d')
 
                 target_dir = os.path.realpath(self.settings['data_dir'] + "/raw/" + folder)
 
