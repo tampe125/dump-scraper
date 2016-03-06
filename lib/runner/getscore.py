@@ -36,7 +36,8 @@ class DumpScraperGetscore(AbstractCommand):
                 date += datetime.timedelta(days=1)
 
                 while end >= date:
-                    folders.append(date.strftime('%Y-%m-%d'))
+                    parts = date.strftime('%Y-%m-%d').split('-')
+                    folders.append(parts[0] + '/' + parts[1] + '/' + parts[2])
                     date += datetime.timedelta(days=1)
 
         regex_empty_lines = re.compile(r'^\s*?\n', re.M)

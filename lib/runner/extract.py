@@ -39,8 +39,9 @@ class DumpScraperExtract(AbstractCommand):
                 date += datetime.timedelta(days=1)
 
         for date in dates:
-            folders.append('hash/' + date)
-            folders.append('plain/' + date)
+            parts = date.split('-')
+            folders.append('hash/' + parts[0] + '/' + parts[1] + '/' + parts[2])
+            folders.append('plain/' + parts[0] + '/' + parts[1] + '/' + parts[2])
 
         extractors = {'hash': HashExtractor(), 'plain': PlainExtractor()}
 
@@ -82,7 +83,9 @@ class DumpScraperExtract(AbstractCommand):
                     extracted = extractor.extracted.strip(' \n\t\r')
 
                     if extracted:
-                        destination = self.settings['data_dir'] + "/" + 'processed/' + label + '/' + path.basename(root)
+                        parts = path.basename(root).split('-')
+                        destination = self.settings['data_dir'] + "/" + 'processed/' + label + '/'
+                        destination += parts[0] + '/' + parts[1] + '/' + parts[2]
 
                         # If asked for a clean run, let's delete the entire folder before copying any file
                         if self.parentArgs.clean and destination not in cleared and path.exists(destination):
