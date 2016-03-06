@@ -166,7 +166,7 @@ Dump Scraper - A better way of scraping
         json_data.close()
 
         # At the moment there aren't required key, let's leave this check for future use
-        required_keys = []
+        required_keys = ['app_key', 'app_secret', 'token', 'token_secret']
 
         for required in required_keys:
             try:
