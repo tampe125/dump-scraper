@@ -67,13 +67,15 @@ class DumpScraperScrapeold(AbstractCommand):
                 if not paste_link:
                     continue
 
-                day = datetime.datetime.fromtimestamp(float(timestamp)).strftime('%Y-%m-%d')
+                dObject = datetime.datetime.fromtimestamp(float(timestamp))
+                day = dObject.strftime('%Y-%m-%d')
 
                 if day != prev_day:
                     prev_day = day
                     dump_logger.info("Processing day: " + day)
 
-                folder = day
+                # Let's create the folder name using year/month/(full-date) structure
+                folder = dObject.strftime('%Y') + '/' + dObject.strftime('%m') + '/' + dObject.strftime('%d')
 
                 target_dir = os.path.realpath(self.settings['data_dir'] + "/raw/" + folder)
 

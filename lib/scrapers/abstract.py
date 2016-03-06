@@ -82,12 +82,13 @@ class AbstractScrape:
         if paste.match():
             filename = str(datetime.now().strftime('%Y%m%d%H%M%S')) + "_" + paste.id
 
-            day = datetime.now().strftime('%Y-%m-%d')
+            dObject = datetime.now()
+            folder  = dObject.strftime('%Y') + '/' + dObject.strftime('%m') + '/' + dObject.strftime('%d')
 
-            if not path.exists(path.realpath(self.settings['data_dir'] + "/raw/" + day)):
-                    makedirs(path.realpath(self.settings['data_dir'] + "/raw/" + day))
+            if not path.exists(path.realpath(self.settings['data_dir'] + "/raw/" + folder)):
+                    makedirs(path.realpath(self.settings['data_dir'] + "/raw/" + folder))
 
-            with open(path.realpath(self.settings['data_dir'] + "/raw/" + day + "/" + filename + ".txt"), 'w+') as dump_file:
+            with open(path.realpath(self.settings['data_dir'] + "/raw/" + folder + "/" + filename + ".txt"), 'w+') as dump_file:
                     dump_file.write(paste.text)
 
             url = paste.url

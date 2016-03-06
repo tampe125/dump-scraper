@@ -25,7 +25,9 @@ class DumpScraperReview(AbstractCommand):
             if stop:
                 break
 
-            review_folder = self.settings['data_dir'] + '/organized/' + folder + "/" + self.parentArgs.dir
+            # Let's convert the single date to a path
+            arg_dir = '/'.join(self.parentArgs.dir.split('-'))
+            review_folder = self.settings['data_dir'] + '/organized/' + folder + "/" + arg_dir
 
             if not os_path.exists(review_folder):
                 print 'Folder "' + folder + '" not found, skipping...'

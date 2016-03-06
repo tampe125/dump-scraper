@@ -56,13 +56,15 @@ class DumpScraperScrape(AbstractCommand):
                 except KeyError:
                     continue
 
-                day = datetime.datetime.fromtimestamp(tweet.created_at_in_seconds).strftime('%Y-%m-%d')
+                dObject = datetime.datetime.fromtimestamp(tweet.created_at_in_seconds)
+                day = dObject.strftime('%Y-%m-%d')
 
                 if day != prev_day:
                     prev_day = day
                     dump_logger.info("Processing day: " + day)
 
-                folder = day
+                # Let's create the folder name using year/month/(full-date) structure
+                folder  = dObject.strftime('%Y') + '/' + dObject.strftime('%m') + '/' + dObject.strftime('%d')
 
                 target_dir = os.path.realpath(self.settings['data_dir'] + "/raw/" + folder)
 

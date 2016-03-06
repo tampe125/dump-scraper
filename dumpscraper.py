@@ -7,8 +7,10 @@ import json
 import logging
 import logging.handlers
 from datetime import date
+import re
 from colorlog import ColoredFormatter
 from os import path as os_path
+from os import listdir as os_listdir
 from requests import get as requests_get
 from textwrap import dedent as textwrap_dedent
 from lib.exceptions import exceptions
@@ -189,6 +191,26 @@ Dump Scraper - A better way of scraping
             settings['data_dir'] = os_path.realpath("data")
 
         self.settings = settings
+
+        # Migrates the old folder structure (raw/YYYY-MM-DD) to the new one (raw/YYYY/MM/YYYY-MM-DD)
+        # Let's check if we actually have to migrate the data
+        raw_dirs = os_listdir(settings['data_dir'] + '/raw')
+        regex = re.compile('\d{4}-\d{2}-\d{2}')
+        old_dirs = filter(regex.match, raw_dirs)
+
+        if old_dirs:
+            from shutil import move as sh_move
+            dump_logger = logging.getLogger('dumpscraper')
+            dump_logger.info('Old folder structure found, migrating')
+
+            for old_dir in old_dirs:
+                parts = old_dir.split('-')
+                old_path = settings['data_dir'] + '/raw/' + old_dir
+                new_path = settings['data_dir'] + '/raw/' + parts[0] + '/' + parts[1] + '/' + parts[2]
+
+                sh_move(old_path, new_path)
+
+            dump_logger.info('Migration successfully completed')
 
     def check_updates(self):
         r = requests_get('https://api.github.com/repos/tampe125/dump-scraper/releases/latest')
