@@ -66,6 +66,10 @@ class DumpScraperScrape(AbstractCommand):
 
                 target_dir = os.path.realpath(self.settings['data_dir'] + "/raw/" + folder)
 
+                # If I already have the file, let's skip it
+                if os.path.isfile(target_dir + '/' + str(tweet.id) + '.txt'):
+                    continue
+
                 if not os.path.exists(target_dir):
                     os.makedirs(target_dir)
 
