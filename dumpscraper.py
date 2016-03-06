@@ -6,6 +6,7 @@ import argparse
 import json
 import logging
 import logging.handlers
+from datetime import date
 from colorlog import ColoredFormatter
 from os import path as os_path
 from requests import get as requests_get
@@ -148,7 +149,7 @@ Dump Scraper - A better way of scraping
 
     def banner(self):
         print("Dump Scraper " + self.version + " - A better way of scraping")
-        print("Copyright (C) 2015 FabbricaBinaria - Davide Tampellini")
+        print("Copyright (C) 2015-" + str(date.today().year) + " FabbricaBinaria - Davide Tampellini")
         print("===============================================================================")
         print("Dump Scraper is Free Software, distributed under the terms of the GNU General")
         print("Public License version 3 or, at your option, any later version.")
