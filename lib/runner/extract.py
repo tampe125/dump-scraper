@@ -71,7 +71,7 @@ class DumpScraperExtract(AbstractCommand):
                     info = {'data': data}
 
                     parts = source.split('/')
-                    label = parts[-2]
+                    label = parts[-4]
 
                     try:
                         extractor = extractors[label]
@@ -83,9 +83,9 @@ class DumpScraperExtract(AbstractCommand):
                     extracted = extractor.extracted.strip(' \n\t\r')
 
                     if extracted:
-                        parts = path.basename(root).split('-')
+                        parts = root.replace(self.settings['data_dir'] + '/', '').split('/')
                         destination = self.settings['data_dir'] + "/" + 'processed/' + label + '/'
-                        destination += parts[0] + '/' + parts[1] + '/' + parts[2]
+                        destination += parts[2] + '/' + parts[3] + '/' + parts[4]
 
                         # If asked for a clean run, let's delete the entire folder before copying any file
                         if self.parentArgs.clean and destination not in cleared and path.exists(destination):
