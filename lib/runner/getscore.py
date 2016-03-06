@@ -27,7 +27,8 @@ class DumpScraperGetscore(AbstractCommand):
         else:
             targetfolder = 'raw'
             feature_path = self.settings['data_dir'] + "/features.csv"
-            folders = [self.parentArgs.since]
+            # Let's convert the single date to a path
+            folders = ['/'.join(self.parentArgs.since.split('-'))]
 
             if self.parentArgs.until:
                 date  = datetime.datetime.strptime(self.parentArgs.since, "%Y-%m-%d").date()
@@ -101,7 +102,10 @@ class DumpScraperGetscore(AbstractCommand):
                     else:
                         csvline['label'] = ''
 
-                    csvline['file'] = path.basename(root) + "/" + dump
+                    # Let's remove the data dir from the path
+                    file_path = root + '/' + dump
+
+                    csvline['file'] = file_path.replace(self.settings['data_dir'] + '/' + targetfolder + '/', '')
 
                     features_writer.writerow(csvline)
 
