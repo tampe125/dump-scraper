@@ -1,3 +1,12 @@
 {
-  "data_dir" : ""
+  "data_dir": "",
+  "app_secret": "",
+  "app_key": "",
+  "token": "",
+  "token_secret": "",
+  "processing_limit": 2000,
+  "delay": 3,
+  "limit": 50,
+  "max_id": null,
+  "last_id": null
 }
