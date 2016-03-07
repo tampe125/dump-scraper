@@ -3,8 +3,8 @@
 block_cipher = None
 
 
-a = Analysis(['../../src/dumpscraper.py'],
-             pathex=['C:\\Users\\IEUser\\Documents\\git\\dump-scraper\\build\\script'],
+a = Analysis(['../../dumpscraper.py'],
+             pathex=['C:\\Users\\tampe125\\Documents\\git\\dump-scraper\\build\\script'],
              hiddenimports=[
                     'sklearn.neighbors.typedefs',
                     'sklearn.utils.sparsetools._graph_validation',

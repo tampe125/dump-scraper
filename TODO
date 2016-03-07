@@ -1,0 +1,45 @@
+Add the following regex while scraping + data detection and extraction
+
+Command Line Password '\-\-[pP]assword\=[^%^\$]'
+
+KeyLoggers:
+	===============================================
+	Tracking ID:	
+	-------garbage---------
+	First Name:xxx
+	Last Name:xxx
+	eMail:xxx
+	Username:xxx
+	Password:xxx
+§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§
+    Captured Keys:
+    <------------>
+    Games-NTG #1: xxx
+    Games-NTG #2: xxx
+    Games-NTG #3: xxx
+    Games-NTG #4: xxx
+    Games-NTG #5: xxx
+    Games-NTG #6: xxx
+
+    email:pass
+§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§
+    --Email--: 01982270682
+    --Password--: 2222211
+§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§
+    =====================================
+    ?????? ??? ????? - email:PASS
+    ?????? ?? ??????? - LINK
+    ========= [???? - 46] =========
+    list of games
+§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§
+    ================================
+    Email: email:pass
+    Origin ID: xxx
+    list of games
+§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§
+    -======[Информация]======-
+    Данные для входа - hamburg.ilja@web.de:01041983
+    Страна - DE
+    EAID - iljaD
+    Секретка - Есть
+    -======[Игры - 4]======-

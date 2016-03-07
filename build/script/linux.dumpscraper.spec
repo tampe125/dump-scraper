@@ -3,7 +3,7 @@
 block_cipher = None
 
 
-a = Analysis(['../../src/dumpscraper.py'],
+a = Analysis(['../../dumpscraper.py'],
              pathex=['/home/tampe125/git/dump-scaper/build/script'],
              hiddenimports=[
                     'sklearn.neighbors.typedefs',

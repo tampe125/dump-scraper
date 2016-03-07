@@ -2,7 +2,7 @@ __author__ = 'Davide Tampellini'
 __copyright__ = '2015 Davide Tampellini - FabbricaBinaria'
 __license__ = 'GNU GPL version 3 or later'
 
-import re
+from re import sub as re_sub
 from abc import ABCMeta, abstractmethod
 
 
@@ -10,10 +10,12 @@ class AbstractExtractor():
     __metaclass__ = ABCMeta
 
     def __init__(self):
+        from collections import OrderedDict
+
         self.data = ''
         self.extracted = ''
         self.matches = []
-        self.regex = {}
+        self.regex = OrderedDict()
 
     def reset(self):
         self.data = ''
@@ -34,7 +36,7 @@ class AbstractExtractor():
     def extractdata(self, regex):
         self.matches = []
 
-        self.data = re.sub(regex, self.replacemateches, self.data)
+        self.data = re_sub(regex, self.replacemateches, self.data)
 
         return '\n'.join(self.matches)
 

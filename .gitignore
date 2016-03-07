@@ -1,7 +1,7 @@
 .idea
 data/*
-src/data
-src/**/*.pyc
+data_save/*
+lib/**/*.pyc
 training/*
 vendor/*
 wordlists/*
@@ -11,3 +11,4 @@ build/tmp
 settings.json
 composer.phar
 settings.sh
+dumpscraper.log*

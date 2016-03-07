@@ -1,0 +1,7 @@
+scipy
+sklearn
+requests
+colorlog
+colorama
+python-twitter
+beautifoulsoup

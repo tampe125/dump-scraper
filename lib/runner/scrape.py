@@ -7,19 +7,10 @@ import datetime
 import twitter
 import os
 import requests
-import sys
+from logging import getLogger
 from time import sleep
 from lib.runner.abstract import AbstractCommand
 from lib.exceptions.exceptions import RunningError
-
-# Sadly there is a problem with shipping the certificate in the single executable, so I have to skip HTTPS verification
-# This is turn will raise an InsecureRequestWarning, so we hav e to suppress it
-# It's an ugly workaround while we found a way to make HTTPS connection work...
-try:
-    requests.packages.urllib3.disable_warnings()
-except AttributeError:
-    # Guess what? Under Linux I don't have the packages attribute
-    pass
 
 
 class DumpScraperScrape(AbstractCommand):
@@ -39,6 +30,8 @@ class DumpScraperScrape(AbstractCommand):
             connection.VerifyCredentials()
         except twitter.error.TwitterError as error:
             raise RunningError(colorama.Fore.RED + 'Twitter error: ' + error.message[0]['message'])
+
+        dump_logger = getLogger('dumpscraper')
 
         while processed <= self.settings['processing_limit']:
 
@@ -63,17 +56,24 @@ class DumpScraperScrape(AbstractCommand):
                 except KeyError:
                     continue
 
-                day = datetime.datetime.fromtimestamp(tweet.created_at_in_seconds).strftime('%Y-%m-%d')
+                dObject = datetime.datetime.fromtimestamp(tweet.created_at_in_seconds)
+                day = dObject.strftime('%Y-%m-%d')
 
                 if day != prev_day:
                     prev_day = day
-                    print("")
-                    print("Processing day: " + day)
+                    dump_logger.info("Processing day: " + day)
 
-                folder = day
+                # Let's create the folder name using year/month/(full-date) structure
+                folder  = dObject.strftime('%Y') + '/' + dObject.strftime('%m') + '/' + dObject.strftime('%d')
 
-                if not os.path.exists(os.path.realpath("data/raw/" + folder)):
-                    os.makedirs(os.path.realpath("data/raw/" + folder))
+                target_dir = os.path.realpath(self.settings['data_dir'] + "/raw/" + folder)
+
+                # If I already have the file, let's skip it
+                if os.path.isfile(target_dir + '/' + str(tweet.id) + '.txt'):
+                    continue
+
+                if not os.path.exists(target_dir):
+                    os.makedirs(target_dir)
 
                 sleep(self.settings['delay'])
 
@@ -90,19 +90,12 @@ class DumpScraperScrape(AbstractCommand):
 
                 if "has been removed" in data.text:
                     removed += 1
-                    sys.stdout.write('x')
-                    sys.stdout.flush()
                     continue
 
-                sys.stdout.write('.')
-                sys.stdout.flush()
-
-                with open(os.path.realpath("data/raw/" + folder + "/" + str(tweet.id) + ".txt"), 'w+') as dump_file:
+                with open(target_dir + "/" + str(tweet.id) + ".txt", 'w+') as dump_file:
                     dump_file.write(data.text.encode('utf-8'))
 
-            print("")
-            print("\tprocessed " + str(processed) + " tweets")
-            print("\tFound " + str(removed) + " removed tweets in this batch")
+            dump_logger.info("Processed " + str(processed) + " tweets")
+            dump_logger.info("Found " + str(removed) + " removed tweets in this batch")
 
-        print("")
-        print("Total processed tweets: " + str(processed))
+        dump_logger.info("Total processed tweets: " + str(processed))

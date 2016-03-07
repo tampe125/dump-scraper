@@ -7,40 +7,52 @@ from lib.detector.abstract import AbstractDetector
 
 
 class TrashDetector(AbstractDetector):
-    def __init__(self):
-        self.functions = {
-            'fewLines'         : 1,
-            'longLines'        : 1,
-            'privateKeys'      : 1,
-            'antivirusDump'    : 1,
-            'detectRawEmail'   : 1,
-            'detectEmailsOnly' : 1,
-            'detectDebug'      : 1.2,
-            'detectIP'         : 1.5,
-            'detectTimeStamps' : 1,
-            'detectHtml'       : 1,
-            'detectVarious'    : 1
-        }
+    def __init__(self, level):
+        super(TrashDetector, self).__init__(level)
 
-        super(TrashDetector, self).__init__()
+        from collections import OrderedDict
+
+        # Order MATTERS! Functions to detect false positives MUST BE executed first
+        self.functions = OrderedDict()
+
+        # Accordingly to the level, set the correct function list
+        # The higher the level, the more data I want to extract, so I can sustain false positives.
+        if self.level <= 3:
+            self.functions['fewLines']        = 1
+            self.functions['longLines']       = 1
+            self.functions['privateKeys']     = 1
+            self.functions['detectRawEmail']  = 1
+            self.functions['detectEmailsOnly'] = 1
+            self.functions['detectDebug']     = 1.2
+            self.functions['detectHtml']      = 1
+            self.functions['detectVarious']   = 1
+
+        if self.level <= 2:
+            self.functions['detectTimeStamps'] = 1
+
+        if self.level <= 1:
+            self.functions['detectIP']        = 1.5
+
+        # Let's log the functions that will be applied
+        self.logfunctions()
 
         # Let's compile some regexes to speed up the execution
-        self.regex['emailsOnly'] = re.compile('^[\s"]?[a-z0-9\-\._]+@[a-z0-9\-\.]+\.[a-z]{2,4}[\s|\t]?$', re.I | re.M)
-        self.regex['debugHex'] = re.compile('0x[a-f0-9]{8}', re.I)
-        self.regex['winPath'] = re.compile('[A-Z]:\\\.*?\\\.*?\\\\', re.M)
+        self.regex['emailsOnly'] = re.compile(r'^[\s"]?[a-z0-9\-\._]+@[a-z0-9\-\.]+\.[a-z]{2,4}[\s|\t]?$', re.I | re.M)
+        self.regex['debugHex'] = re.compile(r'0x[a-f0-9]{8}', re.I)
+        self.regex['winPath'] = re.compile(r'[A-Z]:\\\.*?\\\.*?\\\\', re.M)
 
         # Chat log 330e8f8887e4ea04b06a6cffc66cfce0 -1 Admin Ban G-SH
-        self.regex['chat'] = re.compile('[a-f0-9]{32} -\d')
+        self.regex['chat'] = re.compile(r'[a-f0-9]{32} -\d')
 
-        self.regex['mysqlTable'] = re.compile('\+-{10,}?\+', re.M)
-        self.regex['startingDigits'] = re.compile('^\d{1,4},', re.M)
-        self.regex['ip'] = re.compile('\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b')
-        self.regex['mysqlDates'] = re.compile('(19|20)\d\d[\-/.](0[1-9]|1[012])[\-/.](0[1-9]|[12][0-9]|3[01])')
-        self.regex['engDates'] = re.compile('(0[1-9]|1[012])[\-/.](0[1-9]|[12][0-9]|3[01])[\-/.](19|20)\d\d')
-        self.regex['time'] = re.compile('(?:2[0-3]|[01][0-9]):[0-5][0-9](?::[0-5][0-9])?')
-        self.regex['htmlTags'] = re.compile('</?(?:html|div|p|div|script|link|span|u|ul|li|ol|a)+\s*/?>', re.I)
-        self.regex['htmlLinks'] = re.compile('\b(?:(?:https?|udp)://|www\.)[-A-Z0-9+&@#/%=~_|$?!:,.]*[A-Z0-9+&@#/%=~_|$]', re.I)
-        self.regex['md5links'] = re.compile('(?:(?:https?|udp)://|www\.)[-A-Z0-9+&@#/%=~_|$?!:,.]*[A-Z0-9+&@#/%=~_|$]=[a-f0-9]{32}', re.I)
+        self.regex['mysqlTable'] = re.compile(r'\+-{10,}?\+', re.M)
+        self.regex['startingDigits'] = re.compile(r'^\d{1,4},', re.M)
+        self.regex['ip'] = re.compile(r'\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b')
+        self.regex['mysqlDates'] = re.compile(r'(19|20)\d\d[\-/.](0[1-9]|1[012])[\-/.](0[1-9]|[12][0-9]|3[01])')
+        self.regex['engDates'] = re.compile(r'(0[1-9]|1[012])[\-/.](0[1-9]|[12][0-9]|3[01])[\-/.](19|20)\d\d')
+        self.regex['time'] = re.compile(r'(?:2[0-3]|[01][0-9]):[0-5][0-9](?::[0-5][0-9])?')
+        self.regex['htmlTags'] = re.compile(r'</?(?:html|head|body|div|p|div|script|link|span|u|ul|li|ol|a)+\s*/?>', re.I)
+        self.regex['htmlLinks'] = re.compile(r'\b(?:(?:https?|udp)://|www\.)[-A-Z0-9+&@#/%=~_|$?!:,.]*[A-Z0-9+&@#/%=~_|$]', re.I)
+        self.regex['md5links'] = re.compile(r'(?:(?:https?|udp)://|www\.)[-A-Z0-9+&@#/%=~_|$?!:,.]*[A-Z0-9+&@#/%=~_|$]=[a-f0-9]{32}', re.I)
 
     def analyze(self, results):
         for function, coefficient in self.functions.iteritems():
@@ -85,15 +97,6 @@ class TrashDetector(AbstractDetector):
         """
         if self.data.count('---BEGIN') > 0:
             return 3
-
-        return 0
-
-    def antivirusDump(self):
-        signatures = ['Malwarebytes Anti-Malware', 'www.malwarebytes.org']
-
-        for signature in signatures:
-            if self.data.lower().count(signature.lower()) > 0:
-                return 3
 
         return 0
 
@@ -154,7 +157,7 @@ class TrashDetector(AbstractDetector):
         # Do I have lines starting with a number? Maybe it's a table dump without any MySQL markup
         digits = len(re.findall(self.regex['startingDigits'], self.data)) / self.lines
 
-        if insert > 3 or mysql > 5 or digits > 0.25:
+        if insert > 1 or mysql > 1 or digits > 0.25:
             multiplier = 0.01
 
         ip = len(re.findall(self.regex['ip'], self.data)) * multiplier
@@ -175,7 +178,10 @@ class TrashDetector(AbstractDetector):
         # Do I have lines starting with a number? Maybe it's a table dump without any MySQL markup
         digits = len(re.findall(self.regex['startingDigits'], self.data)) / self.lines
 
-        if insert > 3 or mysql > 5 or digits > 0.25:
+        # Do I have a SQLmap cracked password signature?
+        sqlmap = len(re.findall(r'\[INFO\] (cracked|resuming) password', self.data)) / self.lines
+
+        if insert > 1 or mysql > 1 or digits > 0.25 or sqlmap > 0.25:
             multiplier = 0.01
 
         # MySQL dates - 2015-11-02
@@ -211,6 +217,17 @@ class TrashDetector(AbstractDetector):
         return score / self.lines
 
     def detectVarious(self):
-        score = self.data.lower().count('e-mail found')
+        data_lower = self.data.lower()
+
+        score = data_lower.count('e-mail found')
+
+        # We moved these checks directly while scraping
+        # The #EXTINF signature flags a file we're not interested into
+        # if data_lower.count('#extinf'):
+        #    return 3
+
+        # XML files
+        # if data_lower.count('<?xml version="1.0" encoding="utf-8"?>'):
+        #    return 3
 
         return score / self.lines
