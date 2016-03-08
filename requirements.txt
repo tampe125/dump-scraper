@@ -4,4 +4,4 @@ requests
 colorlog
 colorama
 python-twitter
-beautifoulsoup
+bs4
