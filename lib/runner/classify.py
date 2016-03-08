@@ -7,6 +7,7 @@ from logging import getLogger
 from csv import reader as csv_reader
 from os import path, makedirs
 from scipy import genfromtxt as scipy_genfromtxt
+from numpy import array as np_array
 from shutil import copyfile as shutil_copyfile, rmtree as shutil_rmtree
 from lib.runner.abstract import AbstractCommand
 from lib.exceptions.exceptions import RunningError
@@ -51,7 +52,8 @@ class DumpScraperClassify(AbstractCommand):
                 if line[0] == 'Trash score':
                     continue
 
-                features = line[0:3]
+                features = np_array(line[0:3])
+                features = features.reshape(1, -1)
                 label = clf.predict(features)
 
                 if label == 0:
