@@ -13,8 +13,8 @@ Moreover, once you have the raw data you need to extract such information and re
 
 That's the reason why Dump Scraper was born: inside this repository you will find several scripts to fetch the latest tweets from Dump Monitor, analyze them (discarding useless files) and extract the hashes or the passwords.  
 
-If you are using an Amazon EC2 spot instance to crack hashes, you will find some useful scripts for handling the termination notice.  
-Finally, there are a couple of scripts for dealing with plain passwords and create your own wordlist.
-
-## Requirements
- There are no requirements, just run the executable file from CLI
+## Installation
+ The hardest thing to do is to install the SciPy stack. Luckly [on their site](http://www.scipy.org/install.html) they have several ready to use package.
+ After that, you can simply install all the requirements using `pip`:  
+ `pip install -r requirements.txt`  
+ However, before running Dump Scraper you have to configure it, please take a look at the [Wiki](https://github.com/tampe125/dump-scraper/wiki).
